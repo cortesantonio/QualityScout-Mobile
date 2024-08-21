@@ -1,11 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ImageBackground, Pressable, Animated, TouchableOpacity, TextInput, StyleSheet, Dimensions} from 'react-native';
+import { View, Text, Image, ImageBackground, Pressable, Animated, TouchableOpacity, TextInput, StyleSheet, Dimensions, Alert, ActivityIndicator } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
+
+
+
+
+
+import CryptoJS from 'crypto-js';
+
+// Clave secreta fija y vector de inicialización (IV) (deben ser de longitud adecuada)
+const secretKey = "E93{P254sNRJy2XG"; // Debe tener 16, 24 o 32 bytes
+const iv = 'E93{P254sNRJy2XG'; // Debe ser de 16 bytes
+
+export const encryptText = (text) => {
+  const encrypted = CryptoJS.AES.encrypt(text, CryptoJS.enc.Utf8.parse(secretKey), {
+    iv: CryptoJS.enc.Utf8.parse(iv),
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7
+  });
+
+  // Convertir el resultado a Base64
+  return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+};
+
+
 
 // Imágenes
 const QualityScoutLogo = require('../img/QualityScoutLogo.png');
 const Uvas = require('../img/Uvas.jpg');
+
 
 const Login = () => {
   // Estado para controlar si se muestra la pantalla de inicio o el formulario
@@ -19,6 +43,13 @@ const Login = () => {
     setIsFormVisible(!isFormVisible);
   };
 
+
+  const [rut, setRut] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // Estado para controlar la carga
+
+
+
   // Efecto para animar la altura del contenedor cuando cambia el estado isFormVisible
   useEffect(() => {
     Animated.timing(containerHeight, {
@@ -28,12 +59,39 @@ const Login = () => {
     }).start();
   }, [isFormVisible]);
 
+  const handleLogin = async () => {
+    setLoading(true); // Iniciar el estado de carga
+    try {
+      const response = await fetch('http://192.168.1.108:5071/api/authapi/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          rut: encryptText( rut),
+          password: encryptText( password),
+        }),
+      });
+      if (response.ok) {
+        const result = await response.text();
+        Alert.alert('Login Successful', result);
+      } else {
+        const error = await response.text();
+        Alert.alert('Login Failed', error);
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      Alert.alert('Login Error', 'An error occurred during login.');
+    } finally {
+      setLoading(false); // Terminar el estado de carga
+    }
+  };
+
   return (
     <View style={styles.LoginStyle}>
       <ImageBackground style={styles.img} source={Uvas} resizeMode="contain" />
 
       {!isFormVisible ? (
-        // Vista inicial: información y botón de acceso
         <>
           <View style={styles.contenedorLogo}>
             <Image style={styles.LoginLogoImg} source={QualityScoutLogo} resizeMode="contain" />
@@ -54,7 +112,6 @@ const Login = () => {
           </Animated.View>
         </>
       ) : (
-        // Vista del formulario de inicio de sesión
         <>
           <TouchableOpacity onPress={handleAccessPress} style={styles.ButtonCirculoAtras}>
             <View style={styles.CirculoAtras}>
@@ -70,16 +127,34 @@ const Login = () => {
             <Text style={styles.TextLoginTitle}>Acceso</Text>
             <Text style={styles.TextLoginSubTitle}>Inicie sesión para continuar.</Text>
 
-            <Text style={styles.labelLoginInput}>Correo</Text>
-            <TextInput style={styles.inputLogin} placeholder="Hola@Bienvenido.cl" />
+            <Text style={styles.labelLoginInput}>RUT</Text>
+            <TextInput
+              style={styles.inputLogin}
+              value={rut}
+              onChangeText={setRut}
+              placeholder="12.345.678-9"
+            />
 
             <Text style={styles.labelLoginInput}>Contraseña</Text>
-            <TextInput style={styles.inputLogin} placeholder="*******" secureTextEntry={true} />
+            <TextInput
+              style={styles.inputLogin}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="*******"
+              secureTextEntry={true}
+            />
 
-            <Pressable style={styles.ButtonAcceso}>
+            <Pressable style={styles.ButtonAcceso} onPress={handleLogin}>
               <Text style={[styles.ButtonAccesoText, { textTransform: 'none' }]}>Iniciar Sesión</Text>
             </Pressable>
           </Animated.View>
+
+          {loading && (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#260202" />
+              <Text style={styles.loadingText}>Cargando...</Text>
+            </View>
+          )}
         </>
       )}
     </View>
@@ -88,6 +163,8 @@ const Login = () => {
 
 
 const styles = StyleSheet.create({
+
+
   LoginStyle: {
     backgroundColor: '#260202',
     width: Dimensions.get('window').width,
@@ -202,8 +279,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
 
-  },
-
+  }, 
+  loadingContainer: {
+    position: 'absolute',
+    bottom: 100,
+  }
 });
 
 
