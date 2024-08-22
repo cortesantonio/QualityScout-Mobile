@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ImageBackground, Pressable, Animated, TouchableOpacity, TextInput, StyleSheet, Dimensions, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, Image, ImageBackground,
+   Pressable, Animated, TouchableOpacity, 
+   TextInput, StyleSheet, Dimensions, Alert,
+    ActivityIndicator, SafeAreaView} from 'react-native';
+
+
+
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 
@@ -60,6 +66,10 @@ const Login = () => {
   }, [isFormVisible]);
 
   const handleLogin = async () => {
+    if (!rut || !password) {
+      Alert.alert('Error', 'Por favor, ingrese su RUT y contraseña.');
+      return;
+    }
     setLoading(true); // Iniciar el estado de carga
     try {
       const response = await fetch('http://192.168.1.108:5071/api/authapi/login', {
@@ -88,7 +98,7 @@ const Login = () => {
   };
 
   return (
-    <View style={styles.LoginStyle}>
+    <SafeAreaView style={[styles.LoginStyle,{ backgroundColor: '#260202' }]}>
       <ImageBackground style={styles.img} source={Uvas} resizeMode="contain" />
 
       {!isFormVisible ? (
@@ -157,7 +167,7 @@ const Login = () => {
           )}
         </>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -168,7 +178,7 @@ const styles = StyleSheet.create({
   LoginStyle: {
     backgroundColor: '#260202',
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    height: Dimensions.get('window').height ,
     alignItems: 'center',
     justifyContent: 'center',
 
@@ -265,7 +275,7 @@ const styles = StyleSheet.create({
   },
   ButtonCirculoAtras: {
     position: 'absolute',
-    top: -100,
+    top: -50,
     left: -50,
 
   },
