@@ -2,7 +2,7 @@ import { Dimensions, StyleSheet, Text, View, Image, Pressable, ScrollView } from
 import React from 'react';
 import { PieChart } from 'react-native-svg-charts';
 import { Text as SvgText } from 'react-native-svg';
-import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
+import { width } from '@fortawesome/free-solid-svg-icons/fa0';
 
 
 // iconos propios 
@@ -18,7 +18,7 @@ const iconBajada = require('../img/flechaBajada.png')
 
 
 
-const HomeAdmin = () => {
+const HomeEspecialista = () => {
     const calculatePercentages = (data) => {
         const total = data.reduce((sum, item) => sum + item.amount, 0);
         return data.map(item => ({
@@ -94,18 +94,10 @@ const HomeAdmin = () => {
                 <View style={styles.ContainerAccesosRapidos} >
                     <Pressable style={styles.PressableCard}>
                         <View style={styles.IconBackground}>
-                            <Image source={iconDashboard} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            <Image source={iconBuscador} style={{ width: 50, height: 50 }} resizeMode='contain' />
                         </View>
-                        <Text>Dashboard</Text>
+                        <Text>Buscador</Text>
                     </Pressable>
-
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconUsuarios} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text>Usuarios</Text>
-                    </Pressable>
-
                     <Pressable style={styles.PressableCard}>
                         <View style={styles.IconBackground}>
                             <Image source={iconControles} style={{ width: 50, height: 50 }} resizeMode='contain' />
@@ -120,37 +112,13 @@ const HomeAdmin = () => {
                         <Text>Productos</Text>
                     </Pressable>
 
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconInformes} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text>Informes</Text>
-                    </Pressable>
-
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconBuscador} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text>Buscador</Text>
-                    </Pressable>
-
                 </View >
 
                 {/* Indicadores de rendimientos */}
-                <Text style={{ fontSize: 18, }}>Indicadores de rendimientos actuales.</Text>
+                <Text style={{ fontSize: 18, }}>Estado Actual.</Text>
                 <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
-                    <PieChart
-                        style={{ height: 200 }}
-                        valueAccessor={({ item }) => item.amount}
-                        data={data}
-                        spacing={0}
-                        outerRadius={'85%'}
-
-
-                    >
-                        <Labels />
-                    </PieChart>
+                    {/* Estadisticas */}
                     <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
                         <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                             <View style={{ backgroundColor: '#f25757', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
@@ -165,7 +133,19 @@ const HomeAdmin = () => {
                             <Text>Rechazados</Text>
                         </View>
                     </View>
-                    
+
+                    <PieChart
+                        style={{ width: '100%', height: 200 }}
+                        valueAccessor={({ item }) => item.amount}
+                        data={data}
+                        spacing={0}
+                        outerRadius={'85%'}
+
+                    >
+                        <Labels />
+                    </PieChart>
+
+
                     <View style={styles.containerCard}>
 
 
@@ -176,6 +156,7 @@ const HomeAdmin = () => {
                             <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
                             <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
                         </View>
+
                         <View style={[styles.CardEstadisticas, { backgroundColor: '#260202' }]}>
                             <Text style={[styles.tituloCard, { color: 'white' }]}> Controles Rechazados </Text>
                             <Text style={styles.numeroCard}>5</Text>
@@ -183,6 +164,7 @@ const HomeAdmin = () => {
                             <Image source={iconBajada} style={styles.IconFlechaEstadistica} resizeMode='contain' />
                             <Text style={[styles.indicadorCard, { color: 'red', }]}> -</Text>
                         </View>
+
                         <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
                             <Text style={[styles.tituloCard, { color: '#260202' }]}> Reprocesos </Text>
                             <Text style={styles.numeroCard}>8</Text>
@@ -192,6 +174,37 @@ const HomeAdmin = () => {
                         </View>
 
                     </View>
+                    <View style={styles.SubcontainerCard}>
+                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
+                            <Text style={[styles.SubtituloCard, { color: 'white' }]}> Nuevos Productos </Text>
+                            <Text style={styles.SubnumeroCard}>8</Text>
+                        </View>
+                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
+                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Actualizaciones de prod. </Text>
+                            <Text style={styles.SubnumeroCard}>12</Text>
+                        </View>
+
+                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#260202' }]}>
+                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Prod. Eliminados </Text>
+                            <Text style={styles.SubnumeroCard}>0</Text>
+                        </View>
+                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#260202' }]}>
+                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Rechazos de Control </Text>
+                            <Text style={styles.SubnumeroCard}>16</Text>
+                        </View>
+
+                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
+                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Nuevos Reprocesos </Text>
+                            <Text style={styles.SubnumeroCard}>8</Text>
+                        </View>
+                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
+                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Nuevos Controles </Text>
+                            <Text style={styles.SubnumeroCard}>12</Text>
+                        </View>
+
+                    </View>
+
+
 
                 </View>
             </View >
@@ -217,8 +230,8 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'flex-start',
-        gap: 6,
+        justifyContent: 'center',
+        gap: 10,
     },
     IconBackground: {
         backgroundColor: '#f25757',
@@ -242,8 +255,6 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'center',
         gap: 10,
-        marginTop: 25,
-        marginBottom: 100
     },
     CardEstadisticas: {
         width: 100,
@@ -297,9 +308,39 @@ const styles = StyleSheet.create({
         marginTop: 5,
         fontWeight: '800',
         zIndex: 10,
+    }, SubcontainerCard: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 5,
+        marginTop: 10,
+        marginBottom: 100
+    }, SubCardEstadisticas: {
+        padding: 3,
+        width: 50,
+        height: 50,
+        borderRadius: 10,
+        overflow: 'hidden',
+    }, SubtituloCard: {
+        textAlign: 'left',
+        fontSize: 8,
+        fontWeight: '800',
+        zIndex: 10,
+
+    }, SubnumeroCard: {
+        fontSize: 38,
+        color: 'white',
+        fontWeight: 'bold',
+        position: 'absolute',
+        bottom: -9,
+        width: '100%',
+        textAlign: 'center',
+        zIndex: 5,
     }
 
 });
 
 
-export default HomeAdmin;
+export default HomeEspecialista;

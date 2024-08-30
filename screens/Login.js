@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ImageBackground,
-   Pressable, Animated, TouchableOpacity, 
-   TextInput, StyleSheet, Dimensions, Alert,
-    ActivityIndicator, SafeAreaView} from 'react-native';
-
-
-
+import {
+  View, Text, Image, ImageBackground,
+  Pressable, Animated, TouchableOpacity,
+  TextInput, StyleSheet, Dimensions, Alert,
+  ActivityIndicator, SafeAreaView
+} from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
-
-
-
-
-
 import CryptoJS from 'crypto-js';
+
+
 
 // Clave secreta fija y vector de inicialización (IV) (deben ser de longitud adecuada)
 const secretKey = "E93{P254sNRJy2XG"; // Debe tener 16, 24 o 32 bytes
@@ -35,6 +31,8 @@ export const encryptText = (text) => {
 // Imágenes
 const QualityScoutLogo = require('../img/QualityScoutLogo.png');
 const Uvas = require('../img/Uvas.jpg');
+
+
 
 
 const Login = () => {
@@ -78,8 +76,8 @@ const Login = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          rut: encryptText( rut),
-          password: encryptText( password),
+          rut: encryptText(rut),
+          password: encryptText(password),
         }),
       });
       if (response.ok) {
@@ -98,7 +96,7 @@ const Login = () => {
   };
 
   return (
-    <SafeAreaView style={[styles.LoginStyle,{ backgroundColor: '#260202' }]}>
+    <SafeAreaView style={[styles.LoginStyle, { backgroundColor: '#260202' }]}>
       <ImageBackground style={styles.img} source={Uvas} resizeMode="contain" />
 
       {!isFormVisible ? (
@@ -178,7 +176,7 @@ const styles = StyleSheet.create({
   LoginStyle: {
     backgroundColor: '#260202',
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height ,
+    height: Dimensions.get('window').height,
     alignItems: 'center',
     justifyContent: 'center',
 
@@ -289,7 +287,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
 
-  }, 
+  },
   loadingContainer: {
     position: 'absolute',
     bottom: 100,
