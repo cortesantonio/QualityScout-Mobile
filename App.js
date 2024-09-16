@@ -1,26 +1,25 @@
 import { Dimensions, StyleSheet, View, Image, ImageBackground, Button, Pressable, SafeAreaView, ScrollView } from 'react-native';
 import { Nav, Footer } from './components/shared'
 import React from 'react';
-import HomeAdmin from './screens/HomeAdmin'
-import Login from './screens/Login';
-import Controles from './screens/Controles';
-import HomeEspecialista from './screens/HomeEspecialista';
-
+import HomeControlCalidad from './screens/ControlCalidad/HomeControlCalidad';
+import Login from './screens/Auth/Login'
+import Controles from './screens/Shared/Controles'
+import HomeEspecialista from './screens/Especialista/HomeEspecialista';
+import Buscador from './screens/Shared/Buscador'
+import Productos from './screens/Shared/Productos';
 
 export default function App() {
   return (
-    <View style={styles.app}>
-      <Nav />
-      <HomeEspecialista />
-      <Footer />
-    </View>
+    <SafeAreaView style={styles.app}>
+      <Login/>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   app: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    height: Dimensions.get('screen').height,
   },
 
 });

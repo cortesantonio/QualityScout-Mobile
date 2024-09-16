@@ -29,8 +29,8 @@ export const encryptText = (text) => {
 
 
 // Imágenes
-const QualityScoutLogo = require('../img/QualityScoutLogo.png');
-const Uvas = require('../img/Uvas.jpg');
+const QualityScoutLogo = require('../../assets/images/QualityScoutLogo.png');
+const Uvas = require('../../assets/images/Uvas.jpg');
 
 
 
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   ButtonAccesoText: {
     color: 'white',
-    fontSize: '24',
+    fontSize: 24,
     textTransform: 'uppercase',
   },
   TextComentario: {

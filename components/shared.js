@@ -3,14 +3,14 @@ import { Dimensions, StyleSheet, Text, View, Image, ImageBackground, Button, Pre
 import React from 'react';
 import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
 
-const UserP = require('../img/UserExample.jpg');
+const UserP = require('../assets/images/UserExample.jpg');
 // iconos propios 
-const iconDashboard = require('../img/iconDashboard.png')
-const iconUsuarios = require('../img/iconUsuarios.png')
-const iconControles = require('../img/iconControles.png')
-const iconProductos = require('../img/iconProductos.png')
-const iconInformes = require('../img/iconInformes.png')
-const iconBuscador = require('../img/iconBuscador.png')
+const iconDashboard = require('../assets/icons/iconDashboard.png')
+const iconUsuarios = require('../assets/icons/iconUsuarios.png')
+const iconControles = require('../assets/icons/iconControles.png')
+const iconProductos = require('../assets/icons/iconProductos.png')
+const iconInformes = require('../assets/icons/iconInformes.png')
+const iconBuscador = require('../assets/icons/iconBuscador.png')
 
 
 
@@ -31,7 +31,7 @@ const Nav = () => {
             </View>
 
             <Pressable style={{ width: 35, height: 35, backgroundColor: 'white', borderRadius: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Image source={require('../img/settings.png')} style={{ width: 30, height: 30 }}></Image>
+                <Image source={require('../assets/icons/settings.png')} style={{ width: 30, height: 30 }}></Image>
             </Pressable>
 
         </View>
@@ -64,7 +64,7 @@ const Footer = () => {
             </Pressable>
 
             <Pressable style={styles.PressableFooter}>
-                <Image source={require('../img/home.png')} style={styles.iconPressable}></Image>
+                <Image source={require('../assets/icons/home.png')} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Inicio</Text>
             </Pressable>
             <Pressable style={styles.PressableFooter}>

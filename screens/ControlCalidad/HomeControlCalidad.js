@@ -6,19 +6,19 @@ import { width } from '@fortawesome/free-solid-svg-icons/fa0';
 
 
 // iconos propios 
-const iconDashboard = require('../img/iconDashboard.png')
-const iconUsuarios = require('../img/iconUsuarios.png')
-const iconControles = require('../img/iconControles.png')
-const iconProductos = require('../img/iconProductos.png')
-const iconInformes = require('../img/iconInformes.png')
-const iconBuscador = require('../img/iconBuscador.png')
+const iconDashboard = require('../../assets/icons/iconDashboard.png')
+const iconUsuarios = require('../../assets/icons/iconUsuarios.png')
+const iconControles = require('../../assets/icons/iconControles.png')
+const iconProductos = require('../../assets/icons/iconProductos.png')
+const iconInformes = require('../../assets/icons/iconInformes.png')
+const iconBuscador = require('../../assets/icons/iconBuscador.png')
 
-const iconFlechaSubida = require('../img/flechaSubida.png')
-const iconBajada = require('../img/flechaBajada.png')
+const iconFlechaSubida = require('../../assets/icons/flechaSubida.png')
+const iconBajada = require('../../assets/icons/flechaBajada.png')
 
 
 
-const HomeEspecialista = () => {
+const HomeControlCalidad = () => {
     const calculatePercentages = (data) => {
         const total = data.reduce((sum, item) => sum + item.amount, 0);
         return data.map(item => ({
@@ -343,4 +343,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default HomeEspecialista;
+export default HomeControlCalidad;

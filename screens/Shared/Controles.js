@@ -5,11 +5,11 @@ import { Text as SvgText } from 'react-native-svg';
 
 
 // iconos propios 
-const iconControlCheck = require('../img/iconControlCheck.png')
+const iconControlCheck = require('../../assets/icons/iconControlCheck.png')
 
-const iconReload = require('../img/iconReload.png')
-const iconDislike = require('../img/iconDislike.png')
-const iconStop = require('../img/iconStop.png')
+const iconReload = require('../../assets/icons/iconReload.png')
+const iconDislike = require('../../assets/icons/iconDislike.png')
+const iconStop = require('../../assets/icons/iconStop.png')
 
 const Controles = () => {
     const calculatePercentages = (data) => {
