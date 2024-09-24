@@ -80,6 +80,7 @@ const Footer = () => {
 
 const styles = StyleSheet.create({
     Nav: {
+        
         backgroundColor: '#260202',
         width: Dimensions.get('window').width,
         height: 120,
@@ -93,11 +94,17 @@ const styles = StyleSheet.create({
         paddingTop: 25,
         paddingLeft: 25,
         paddingRight: 25,
-
     },
 
 
     Footer: {
+
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1,
+        elevation: 1,
 
         backgroundColor: '#260202',
         width: Dimensions.get('window').width,
@@ -111,8 +118,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
         gap: 5,
-        position: 'absolute',
-        bottom: 0
     },
     PressableFooter: {
         height: 50,

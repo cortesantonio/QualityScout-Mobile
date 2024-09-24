@@ -8,13 +8,10 @@ import { TouchableOpacity } from 'react-native';
 const iconFiltro = require('../../assets/icons/iconFiltro.png')
 const iconOrden = require('../../assets/icons/iconOrden.png')
 
-const iconLupa = require('../../assets/icons/iconLupa.png')
-const iconAdd = require('../../assets/icons/iconAdd.png')
-const iconCamara = require('../../assets/icons/iconCamara.png')
 
 const iconVino = require('../../assets/icons/iconVino.png')
-const iconBasurero = require('../../assets/icons/iconBasurero.png')
 const iconGo = require('../../assets/icons/iconGo.png')
+const iconControlCheck = require('../../assets/icons/iconControlCheck.png')
 
 const Productos = () => {
     const DATA = [
@@ -22,57 +19,35 @@ const Productos = () => {
             cod: '12312323123',
             nombe: 'Sauvignon 1234k',
             reserva: 'Reserva Especial',
-            destino: 'Chile'
-        },
-        {
-            cod: '1231213123',
-            nombe: 'Malvec',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
+            destino: 'Chile',
+            fecha: '12/12/2023',
+            hora: '12:00',
+            estado: 'Aprobado'
         }, {
-            cod: '12315523123',
-            nombe: 'Cabernet Sauvignon',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
-        },
-        {
-            cod: '123123243123',
+            cod: '123123444123',
             nombe: 'Sauvignon 1234k',
             reserva: 'Reserva Especial',
-            destino: 'Chile'
-        },
-        {
-            cod: '12131213123',
-            nombe: 'Malvec',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
-        }, {
-            cod: '1231525523123',
-            nombe: 'Cabernet Sauvignon',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
-        }, {
-            cod: '123142323123',
-            nombe: 'Sauvignon 1234k',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
+            destino: 'Chile',
+            fecha: '12/12/2023',
+            hora: '12:00',
+            estado: 'rechazado'
         }
+
+
     ]
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7 }}>
-                <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={iconVino} />
+                <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={iconControlCheck} />
             </View>
 
             <View style={styles.infoCard} >
                 <Text style={styles.titleInfo}>{item.nombe} - {item.reserva}</Text>
-                <Text style={styles.subtitleInfo}>VE: {item.cod}  Destino: {item.destino}</Text>
+                <Text style={styles.subtitleInfo}>Fecha: {item.fecha} Hora: {item.hora} | Estado: {item.estado}</Text>
             </View>
 
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', gap: 10, padding: 3, borderRadius: 3 }}>
-                <TouchableOpacity >
-                    <Image source={iconBasurero} style={styles.iconAcciones}></Image>
-                </TouchableOpacity>
+
                 <TouchableOpacity >
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
@@ -82,25 +57,9 @@ const Productos = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.TituloPantalla}>Gestión de productos.</Text>
+            <Text style={styles.TituloPantalla}>Registro de Controles.</Text>
 
-            <View style={styles.buscador}>
-                <Image source={iconLupa} style={styles.iconLupa} ></Image>
 
-                <TextInput style={styles.inputBuscador} placeholder='Ingresa codigo o nombre del producto'></TextInput>
-            </View>
-            <View style={styles.contenedorBotones}>
-                <TouchableOpacity style={styles.TouchableBoton}>
-                    <Image source={iconCamara} style={styles.iconsBotones}></Image>
-                    <Text style={styles.botonText}>Abrir Escaner</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.TouchableBoton}>
-                    <Image source={iconAdd} style={styles.iconsBotones} ></Image>
-                    <Text style={styles.botonText}>Añadir Productos</Text>
-                </TouchableOpacity>
-
-            </View>
             <View>
                 {/*encabezado de la lista*/}
                 <View style={styles.encabezado}>
@@ -243,11 +202,12 @@ const styles = StyleSheet.create({
 
     ,
     infoCard: {
-        width: '60%'
-    }, titleInfo: { fontSize: 16 }
+        width: '75%'
+    },
+    titleInfo: { fontSize: 16 }
     , subtitleInfo: {
-        fontSize: 12,
-        color: 'gray'
+        fontSize: 10,
+        color: 'gray',
     }
     , iconAcciones: {
         width: 20,

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { PieChart } from 'react-native-svg-charts';
 import { Text as SvgText } from 'react-native-svg';
@@ -10,7 +10,7 @@ const iconControlCheck = require('../../assets/icons/iconControlCheck.png')
 const iconReload = require('../../assets/icons/iconReload.png')
 const iconDislike = require('../../assets/icons/iconDislike.png')
 const iconStop = require('../../assets/icons/iconStop.png')
-
+const flechaSeguir = require('../../assets/icons/flechaSeguir.png')
 const Controles = () => {
     const calculatePercentages = (data) => {
         const total = data.reduce((sum, item) => sum + item.amount, 0);
@@ -138,7 +138,12 @@ const Controles = () => {
                         <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>912</Text>
                         <Text style={{ textAlign: 'center' }}>Controles {'\n'} Preventivos</Text>
                     </Pressable>
-
+                    <TouchableOpacity style={styles.PressableCard}>
+                        <View style={styles.IconBackground}>
+                            <Image source={flechaSeguir} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                        </View>
+                        <Text style={{ fontSize: 12, marginTop:10,fontWeight: 'bold', textAlign: 'center' }}>ABRIR REGISTROS</Text>
+                    </TouchableOpacity>
                 </View >
 
                 {/* Indicadores de rendimientos */}
@@ -176,7 +181,7 @@ const Controles = () => {
 
                     </View>
 
-                    
+
 
                 </View>
             </View >
@@ -220,7 +225,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
 
-   
+
 
 });
 

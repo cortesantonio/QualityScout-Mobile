@@ -35,11 +35,10 @@ export default function App() {
       <CameraView
         onBarcodeScanned={scanned ? undefined : handleBarcodeScanned}
         videoQuality="1080p"
-        mode="video"
 
         autofocus="off"
         barcodeScannerSettings={{
-          barcodeTypes: ["ean8", "ean13"],
+          barcodeTypes: ["ean13"],
         }}
         style={StyleSheet.absoluteFillObject}
       />
