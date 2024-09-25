@@ -3,20 +3,21 @@ import { Nav, Footer } from './components/shared'
 import React from 'react';
 import HomeControlCalidad from './screens/ControlCalidad/HomeControlCalidad';
 import Login from './screens/Auth/Login'
-import Controles from './screens/Especialista/Controles'
+import Controles from './screens/Shared/Controles'
 import ListadoControles from './screens/Shared/ListadoControles'
 import HomeEspecialista from './screens/Especialista/HomeEspecialista';
 import Buscador from './screens/Shared/Buscador'
 import Productos from './screens/Shared/Productos';
+import Usuarios from './screens/Especialista/Usuarios';
+import Informes from './screens/Especialista/Informes';
 
 export default function App() {
   return (
 
       <View style={styles.app}>
       <StatusBar style="light" barStyle="light-content" translucent={true} backgroundColor="transparent" />
-
         <Nav />
-        <ListadoControles />
+        < Informes/>
         <Footer />
       </View>
 

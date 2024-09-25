@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import React from 'react';
 import { PieChart } from 'react-native-svg-charts';
 import { Text as SvgText } from 'react-native-svg';
@@ -140,9 +140,9 @@ const Controles = () => {
                     </Pressable>
                     <TouchableOpacity style={styles.PressableCard}>
                         <View style={styles.IconBackground}>
-                            <Image source={flechaSeguir} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            <Image source={flechaSeguir} style={{ width: 40, height: 40 }} resizeMode='contain' />
                         </View>
-                        <Text style={{ fontSize: 12, marginTop:10,fontWeight: 'bold', textAlign: 'center' }}>ABRIR REGISTROS</Text>
+                        <Text style={{ fontSize: 12, marginTop:10,fontWeight: 'bold', textAlign: 'center' }}>ABRIR  {'\n'}REGISTROS</Text>
                     </TouchableOpacity>
                 </View >
 
@@ -195,6 +195,7 @@ const styles = StyleSheet.create({
     scrollContainer: {
         flexGrow: 1,
         padding: 25,
+        paddingBottom:120
     },
     containerHomeAdmin: {
         display: 'flex',
@@ -207,8 +208,8 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'flex-start',
-        gap: 6,
+        justifyContent: 'center',
+        gap: 4,
     },
     IconBackground: {
         backgroundColor: '#f25757',

@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
         marginBottom: 100
     },
     CardEstadisticas: {
-        width: 100,
+        width: '30%',
         height: 100,
         borderRadius: 20,
         overflow: 'hidden',
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
         opacity: 0.3,
         zIndex: 0,
     }, tituloCard: {
-        fontSize: 18,
+        fontSize: 14,
         marginTop: 5,
         fontWeight: '800',
         zIndex: 10,

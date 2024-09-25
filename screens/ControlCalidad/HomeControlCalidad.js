@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
         gap: 10,
     },
     CardEstadisticas: {
-        width: 100,
+        width: '30%',
         height: 100,
         borderRadius: 20,
         overflow: 'hidden',
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
         width: '100%',
         textAlign: 'left',
         marginLeft: 5,
-        bottom: -20,
+        bottom: -25,
         fontSize: 78,
         fontWeight: '700',
         letterSpacing: -5,
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
         opacity: 0.3,
         zIndex: 0,
     }, tituloCard: {
-        fontSize: 18,
+        fontSize: 14,
         marginTop: 5,
         fontWeight: '800',
         zIndex: 10,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: 5,
+        gap: 2,
         marginTop: 10,
         marginBottom: 100
     }, SubCardEstadisticas: {
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     }, SubtituloCard: {
         textAlign: 'left',
         fontSize: 8,
-        fontWeight: '800',
+        fontWeight: 'medium',
         zIndex: 10,
 
     }, SubnumeroCard: {
