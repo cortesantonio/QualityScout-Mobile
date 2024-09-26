@@ -5,16 +5,16 @@ import { TouchableOpacity } from 'react-native';
 
 // iconos propios 
 
-const iconFiltro = require('../../assets/icons/iconFiltro.png')
-const iconOrden = require('../../assets/icons/iconOrden.png')
+const iconFiltro = require('../../../assets/icons/iconFiltro.png')
+const iconOrden = require('../../../assets/icons/iconOrden.png')
 
-const iconLupa = require('../../assets/icons/iconLupa.png')
-const iconAdd = require('../../assets/icons/iconAdd.png')
-const iconCamara = require('../../assets/icons/iconCamara.png')
+const iconLupa = require('../../../assets/icons/iconLupa.png')
+const iconAdd = require('../../../assets/icons/iconAdd.png')
+const iconCamara = require('../../../assets/icons/iconCamara.png')
 
-const iconVino = require('../../assets/icons/iconVino.png')
-const iconBasurero = require('../../assets/icons/iconBasurero.png')
-const iconGo = require('../../assets/icons/iconGo.png')
+const iconVino = require('../../../assets/icons/iconVino.png')
+const iconBasurero = require('../../../assets/icons/iconBasurero.png')
+const iconGo = require('../../../assets/icons/iconGo.png')
 
 const Productos = () => {
     const DATA = [

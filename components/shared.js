@@ -21,20 +21,26 @@ const iconBuscador = require('../assets/icons/iconBuscador.png')
 const Nav = () => {
     return (
         <View style={styles.Nav}>
-            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <Image source={UserP} style={{ width: 50, height: 50, borderRadius: 50, marginRight: 10 }} ></Image>
-                <View >
-                    <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>Bienvenido!</Text>
-                    <Text style={{ color: 'white', fontSize: 16 }}>Antonio Cortes</Text>
+            <View style={styles.containerNav}>
+
+
+
+                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <Image source={UserP} style={{ width: 50, height: 50, borderRadius: 50, marginRight: 10 }} ></Image>
+                    <View >
+                        <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>Bienvenido!</Text>
+                        <Text style={{ color: 'white', fontSize: 16 }}>Antonio Cortes</Text>
+                    </View>
+
                 </View>
 
+                <Pressable style={{ width: 35, height: 35, backgroundColor: 'white', borderRadius: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <Image source={require('../assets/icons/settings.png')} style={{ width: 25, height: 25 }}></Image>
+                </Pressable>
+
+
             </View>
-
-            <Pressable style={{ width: 35, height: 35, backgroundColor: 'white', borderRadius: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Image source={require('../assets/icons/settings.png')} style={{ width: 30, height: 30 }}></Image>
-            </Pressable>
-
-        </View>
+        </View >
     );
 }
 
@@ -68,7 +74,7 @@ const Footer = () => {
                 <Text style={{ color: 'white', fontSize: 8 }}>Inicio</Text>
             </Pressable>
             <Pressable style={styles.PressableFooter}>
-                <Image source={UserP} style={[styles.iconPressable, {borderRadius: 50}]} resizeMode='cover' ></Image>
+                <Image source={UserP} style={[styles.iconPressable, { borderRadius: 50 }]} resizeMode='cover' ></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Perfil </Text>
 
             </Pressable >
@@ -80,13 +86,17 @@ const Footer = () => {
 
 const styles = StyleSheet.create({
     Nav: {
-        
-        backgroundColor: '#260202',
+        backgroundColor: 'transparent'
+
+       
+    },
+    containerNav: {
+        backgroundColor: '#270403',
         width: Dimensions.get('window').width,
         height: 120,
+
         borderBottomLeftRadius: 30,
         borderBottomRightRadius: 30,
-
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -94,6 +104,7 @@ const styles = StyleSheet.create({
         paddingTop: 25,
         paddingLeft: 25,
         paddingRight: 25,
+
     },
 
 

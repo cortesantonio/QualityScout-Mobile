@@ -7,19 +7,19 @@ import Controles from './screens/Shared/Controles'
 import ListadoControles from './screens/Shared/ListadoControles'
 import HomeEspecialista from './screens/Especialista/HomeEspecialista';
 import Buscador from './screens/Shared/Buscador'
-import Productos from './screens/Shared/Productos';
+import Productos from './screens/Shared/Productos/Productos';
 import Usuarios from './screens/Especialista/Usuarios';
 import Informes from './screens/Especialista/Informes';
+import VerProducto from './screens/Shared/Productos/VerProducto';
+
 
 export default function App() {
   return (
 
-      <View style={styles.app}>
+    <View style={styles.app}>
       <StatusBar style="light" barStyle="light-content" translucent={true} backgroundColor="transparent" />
-        <Nav />
-        < Informes/>
-        <Footer />
-      </View>
+      <VerProducto />
+    </View>
 
   );
 }

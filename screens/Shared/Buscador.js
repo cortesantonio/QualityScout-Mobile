@@ -67,24 +67,27 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    position:'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex:-5,
     flexDirection: "column",
     justifyContent: "center",
     alignItems:'center'
+
   },
   buttonScanAgain: {
     backgroundColor: 'white',
     borderRadius: 10,
     margin: 'auto',
     padding: 10,
-    marginTop:20
+    marginTop:20,
 
   },
   buttonScanAgainText: {
     fontWeight: 'bold',
   },
   containerScanner: {
-    position: 'absolute',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
