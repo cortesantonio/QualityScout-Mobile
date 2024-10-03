@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { CameraView, Camera } from "expo-camera";
-
+import { Footer } from "../../components/shared";
 const iconScanner = require('../../assets/icons/scanner.png')
 
 
@@ -60,8 +60,9 @@ export default function App() {
       </View>
 
 
-
+    <Footer/>
     </View>
+    
   );
 }
 

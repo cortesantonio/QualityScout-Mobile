@@ -10,8 +10,8 @@ const iconLupa = require('../../assets/icons/iconLupa.png')
 const iconAdd = require('../../assets/icons/iconAdd.png')
 const iconInformes = require('../../assets/icons/iconInformes.png')
 
-const iconBasurero = require('../../assets/icons/iconBasurero.png')
 const iconGo = require('../../assets/icons/iconGo.png')
+const iconVarita = require('../../assets/icons/iconVarita.png')
 
 const Informes = () => {
     const DATA = [
@@ -58,7 +58,7 @@ const Informes = () => {
 
 
                 <TouchableOpacity style={styles.TouchableBoton}>
-                    <Image source={iconAdd} style={styles.iconsBotones} ></Image>
+                    <Image source={iconVarita} style={styles.iconsBotones} ></Image>
                     <Text style={styles.botonText}>Generar Informe con IA</Text>
                 </TouchableOpacity>
 

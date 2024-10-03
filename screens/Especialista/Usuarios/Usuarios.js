@@ -6,13 +6,13 @@ import { TouchableOpacity } from 'react-native';
 // iconos propios 
 
 
-const iconLupa = require('../../assets/icons/iconLupa.png')
-const iconAdd = require('../../assets/icons/iconAdd.png')
-const iconUsuario = require('../../assets/icons/iconUsuario.png')
+const iconLupa = require('../../../assets/icons/iconLupa.png')
+const iconAdd = require('../../../assets/icons/iconAdd.png')
+const iconUsuario = require('../../../assets/icons/iconUsuario.png')
 
-const iconVino = require('../../assets/icons/iconVino.png')
-const iconBasurero = require('../../assets/icons/iconBasurero.png')
-const iconGo = require('../../assets/icons/iconGo.png')
+const iconVino = require('../../../assets/icons/iconVino.png')
+const iconBasurero = require('../../../assets/icons/iconBasurero.png')
+const iconGo = require('../../../assets/icons/iconGo.png')
 
 const Usuarios = () => {
     const DATA = [

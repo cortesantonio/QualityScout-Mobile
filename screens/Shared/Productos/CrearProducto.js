@@ -10,40 +10,38 @@ import { Picker } from '@react-native-picker/picker';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const EditarProducto = () => {
+const CrearProducto = () => {
 
     const [producto, setProducto] = useState({
-        id: 1,
-        nombre_vino: "Gran Reserva Merlot",
-        cepa_vino: "Merlot",
-        pais_origen: "Chile",
-        pais_destino: "EE.UU.",
-        fecha_cosecha: "2018-04-15",
-        fecha_produccion: "2019-01-10",
-        capacidad_ml: 750,
-        grado_alcoholico: 13.5,
-        azucar_gr: 1.2,
-        sulfuros_mg_l: 35.0,
-        densidad_g_ml: 0.995,
-        tipo_capsula: "PVC",
-        tipo_etiqueta: "Estándar",
-        color_botella: "Verde",
-        medalla: true,
-        color_capsula: "Rojo",
-        tipo_corcho: "Natural",
-        tipo_botella: "Bordelesa",
-        altura_botella_mm: 30,
-        ancho_botella_mm: 8,
-        unidad_medida_etiqueta: "cc",
-        medida_etiqueta_corcho: 7,
-        medida_etiqueta_base: 10,
-        activo: true,
-        fecha_registro: "2024-09-04 10:30:00",
-        idioma: "Español",
-        descripcion_capsula: "Cápsula de PVC color rojo"
+        id: '',
+        codigoVE: '',
+        nombre_vino: '',
+        cepa_vino: '',
+        pais_origen: 'Chile',
+        pais_destino: '',
+        fecha_cosecha: '',
+        fecha_produccion: '',
+        capacidad_ml: '',
+        grado_alcoholico: '',
+        azucar_gr: '',
+        sulfuros_mg_l: '',
+        densidad_g_ml: '',
+        tipo_capsula: '',
+        tipo_etiqueta: '',
+        color_botella: '',
+        medalla: false,
+        color_capsula: '',
+        tipo_corcho: '',
+        tipo_botella: '',
+        altura_botella_mm: '',
+        ancho_botella_mm: '',
+        unidad_medida_etiqueta: '',
+        medida_etiqueta_corcho: '',
+        medida_etiqueta_base: '',
+        fecha_registro: ''
     });
 
-
+    
 
     const VinoEjemplo = require('../../../assets/images/VinoEjemplo.jpg')
     const [medalla, setMedalla] = useState(false);
@@ -58,7 +56,7 @@ const EditarProducto = () => {
         setProducto({ ...producto, [field]: value });
     };
 
-
+    
 
     const enviarProducto = async () => {
         try {
@@ -613,4 +611,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default EditarProducto;
+export default CrearProducto;

@@ -8,17 +8,17 @@ import ListadoControles from './screens/Shared/ListadoControles'
 import HomeEspecialista from './screens/Especialista/HomeEspecialista';
 import Buscador from './screens/Shared/Buscador'
 import Productos from './screens/Shared/Productos/Productos';
-import Usuarios from './screens/Especialista/Usuarios';
+import Usuarios from './screens/Especialista/Usuarios/Usuarios'
 import Informes from './screens/Especialista/Informes';
 import VerProducto from './screens/Shared/Productos/VerProducto';
-
-
+import EditarProducto from './screens/Shared/Productos/CrearProducto';
+import CrearProducto from './screens/Shared/Productos/CrearProducto';
 export default function App() {
   return (
 
     <View style={styles.app}>
       <StatusBar style="light" barStyle="light-content" translucent={true} backgroundColor="transparent" />
-      <VerProducto />
+      <CrearProducto />
     </View>
 
   );

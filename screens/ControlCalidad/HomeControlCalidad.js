@@ -2,7 +2,6 @@ import { Dimensions, StyleSheet, Text, View, Image, Pressable, ScrollView } from
 import React from 'react';
 import { PieChart } from 'react-native-svg-charts';
 import { Text as SvgText } from 'react-native-svg';
-import { width } from '@fortawesome/free-solid-svg-icons/fa0';
 
 
 // iconos propios 
