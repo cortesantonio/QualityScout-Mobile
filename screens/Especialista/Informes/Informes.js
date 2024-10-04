@@ -1,19 +1,21 @@
-import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Modal } from 'react-native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
+import { useState } from 'react';
 
 
 // iconos propios 
 
 
-const iconLupa = require('../../assets/icons/iconLupa.png')
-const iconAdd = require('../../assets/icons/iconAdd.png')
-const iconInformes = require('../../assets/icons/iconInformes.png')
+const iconLupa = require('../../../assets/icons/iconLupa.png')
+const iconInformes = require('../../../assets/icons/iconInformes.png')
 
-const iconGo = require('../../assets/icons/iconGo.png')
-const iconVarita = require('../../assets/icons/iconVarita.png')
+const iconGo = require('../../../assets/icons/iconGo.png')
+const iconVarita = require('../../../assets/icons/iconVarita.png')
 
 const Informes = () => {
+    const [busqueda, setBusqueda] = useState(''); // Estado para la búsqueda
+
     const DATA = [
         {
             id: 1,
@@ -22,8 +24,37 @@ const Informes = () => {
             enfoque: 'General',
             encargado: 'Juan Pérez',
         },
+        {
+            id: 2,
+            fecha: '2023-05-16',
+            hora: '14:45',
+            enfoque: 'Especifico',
+            encargado: 'María González',
+        },
+        {
+            id: 3,
+            fecha: '2023-05-17',
+            hora: '09:15',
+            enfoque: 'General',
+            encargado: 'Pedro Sánchez',
+        },
 
     ]
+    const [usuariosFiltrados, setUsuariosFiltrados] = useState(DATA); // Estado para la lista filtrada
+
+    const handleBuscar = (text) => {
+        setBusqueda(text);
+        if (text) {
+            const filtrados = DATA.filter(item =>
+                item.encargado.toLowerCase().includes(text.toLowerCase()) ||
+                item.encargado.includes(text)
+            );
+            setUsuariosFiltrados(filtrados);
+        } else {
+            setUsuariosFiltrados(DATA);
+        }
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7, justifyContent: 'center', alignItems: 'center' }}>
@@ -45,6 +76,51 @@ const Informes = () => {
         </View>
     );
 
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const abrirModal = () => {
+        setModalVisible(true);
+    };
+
+    const cerrarModal = () => {
+        setModalVisible(false);
+    };
+
+    const ModalCrearInforme = () => (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={cerrarModal}
+        >
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Generar informe con IA</Text>
+
+                    <View>
+                        <Text style={styles.labels}>Título de informe</Text>
+                        <TextInput style={styles.inputModal}></TextInput>
+                        <Text style={styles.labels}>Características a destacar</Text>
+                        <TextInput style={styles.inputModal}></TextInput>
+                        <Text style={{ fontSize: 10, color: 'gray', marginBottom: 15, marginTop: 5 }}>Podrás encontrar los informes generados en registros.</Text>
+                    </View>
+
+                    <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'space-around' }}>
+                        <TouchableOpacity onPress={cerrarModal} >
+                            <Text style={{ fontSize: 14, color: '#260202', textTransform: 'uppercase' }}>CANCELAR</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity >
+                            <Text style={{ fontSize: 14, color: '#bf6565', textTransform: 'uppercase' }}>GENERAR</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+
+
+
+
     return (
         <View style={styles.container}>
             <Text style={styles.TituloPantalla}>Gestión de Registro.</Text>
@@ -52,12 +128,17 @@ const Informes = () => {
             <View style={styles.buscador}>
                 <Image source={iconLupa} style={styles.iconLupa} ></Image>
 
-                <TextInput style={styles.inputBuscador} placeholder='Ingresa nombre del encargado'></TextInput>
+                <TextInput
+                    style={styles.inputBuscador}
+                    placeholder="Ingresa RUT o Nombre del Usuario"
+                    value={busqueda}
+                    onChangeText={handleBuscar}
+                />
             </View>
             <View style={styles.contenedorBotones}>
 
 
-                <TouchableOpacity style={styles.TouchableBoton}>
+                <TouchableOpacity style={styles.TouchableBoton} onPress={abrirModal}>
                     <Image source={iconVarita} style={styles.iconsBotones} ></Image>
                     <Text style={styles.botonText}>Generar Informe con IA</Text>
                 </TouchableOpacity>
@@ -74,13 +155,14 @@ const Informes = () => {
                 <View style={styles.containerProductos}>
                     <FlatList
                         style={styles.flatList}
-                        data={DATA}
-                        keyExtractor={item => item.RUT}
+                        data={usuariosFiltrados}
+                        keyExtractor={item => item.id}
                         renderItem={renderItem}
                     />
                 </View>
             </View>
 
+            {modalVisible && <ModalCrearInforme />}
         </View>
     );
 };
@@ -205,6 +287,43 @@ const styles = StyleSheet.create({
     }, flatList: {
         height: Dimensions.get('window').height,
         flexGrow: 0,
+    },
+
+
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+    },
+    modalTitle: {
+        fontSize: 18,
+        marginBottom: 10,
+        textAlign: 'center',
+        paddingBottom: 10
+
+    },
+    modalButton: {
+        marginBottom: 15,
+        marginLeft: 10,
+
+    }, inputModal: {
+        backgroundColor: '#dbd7d7',
+        borderRadius: 4,
+        padding: 2,
+        marginBottom: 10,
+        color: 'gray'
+
+    }, labels: {
+        fontSize: 14,
+        color: 'gray'
+
     }
 });
 

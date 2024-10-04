@@ -37,7 +37,6 @@ const Usuarios = () => {
 
     const cerrarModal = () => {
         setModalVisible(false);
-        setUsuarioSeleccionado(null);
     };
 
     const ModalDesactivarUsuario = () => (
