@@ -1,46 +1,99 @@
-import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput } from 'react-native';
-import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import {
+    View, Text, TouchableOpacity, Image, TextInput, FlatList, Modal, StyleSheet, Dimensions
+} from 'react-native';
 
-
-// iconos propios 
-
-
+// iconos propios
 const iconLupa = require('../../../assets/icons/iconLupa.png')
 const iconAdd = require('../../../assets/icons/iconAdd.png')
 const iconUsuario = require('../../../assets/icons/iconUsuario.png')
-
-const iconVino = require('../../../assets/icons/iconVino.png')
 const iconBasurero = require('../../../assets/icons/iconBasurero.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
 
 const Usuarios = () => {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+    const [busqueda, setBusqueda] = useState(''); // Estado para la búsqueda
+
     const DATA = [
         {
             RUT: '20.967.892-6',
             nombe: 'Antonio Cortes',
             rol: 'Especialista',
         },
-        
-    ]
+        {
+            RUT: '32.417.812-3',
+            nombe: 'Trinidad Garay',
+            rol: 'Control de Calidad',
+        },
+    ];
+    
+    const [usuariosFiltrados, setUsuariosFiltrados] = useState(DATA); // Estado para la lista filtrada
+
+    const abrirModal = (rut) => {
+        setUsuarioSeleccionado(rut);
+        setModalVisible(true);
+    };
+
+    const cerrarModal = () => {
+        setModalVisible(false);
+        setUsuarioSeleccionado(null);
+    };
+
+    const ModalDesactivarUsuario = () => (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={cerrarModal}
+        >
+            <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Desea desactivar al usuario con rut {usuarioSeleccionado}?</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'space-around' }}>
+                        <TouchableOpacity onPress={cerrarModal}>
+                            <Text style={{ fontSize: 14, color: '#260202', textTransform: 'uppercase' }}>No</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={cerrarModal}>
+                            <Text style={{ fontSize: 14, color: '#bf6565', textTransform: 'uppercase' }}>Si</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+
+    const handleBuscar = (text) => {
+        setBusqueda(text);
+        if (text) {
+            const filtrados = DATA.filter(item =>
+                item.nombe.toLowerCase().includes(text.toLowerCase()) ||
+                item.RUT.includes(text)
+            );
+            setUsuariosFiltrados(filtrados);
+        } else {
+            setUsuariosFiltrados(DATA);
+        }
+    };
+
     const renderItem = ({ item }) => (
         <View style={styles.item}>
-            <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7, justifyContent:'center', alignItems:'center' }}>
+            <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7, justifyContent: 'center', alignItems: 'center' }}>
                 <Image style={{ width: '80%', height: '80%', resizeMode: 'contain' }} source={iconUsuario} />
             </View>
 
-            <View style={styles.infoCard} >
-                <Text style={styles.titleInfo}>{item.nombe} </Text>
+            <View style={styles.infoCard}>
+                <Text style={styles.titleInfo}>{item.nombe}</Text>
+                <Text style={[styles.subtitleInfo, { textTransform: 'capitalize', fontSize: 10 }]}>{item.rol}</Text>
                 <Text style={styles.subtitleInfo}>{item.RUT}</Text>
-
             </View>
 
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', gap: 10, padding: 3, borderRadius: 3 }}>
-                <TouchableOpacity >
-                    <Image source={iconBasurero} style={styles.iconAcciones}></Image>
+                <TouchableOpacity onPress={() => abrirModal(item.RUT)}>
+                    <Image source={iconBasurero} style={styles.iconAcciones} />
                 </TouchableOpacity>
-                <TouchableOpacity >
-                    <Image source={iconGo} style={styles.iconAcciones}></Image>
+                <TouchableOpacity>
+                    <Image source={iconGo} style={styles.iconAcciones} />
                 </TouchableOpacity>
             </View>
         </View>
@@ -51,41 +104,41 @@ const Usuarios = () => {
             <Text style={styles.TituloPantalla}>Gestión de Usuarios.</Text>
 
             <View style={styles.buscador}>
-                <Image source={iconLupa} style={styles.iconLupa} ></Image>
-
-                <TextInput style={styles.inputBuscador} placeholder='Ingresa RUT o Nombre del Usuario'></TextInput>
+                <Image source={iconLupa} style={styles.iconLupa} />
+                <TextInput
+                    style={styles.inputBuscador}
+                    placeholder="Ingresa RUT o Nombre del Usuario"
+                    value={busqueda}
+                    onChangeText={handleBuscar}
+                />
             </View>
-            <View style={styles.contenedorBotones}>
-               
 
+            <View style={styles.contenedorBotones}>
                 <TouchableOpacity style={styles.TouchableBoton}>
-                    <Image source={iconAdd} style={styles.iconsBotones} ></Image>
+                    <Image source={iconAdd} style={styles.iconsBotones} />
                     <Text style={styles.botonText}>Añadir Usuarios</Text>
                 </TouchableOpacity>
-
             </View>
+
             <View>
-                {/*encabezado de la lista*/}
                 <View style={styles.encabezado}>
                     <Text style={{ fontSize: 18 }}>Registros</Text>
-                    
                 </View>
 
-                {/* cuerpo de la lista*/}
                 <View style={styles.containerProductos}>
                     <FlatList
                         style={styles.flatList}
-                        data={DATA}
+                        data={usuariosFiltrados}
                         keyExtractor={item => item.RUT}
                         renderItem={renderItem}
                     />
                 </View>
             </View>
 
+            {usuarioSeleccionado && <ModalDesactivarUsuario />}
         </View>
     );
 };
-
 
 const styles = StyleSheet.create({
 
@@ -160,7 +213,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 5
+        gap: 5,
     }, encabezado: {
         display: 'flex',
         flexDirection: 'row',
@@ -203,7 +256,66 @@ const styles = StyleSheet.create({
     }, flatList: {
         height: Dimensions.get('window').height,
         flexGrow: 0,
-    }
+    },
+    modalContainer: {
+        width: 300,
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+    },
+    modalButton: {
+        backgroundColor: '#4b0404',
+        padding: 10,
+        borderRadius: 8,
+        width: 80,
+        alignItems: 'center',
+    },
+    modalButtonText: {
+        color: '#fff',
+    },
+
+
+
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+    },
+    modalTitle: {
+        fontSize: 18,
+        marginBottom: 10,
+        textAlign: 'center',
+        paddingBottom: 10
+
+    },
+    modalButton: {
+        marginBottom: 15,
+        marginLeft: 10,
+
+    },
+
+
+
 });
 
 

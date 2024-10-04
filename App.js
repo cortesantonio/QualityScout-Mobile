@@ -19,7 +19,7 @@ export default function App() {
     <View style={styles.app}>
       <StatusBar style="light" barStyle="light-content" translucent={true} backgroundColor="transparent" />
       <Nav />
-      <HomeEspecialista />
+      <Usuarios />
       <Footer />
     </View>
 
