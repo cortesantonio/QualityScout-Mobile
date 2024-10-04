@@ -18,7 +18,9 @@ export default function App() {
 
     <View style={styles.app}>
       <StatusBar style="light" barStyle="light-content" translucent={true} backgroundColor="transparent" />
-      <CrearProducto />
+      <Nav />
+      <HomeEspecialista />
+      <Footer />
     </View>
 
   );

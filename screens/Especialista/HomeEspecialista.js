@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
         width: '100%',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         gap: 6,
     },
     IconBackground: {
