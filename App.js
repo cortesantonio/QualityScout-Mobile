@@ -15,14 +15,14 @@ import EditarProducto from './screens/Shared/Productos/CrearProducto';
 import CrearProducto from './screens/Shared/Productos/CrearProducto';
 import VerUsuario from './screens/Especialista/Usuarios/VerUsuario';
 import EditarUsuario from './screens/Especialista/Usuarios/EditarUsuario';
+import VerInforme from "./screens/Especialista/Informes/VerInforme"
 export default function App() {
   return (
 
     <View style={styles.app}>
       <StatusBar style="light" barStyle="light-content" translucent={true} backgroundColor="transparent" />
       <Nav />
-      <Informes />
-      <Footer />
+      <VerInforme />
     </View>
 
   );
