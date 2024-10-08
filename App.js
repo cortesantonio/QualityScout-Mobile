@@ -16,11 +16,13 @@ import CrearProducto from './screens/Shared/Productos/CrearProducto';
 import VerUsuario from './screens/Especialista/Usuarios/VerUsuario';
 import EditarUsuario from './screens/Especialista/Usuarios/EditarUsuario';
 import VerInforme from "./screens/Especialista/Informes/VerInforme"
+
+
 export default function App() {
   return (
 
     <View style={styles.app}>
-      <StatusBar style="light" barStyle="light-content" translucent={true} backgroundColor="transparent" />
+      <StatusBar style="light" barStyle="light-content" translucent={true}  />
       <Nav />
       <VerInforme />
     </View>
@@ -32,7 +34,5 @@ const styles = StyleSheet.create({
   app: {
     width: '100%',
     height: '100%',
-
-  },
-
+  }
 });
