@@ -7,7 +7,7 @@ import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
 const VerProducto = ({navigation}) => {
     DATA = {
         'id': 1,
-        "nombre_vino": "Gran Reserva Merlot",
+        "nombre_vino": "Gran Reserva Merlotx",
         "cepa_vino": "Merlot",
         "pais_origen": "Chile",
         "pais_destino": "EE.UU.",
@@ -114,7 +114,7 @@ const VerProducto = ({navigation}) => {
                 </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.botonRealizarControl}   >
+            <TouchableOpacity style={styles.botonRealizarControl} onPress={() => navigation.navigate('CrearControl', {idProducto: DATA.id, codigo: DATA.id, nombre_vino : DATA.nombre_vino})}>  
                 <Text style={{ color: 'white', }}>
                     REALIZAR CONTROL
 

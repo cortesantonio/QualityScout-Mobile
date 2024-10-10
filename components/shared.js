@@ -76,7 +76,7 @@ const Footer = () => {
                 <Image source={require('../assets/icons/home.png')} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Inicio</Text>
             </Pressable>
-            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Perfil')}>
+            <Pressable style={styles.PressableFooter} >
                 <Image source={UserP} style={[styles.iconPressable, { borderRadius: 50 }]} resizeMode='cover' ></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Perfil</Text>
             </Pressable>

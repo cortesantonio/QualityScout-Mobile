@@ -11,12 +11,11 @@ const iconOrden = require('../../assets/icons/iconOrden.png')
 const iconOrdenArriba = require('../../assets/icons/iconOrdenArriba.png')
 
 
-const iconVino = require('../../assets/icons/iconVino.png')
 const iconGo = require('../../assets/icons/iconGo.png')
 const iconControlCheck = require('../../assets/icons/iconControlCheck.png')
 
 
-const ListadoControles = ({navigation}) => {
+const ListadoControles = ({ navigation }) => {
     const DATA = [
         {
             cod: '12312323123',
@@ -33,7 +32,7 @@ const ListadoControles = ({navigation}) => {
             destino: 'Chile',
             fecha: '12/11/2023',
             hora: '12:00',
-            estado: 'rechazado'
+            estado: 'Rechazado'
         },
     ];
 
@@ -101,7 +100,7 @@ const ListadoControles = ({navigation}) => {
             </View>
 
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', borderRadius: 3, width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-                <TouchableOpacity >
+                <TouchableOpacity onPress={() => navigation.navigate('VerControl', { codigo: item.cod, PrimerEstado: item.estado })} >
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
             </View>
