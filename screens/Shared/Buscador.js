@@ -2,10 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import { Footer } from "../../components/shared";
+import { useFocusEffect } from '@react-navigation/native';
+
+
+
 const iconScanner = require('../../assets/icons/scanner.png')
 
 
-export default function App() {
+export default function App({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
 
@@ -20,7 +24,8 @@ export default function App() {
 
   const handleBarcodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`tipo de codigo${type} codigo ${data} `);
+
+    navigation.navigate('Productos', { codigo: data })
   };
 
   if (hasPermission === null) {
@@ -60,21 +65,21 @@ export default function App() {
       </View>
 
 
-    <Footer/>
+      <Footer />
     </View>
-    
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    position:'absolute',
+    position: 'absolute',
     width: '100%',
     height: '100%',
-    zIndex:-5,
+    zIndex: -5,
     flexDirection: "column",
     justifyContent: "center",
-    alignItems:'center'
+    alignItems: 'center'
 
   },
   buttonScanAgain: {
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     margin: 'auto',
     padding: 10,
-    marginTop:20,
+    marginTop: 20,
 
   },
   buttonScanAgainText: {
@@ -98,10 +103,10 @@ const styles = StyleSheet.create({
     width: 300, height: 150,
     resizeMode: 'contain'
   },
-  textcontainerScanner:{
-    marginTop:5,
-    fontSize:16,
-    color:'white'
+  textcontainerScanner: {
+    marginTop: 5,
+    fontSize: 16,
+    color: 'white'
   }
 
 });

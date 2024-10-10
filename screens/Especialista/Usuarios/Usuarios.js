@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
     View, Text, TouchableOpacity, Image, TextInput, FlatList, Modal, StyleSheet, Dimensions
 } from 'react-native';
+import { Footer, Nav } from '../../../components/shared';
 
 // iconos propios
 const iconLupa = require('../../../assets/icons/iconLupa.png')
@@ -10,7 +11,7 @@ const iconUsuario = require('../../../assets/icons/iconUsuario.png')
 const iconBasurero = require('../../../assets/icons/iconBasurero.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
 
-const Usuarios = () => {
+const Usuarios = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
     const [busqueda, setBusqueda] = useState(''); // Estado para la búsqueda
@@ -20,14 +21,17 @@ const Usuarios = () => {
             RUT: '20.967.892-6',
             nombe: 'Antonio Cortes',
             rol: 'Especialista',
+            correo: ''
         },
         {
             RUT: '32.417.812-3',
             nombe: 'Trinidad Garay',
             rol: 'Control de Calidad',
+            correo: ''
+
         },
     ];
-    
+
     const [usuariosFiltrados, setUsuariosFiltrados] = useState(DATA); // Estado para la lista filtrada
 
     const abrirModal = (rut) => {
@@ -91,7 +95,7 @@ const Usuarios = () => {
                 <TouchableOpacity onPress={() => abrirModal(item.RUT)}>
                     <Image source={iconBasurero} style={styles.iconAcciones} />
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('VerUsuario', { RUT: item.RUT , Nombre : item.nombe , Rol: item.rol , Correo: item.Correo})}>
                     <Image source={iconGo} style={styles.iconAcciones} />
                 </TouchableOpacity>
             </View>
@@ -99,43 +103,49 @@ const Usuarios = () => {
     );
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.TituloPantalla}>Gestión de Usuarios.</Text>
+        <>
+            <Nav />
+            <View style={styles.container}>
+                <Text style={styles.TituloPantalla}>Gestión de Usuarios.</Text>
 
-            <View style={styles.buscador}>
-                <Image source={iconLupa} style={styles.iconLupa} />
-                <TextInput
-                    style={styles.inputBuscador}
-                    placeholder="Ingresa RUT o Nombre del Usuario"
-                    value={busqueda}
-                    onChangeText={handleBuscar}
-                />
-            </View>
-
-            <View style={styles.contenedorBotones}>
-                <TouchableOpacity style={styles.TouchableBoton}>
-                    <Image source={iconAdd} style={styles.iconsBotones} />
-                    <Text style={styles.botonText}>Añadir Usuarios</Text>
-                </TouchableOpacity>
-            </View>
-
-            <View>
-                <View style={styles.encabezado}>
-                    <Text style={{ fontSize: 18 }}>Registros</Text>
-                </View>
-
-                <View style={styles.containerProductos}>
-                    <FlatList
-                        style={styles.flatList}
-                        data={usuariosFiltrados}
-                        keyExtractor={item => item.RUT}
-                        renderItem={renderItem}
+                <View style={styles.buscador}>
+                    <Image source={iconLupa} style={styles.iconLupa} />
+                    <TextInput
+                        style={styles.inputBuscador}
+                        placeholder="Ingresa RUT o Nombre del Usuario"
+                        value={busqueda}
+                        onChangeText={handleBuscar}
                     />
                 </View>
-            </View>
 
-            {usuarioSeleccionado && <ModalDesactivarUsuario />}
-        </View>
+                <View style={styles.contenedorBotones}>
+                    <TouchableOpacity style={styles.TouchableBoton} onPress={() => navigation.navigate('CrearUsuario')}>
+                        <Image source={iconAdd} style={styles.iconsBotones} />
+                        <Text style={styles.botonText}>Añadir Usuarios</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View>
+                    <View style={styles.encabezado}>
+                        <Text style={{ fontSize: 18 }}>Registros</Text>
+                    </View>
+
+                    <View style={styles.containerProductos}>
+                        <FlatList
+                            style={styles.flatList}
+                            data={usuariosFiltrados}
+                            keyExtractor={item => item.RUT}
+                            renderItem={renderItem}
+                        />
+                    </View>
+                </View>
+
+                {usuarioSeleccionado && <ModalDesactivarUsuario />}
+            </View>
+            <Footer />
+        </>
+
+
     );
 };
 

@@ -1,7 +1,10 @@
 import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput } from 'react-native';
-import React from 'react';
+import React ,{useState} from 'react';
 import { TouchableOpacity } from 'react-native';
+import { Footer, Nav } from '../../../components/shared';
 
+import { useRoute } from '@react-navigation/native';
+import { useEffect } from 'react';
 
 // iconos propios 
 
@@ -16,7 +19,7 @@ const iconVino = require('../../../assets/icons/iconVino.png')
 const iconBasurero = require('../../../assets/icons/iconBasurero.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
 
-const Productos = () => {
+const Productos = ({navigation}) => {
     const DATA = [
         {
             cod: '12312323123',
@@ -25,39 +28,37 @@ const Productos = () => {
             destino: 'Chile'
         },
         {
-            cod: '1231213123',
-            nombe: 'Malvec',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
-        }, {
-            cod: '12315523123',
-            nombe: 'Cabernet Sauvignon',
-            reserva: 'Reserva Especial',
+            cod: '444444',
+            nombe: 'Sauvignonk',
+            reserva: 'Reserva',
             destino: 'Chile'
         },
-        {
-            cod: '123123243123',
-            nombe: 'Sauvignon 1234k',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
-        },
-        {
-            cod: '12131213123',
-            nombe: 'Malvec',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
-        }, {
-            cod: '1231525523123',
-            nombe: 'Cabernet Sauvignon',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
-        }, {
-            cod: '123142323123',
-            nombe: 'Sauvignon 1234k',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
-        }
+        
     ]
+
+
+    const [searchText, setSearchText] = useState('');
+    const [filteredData, setFilteredData] = useState(DATA);
+
+    const route = useRoute();
+    
+    const handleSearch = (text) => {
+        setSearchText(text);
+        const filtered = DATA.filter(item => 
+            item.cod.includes(text) || item.nombe.toLowerCase().includes(text.toLowerCase())
+        );
+        setFilteredData(filtered);
+    };
+    const { codigo } = route.params || {};
+
+   
+    useEffect(() => {
+        if (codigo) {
+            handleSearch(codigo);  // Ejecutar la búsqueda con el código una vez
+        }
+    }, [codigo]); 
+    
+
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7 }}>
@@ -73,7 +74,7 @@ const Productos = () => {
                 <TouchableOpacity >
                     <Image source={iconBasurero} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
-                <TouchableOpacity >
+                <TouchableOpacity onPress={() => navigation.navigate('VerProducto') } >
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
             </View>
@@ -81,61 +82,72 @@ const Productos = () => {
     );
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.TituloPantalla}>Gestión de productos.</Text>
+        <>
+            <Nav />
+            <View style={styles.container}>
+                <Text style={styles.TituloPantalla}>Gestión de productos.</Text>
 
-            <View style={styles.buscador}>
-                <Image source={iconLupa} style={styles.iconLupa} ></Image>
+                <View style={styles.buscador}>
+                    <Image source={iconLupa} style={styles.iconLupa} ></Image>
+                    <TextInput 
+                        style={styles.inputBuscador} 
+                        placeholder='Ingresa codigo o nombre del producto' 
+                        value={searchText}
+                        onChangeText={handleSearch}  // Actualiza el estado cuando el usuario escribe
+                    />
+                </View>
+                <View style={styles.contenedorBotones}>
+                    <TouchableOpacity style={styles.TouchableBoton} onPress={() => navigation.navigate('Buscador')} >
+                        <Image source={iconCamara} style={styles.iconsBotones}></Image>
+                        <Text style={styles.botonText}>Abrir Escaner</Text>
+                    </TouchableOpacity>
 
-                <TextInput style={styles.inputBuscador} placeholder='Ingresa codigo o nombre del producto'></TextInput>
-            </View>
-            <View style={styles.contenedorBotones}>
-                <TouchableOpacity style={styles.TouchableBoton}>
-                    <Image source={iconCamara} style={styles.iconsBotones}></Image>
-                    <Text style={styles.botonText}>Abrir Escaner</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.TouchableBoton} onPress={() => navigation.navigate('CrearProducto')}>
+                        <Image source={iconAdd} style={styles.iconsBotones} ></Image>
+                        <Text style={styles.botonText}>Añadir Productos</Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.TouchableBoton}>
-                    <Image source={iconAdd} style={styles.iconsBotones} ></Image>
-                    <Text style={styles.botonText}>Añadir Productos</Text>
-                </TouchableOpacity>
+                </View>
+                <View>
+                    {/*encabezado de la lista*/}
+                    <View style={styles.encabezado}>
+                        <Text style={{ fontSize: 18 }}>Registros</Text>
+                        <View style={styles.filtros}>
+                            <TouchableOpacity style={styles.TouchableBotonLista}>
+                                <Image source={iconFiltro} style={styles.iconsBotones}></Image>
+                                <Text>
+                                    Filtro
+                                </Text>
 
-            </View>
-            <View>
-                {/*encabezado de la lista*/}
-                <View style={styles.encabezado}>
-                    <Text style={{ fontSize: 18 }}>Registros</Text>
-                    <View style={styles.filtros}>
-                        <TouchableOpacity style={styles.TouchableBotonLista}>
-                            <Image source={iconFiltro} style={styles.iconsBotones}></Image>
-                            <Text>
-                                Filtro
-                            </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.TouchableBotonLista}>
+                                <Image source={iconOrden} style={styles.iconsBotones}></Image>
 
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.TouchableBotonLista}>
-                            <Image source={iconOrden} style={styles.iconsBotones}></Image>
+                                <Text>
+                                    Ordenar
+                                </Text>
+                            </TouchableOpacity>
 
-                            <Text>
-                                Ordenar
-                            </Text>
-                        </TouchableOpacity>
+                        </View>
+                    </View>
 
+                    {/* cuerpo de la lista*/}
+                    <View style={styles.containerProductos}>
+                        <FlatList
+                            style={styles.flatList}
+                            data={filteredData}
+                            keyExtractor={item => item.cod}
+                            renderItem={renderItem}
+                        />
                     </View>
                 </View>
 
-                {/* cuerpo de la lista*/}
-                <View style={styles.containerProductos}>
-                    <FlatList
-                        style={styles.flatList}
-                        data={DATA}
-                        keyExtractor={item => item.cod}
-                        renderItem={renderItem}
-                    />
-                </View>
             </View>
 
-        </View>
+            <Footer />
+        </>
+
+
     );
 };
 

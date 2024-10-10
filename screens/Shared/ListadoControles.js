@@ -1,6 +1,7 @@
 import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Modal, Button } from 'react-native';
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
+import { Footer, Nav } from '../../components/shared';
 
 
 // iconos propios 
@@ -15,7 +16,7 @@ const iconGo = require('../../assets/icons/iconGo.png')
 const iconControlCheck = require('../../assets/icons/iconControlCheck.png')
 
 
-const Productos = () => {
+const ListadoControles = ({navigation}) => {
     const DATA = [
         {
             cod: '12312323123',
@@ -100,7 +101,7 @@ const Productos = () => {
             </View>
 
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', borderRadius: 3, width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-                <TouchableOpacity>
+                <TouchableOpacity >
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
             </View>
@@ -108,80 +109,89 @@ const Productos = () => {
     );
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.TituloPantalla}>Registro de Controles.</Text>
 
-            <View>
-                {/* Encabezado de la lista */}
-                <View style={styles.encabezado}>
-                    <Text style={{ fontSize: 18 }}>Registros</Text>
-                    <View style={styles.filtros}>
-                        {/* Botón para abrir el modal de filtros */}
-                        <TouchableOpacity style={styles.TouchableBotonLista} onPress={() => setModalVisible(true)}>
-                            <Image source={iconFiltro} style={styles.iconsBotones}></Image>
-                            <Text>Filtro</Text>
-                        </TouchableOpacity>
+        <>
+            <Nav />
 
-                        {/* Botón para ordenar por fecha */}
-                        <TouchableOpacity style={styles.TouchableBotonLista} onPress={sortDataByDate}>
-                            <Image
+            <View style={styles.container}>
+                <Text style={styles.TituloPantalla}>Registro de Controles.</Text>
 
-                                source={isAscending ? iconOrden : iconOrdenArriba}
-
-                                style={
-                                    styles.iconsBotones
-                                }
-                            />
-                            <Text>Ordenar por Fecha</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
-                {/* Modal para seleccionar el tipo de estado */}
-                <Modal
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => setModalVisible(false)}
-                >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalContent}>
-                            <Text style={styles.modalTitle}>Seleccionar Filtro por Estado</Text>
-                            <TouchableOpacity onPress={() => filterDataByState('Aprobado')} style={styles.modalButton}>
-                                <Text>Aprobado</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => filterDataByState('Rechazado')} style={styles.modalButton}>
-                                <Text>Rechazado</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => filterDataByState('Reproceso')} style={styles.modalButton}>
-                                <Text>Reproceso</Text>
+                <View>
+                    {/* Encabezado de la lista */}
+                    <View style={styles.encabezado}>
+                        <Text style={{ fontSize: 18 }}>Registros</Text>
+                        <View style={styles.filtros}>
+                            {/* Botón para abrir el modal de filtros */}
+                            <TouchableOpacity style={styles.TouchableBotonLista} onPress={() => setModalVisible(true)}>
+                                <Image source={iconFiltro} style={styles.iconsBotones}></Image>
+                                <Text>Filtro</Text>
                             </TouchableOpacity>
 
-                            <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
-                                <TouchableOpacity onPress={() => resetFilter()}>
-                                    <Text style={{ fontSize: 14, color: '#260202', textTransform: 'uppercase' }}>Restablecer</Text>
-                                </TouchableOpacity>
+                            {/* Botón para ordenar por fecha */}
+                            <TouchableOpacity style={styles.TouchableBotonLista} onPress={sortDataByDate}>
+                                <Image
 
-                                <TouchableOpacity onPress={() => setModalVisible(false)}>
-                                    <Text style={{ fontSize: 14, color: '#bf6565', textTransform: 'uppercase' }}>Cancelar</Text>
-                                </TouchableOpacity>
-                            </View>
+                                    source={isAscending ? iconOrden : iconOrdenArriba}
 
-
+                                    style={
+                                        styles.iconsBotones
+                                    }
+                                />
+                                <Text>Ordenar por Fecha</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
-                </Modal>
 
-                {/* Cuerpo de la lista */}
-                <View style={styles.containerProductos}>
-                    <FlatList
-                        style={styles.flatList}
-                        data={filteredData}
-                        keyExtractor={item => item.cod}
-                        renderItem={renderItem}
-                    />
+                    {/* Modal para seleccionar el tipo de estado */}
+                    <Modal
+                        transparent={true}
+                        visible={modalVisible}
+                        onRequestClose={() => setModalVisible(false)}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>Seleccionar Filtro por Estado</Text>
+                                <TouchableOpacity onPress={() => filterDataByState('Aprobado')} style={styles.modalButton}>
+                                    <Text>Aprobado</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => filterDataByState('Rechazado')} style={styles.modalButton}>
+                                    <Text>Rechazado</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => filterDataByState('Reproceso')} style={styles.modalButton}>
+                                    <Text>Reproceso</Text>
+                                </TouchableOpacity>
+
+                                <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
+                                    <TouchableOpacity onPress={() => resetFilter()}>
+                                        <Text style={{ fontSize: 14, color: '#260202', textTransform: 'uppercase' }}>Restablecer</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity onPress={() => setModalVisible(false)}>
+                                        <Text style={{ fontSize: 14, color: '#bf6565', textTransform: 'uppercase' }}>Cancelar</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+
+                            </View>
+                        </View>
+                    </Modal>
+
+                    {/* Cuerpo de la lista */}
+                    <View style={styles.containerProductos}>
+                        <FlatList
+                            style={styles.flatList}
+                            data={filteredData}
+                            keyExtractor={item => item.cod}
+                            renderItem={renderItem}
+                        />
+                    </View>
                 </View>
-            </View>
-        </View >
+            </View >
+            <Footer />
+
+        </>
+
+
     );
 };
 
@@ -320,7 +330,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         borderBottomWidth: 1,
         borderBottomColor: 'black',
-        textAlign: 'center',paddingBottom: 10
+        textAlign: 'center', paddingBottom: 10
 
     },
     modalButton: {
@@ -333,4 +343,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default Productos;
+export default ListadoControles;

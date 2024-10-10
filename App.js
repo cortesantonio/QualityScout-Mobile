@@ -1,31 +1,43 @@
-import { Dimensions, StyleSheet, View, Image, ImageBackground, Button, Pressable, SafeAreaView, ScrollView, StatusBar } from 'react-native';
-import { Nav, Footer } from './components/shared'
+import { StyleSheet } from 'react-native';
 import React from 'react';
-import HomeControlCalidad from './screens/ControlCalidad/HomeControlCalidad';
-import Login from './screens/Auth/Login'
-import Controles from './screens/Shared/Controles'
-import ListadoControles from './screens/Shared/ListadoControles'
-import HomeEspecialista from './screens/Especialista/HomeEspecialista';
-import Buscador from './screens/Shared/Buscador'
-import Productos from './screens/Shared/Productos/Productos';
-import Usuarios from './screens/Especialista/Usuarios/Usuarios'
-import Informes from './screens/Especialista/Informes/Informes';
-import VerProducto from './screens/Shared/Productos/VerProducto';
-import EditarProducto from './screens/Shared/Productos/CrearProducto';
-import CrearProducto from './screens/Shared/Productos/CrearProducto';
-import VerUsuario from './screens/Especialista/Usuarios/VerUsuario';
-import EditarUsuario from './screens/Especialista/Usuarios/EditarUsuario';
-import VerInforme from "./screens/Especialista/Informes/VerInforme"
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+import Login from './screens/Auth/Login'
+
+import EspecialistaNavigator from './navigators/EspecialistaNavigator';
+import ControlCalidadNavigator from './navigators/ControlCalidadNavigator';
+import FooterNavigator from './navigators/FooterNavigator';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
 
-    <View style={styles.app}>
-      <StatusBar style="light" barStyle="light-content" translucent={true}  />
-      <Nav />
-      <VerInforme />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator
+        initialRouteName="Login"  
+        screenOptions={{
+          headerShown: false,
+
+        }}
+      >
+        {/* LOGIN */}
+        <Stack.Screen name="Login" component={Login} />
+        
+        {/* Especialista */}
+        <Stack.Screen name='Especialista' component={EspecialistaNavigator}/>
+
+        {/* Control de Calidad */}
+
+        <Stack.Screen name="ControlCalidad" component={ControlCalidadNavigator} />
+
+      </Stack.Navigator>
+    </NavigationContainer>
+
+ 
+
+    
 
   );
 }

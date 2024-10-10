@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Dimensions, StyleSheet, Text, View, Image, ImageBackground, Button, Pressable, SafeAreaView } from 'react-native';
 import React from 'react';
 import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
+import { useNavigation } from '@react-navigation/native';  // Importa el hook de navegación
 
 const UserP = require('../assets/images/UserExample.jpg');
 // iconos propios 
@@ -18,7 +19,7 @@ const iconBuscador = require('../assets/icons/iconBuscador.png')
 
 
 
-const Nav = () => {
+const Nav = ({}) => {
     return (
         <View style={styles.Nav}>
             <View style={styles.containerNav}>
@@ -46,44 +47,42 @@ const Nav = () => {
 
 
 const Footer = () => {
+    const navigation = useNavigation();  // Usa el hook para obtener el objeto de navegación
+
     return (
         <View style={styles.Footer}>
-            <Pressable style={styles.PressableFooter}>
+            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Buscador')} > 
                 <Image source={iconBuscador} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Buscador</Text>
             </Pressable>
-            <Pressable style={styles.PressableFooter}>
+            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Informes')}>
                 <Image source={iconInformes} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Informes</Text>
             </Pressable>
-            <Pressable style={styles.PressableFooter}>
+            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Productos')}>
                 <Image source={iconProductos} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Productos</Text>
             </Pressable>
-            <Pressable style={styles.PressableFooter}>
+            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Controles')}>
                 <Image source={iconControles} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Controles</Text>
             </Pressable>
-            <Pressable style={styles.PressableFooter}>
+            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Usuarios')}>
                 <Image source={iconUsuarios} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Usuarios</Text>
             </Pressable>
 
-            <Pressable style={styles.PressableFooter}>
+            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Home')}>
                 <Image source={require('../assets/icons/home.png')} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Inicio</Text>
             </Pressable>
-            <Pressable style={styles.PressableFooter}>
+            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Perfil')}>
                 <Image source={UserP} style={[styles.iconPressable, { borderRadius: 50 }]} resizeMode='cover' ></Image>
-                <Text style={{ color: 'white', fontSize: 8 }}>Perfil </Text>
-
-            </Pressable >
-        </View >
+                <Text style={{ color: 'white', fontSize: 8 }}>Perfil</Text>
+            </Pressable>
+        </View>
     );
-
-
 }
-
 const styles = StyleSheet.create({
     Nav: {
         backgroundColor: 'transparent'

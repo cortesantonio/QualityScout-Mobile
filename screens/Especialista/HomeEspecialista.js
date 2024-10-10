@@ -1,8 +1,9 @@
-import { Dimensions, StyleSheet, Text, View, Image, Pressable, ScrollView } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Image, Pressable, ScrollView,StatusBar } from 'react-native';
 import React from 'react';
 import { PieChart } from 'react-native-svg-charts';
 import { Text as SvgText } from 'react-native-svg';
-import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
+import { Footer, Nav } from '../../components/shared';
+
 
 
 // iconos propios 
@@ -19,7 +20,7 @@ const iconBajada = require('../../assets/icons/flechaBajada.png')
 
 
 
-const HomeEspecialista = () => {
+const HomeEspecialista = ({navigation}) => {
     const calculatePercentages = (data) => {
         const total = data.reduce((sum, item) => sum + item.amount, 0);
         return data.map(item => ({
@@ -27,7 +28,6 @@ const HomeEspecialista = () => {
             percentage: ((item.amount / total) * 100).toFixed(2) // Calcula el porcentaje y lo formatea
         }));
     };
-    const screenWidth = Dimensions.get('window').width;
 
     const data = calculatePercentages([{
         key: 1,
@@ -86,117 +86,124 @@ const HomeEspecialista = () => {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.containerHomeAdmin}>
 
-                {/* Accesos Rapidos */}
+        <>
+            <StatusBar style="light" barStyle="light-content" translucent={true}  />
+            <Nav />
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <View style={styles.containerHomeAdmin}>
 
-                <Text style={{ fontSize: 18, }}>Accesos Rapidos.</Text>
-                <View style={styles.ContainerAccesosRapidos} >
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconDashboard} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                    {/* Accesos Rapidos */}
+
+                    <Text style={{ fontSize: 18, }}>Accesos Rapidos.</Text>
+                    <View style={styles.ContainerAccesosRapidos} >
+                        <Pressable style={styles.PressableCard} >
+                            <View style={styles.IconBackground}>
+                                <Image source={iconDashboard} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text>Dashboard</Text>
+                        </Pressable>
+
+                        <Pressable style={styles.PressableCard} onPress={() => navigation.navigate('Usuarios')} >
+                            <View style={styles.IconBackground}>
+                                <Image source={iconUsuarios} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text>Usuarios</Text>
+                        </Pressable>
+
+                        <Pressable style={styles.PressableCard} onPress={() => navigation.navigate('Controles')}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconControles} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text>Controles</Text>
+                        </Pressable>
+
+                        <Pressable style={styles.PressableCard} onPress={() => navigation.navigate('Productos')}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconProductos} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text>Productos</Text>
+                        </Pressable>
+
+                        <Pressable style={styles.PressableCard} onPress={() => navigation.navigate('Informes')}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconInformes} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text>Informes</Text>
+                        </Pressable>
+
+                        <Pressable style={styles.PressableCard} onPress={() => navigation.navigate('Buscador')}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconBuscador} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text>Buscador</Text>
+                        </Pressable>
+
+                    </View >
+
+                    {/* Indicadores de rendimientos */}
+                    <Text style={{ fontSize: 18, }}>Indicadores de rendimientos actuales.</Text>
+                    <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+
+                        <PieChart
+                            style={{ height: 200, width: 300 }}
+                            valueAccessor={({ item }) => item.amount}
+                            data={data}
+                            spacing={0}
+                            outerRadius={'85%'}
+
+
+                        >
+                            <Labels />
+                        </PieChart>
+                        <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                <View style={{ backgroundColor: '#f25757', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
+                                <Text>Aprobado</Text>
+                            </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                <View style={{ backgroundColor: '#ed8d8d', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
+                                <Text>Reprocesos</Text>
+                            </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                <View style={{ backgroundColor: '#260202', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
+                                <Text>Rechazados</Text>
+                            </View>
                         </View>
-                        <Text>Dashboard</Text>
-                    </Pressable>
 
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconUsuarios} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                        <View style={styles.containerCard}>
+
+
+                            <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
+                                <Text style={[styles.tituloCard, { color: '#260202' }]}> Controles Aprobados </Text>
+                                <Text style={styles.numeroCard}>16</Text>
+                                <Text style={styles.porcentajeCard} >%</Text>
+                                <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
+                                <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
+                            </View>
+                            <View style={[styles.CardEstadisticas, { backgroundColor: '#260202' }]}>
+                                <Text style={[styles.tituloCard, { color: 'white' }]}> Controles Rechazados </Text>
+                                <Text style={styles.numeroCard}>5</Text>
+                                <Text style={styles.porcentajeCard} >%</Text>
+                                <Image source={iconBajada} style={styles.IconFlechaEstadistica} resizeMode='contain' />
+                                <Text style={[styles.indicadorCard, { color: 'red', }]}> -</Text>
+                            </View>
+                            <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
+                                <Text style={[styles.tituloCard, { color: '#260202' }]}> Reprocesos </Text>
+                                <Text style={styles.numeroCard}>8</Text>
+                                <Text style={styles.porcentajeCard} >%</Text>
+                                <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
+                                <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
+                            </View>
+
                         </View>
-                        <Text>Usuarios</Text>
-                    </Pressable>
 
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconControles} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text>Controles</Text>
-                    </Pressable>
-
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconProductos} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text>Productos</Text>
-                    </Pressable>
-
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconInformes} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text>Informes</Text>
-                    </Pressable>
-
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconBuscador} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text>Buscador</Text>
-                    </Pressable>
-
+                    </View>
                 </View >
+            </ScrollView >
+            <Footer />
+        </>
 
-                {/* Indicadores de rendimientos */}
-                <Text style={{ fontSize: 18, }}>Indicadores de rendimientos actuales.</Text>
-                <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-
-                    <PieChart
-                        style={{ height: 200,width:300 }}
-                        valueAccessor={({ item }) => item.amount}
-                        data={data}
-                        spacing={0}
-                        outerRadius={'85%'}
-
-
-                    >
-                        <Labels />
-                    </PieChart>
-                    <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
-                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ backgroundColor: '#f25757', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                            <Text>Aprobado</Text>
-                        </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ backgroundColor: '#ed8d8d', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                            <Text>Reprocesos</Text>
-                        </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ backgroundColor: '#260202', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                            <Text>Rechazados</Text>
-                        </View>
-                    </View>
-                    
-                    <View style={styles.containerCard}>
-
-
-                        <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
-                            <Text style={[styles.tituloCard, { color: '#260202' }]}> Controles Aprobados </Text>
-                            <Text style={styles.numeroCard}>16</Text>
-                            <Text style={styles.porcentajeCard} >%</Text>
-                            <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
-                            <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
-                        </View>
-                        <View style={[styles.CardEstadisticas, { backgroundColor: '#260202' }]}>
-                            <Text style={[styles.tituloCard, { color: 'white' }]}> Controles Rechazados </Text>
-                            <Text style={styles.numeroCard}>5</Text>
-                            <Text style={styles.porcentajeCard} >%</Text>
-                            <Image source={iconBajada} style={styles.IconFlechaEstadistica} resizeMode='contain' />
-                            <Text style={[styles.indicadorCard, { color: 'red', }]}> -</Text>
-                        </View>
-                        <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
-                            <Text style={[styles.tituloCard, { color: '#260202' }]}> Reprocesos </Text>
-                            <Text style={styles.numeroCard}>8</Text>
-                            <Text style={styles.porcentajeCard} >%</Text>
-                            <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
-                            <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
-                        </View>
-
-                    </View>
-
-                </View>
-            </View >
-        </ScrollView >
     );
 };
 

@@ -2,6 +2,9 @@ import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInp
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useState } from 'react';
+import { Footer, Nav } from '../../../components/shared';
+import { useRoute } from '@react-navigation/native';
+
 
 
 const DATA = {
@@ -14,34 +17,49 @@ const DATA = {
 }
 
 const VerInforme = () => {
+
+
+    const route = useRoute();
+    const { id } = route.params;
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.Titulo}>Informe Nº {DATA.id}</Text>
-                <View style={styles.row}>
-                    <Text style={styles.datetime}>FECHA: {DATA.fecha}</Text>
-                    <Text style={styles.datetime}>HORA: {DATA.hora}</Text>
-                </View>
-                <Text style={styles.TituloH2}>Enfoque</Text>
-                <Text >{DATA.titulo}</Text>
-            </View>
-            <View style={styles.containerInformacion}>
-                <View >
-                    <Text style={styles.TituloH2}>Descripcion de informe</Text>
-                    <Text>{DATA.descricion}</Text>
-                </View>
-                <View>
-                    <Text style={styles.encargadoTex} >
-                        Generado por {DATA.autor} con IA
-                    </Text>
 
-                </View>
-            </View>
-            <TouchableOpacity style={styles.botonEliminar}>
-                <Text style={styles.TextoBotonEliminar}>Elimiar Informe</Text>
-            </TouchableOpacity>
 
-        </View>
+
+        <>
+            <Nav />
+
+
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <Text style={styles.Titulo}>Informe Nº {id}</Text>
+                    <View style={styles.row}>
+                        <Text style={styles.datetime}>FECHA: {DATA.fecha}</Text>
+                        <Text style={styles.datetime}>HORA: {DATA.hora}</Text>
+                    </View>
+                    <Text style={styles.TituloH2}>Enfoque</Text>
+                    <Text >{DATA.titulo}</Text>
+                </View>
+                <View style={styles.containerInformacion}>
+                    <View >
+                        <Text style={styles.TituloH2}>Descripcion de informe</Text>
+                        <Text>{DATA.descricion}</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.encargadoTex} >
+                            Generado por {DATA.autor} con IA
+                        </Text>
+
+                    </View>
+                </View>
+                <TouchableOpacity style={styles.botonEliminar}>
+                    <Text style={styles.TextoBotonEliminar}>ELIMINAR INFORME</Text>
+                </TouchableOpacity>
+
+            </View>
+            <Footer />
+
+        </>
+
     );
 
 

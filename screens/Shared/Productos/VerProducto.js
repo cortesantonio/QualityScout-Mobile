@@ -4,7 +4,7 @@ import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
 
 
-const VerProducto = (id) => {
+const VerProducto = ({navigation}) => {
     DATA = {
         'id': 1,
         "nombre_vino": "Gran Reserva Merlot",
@@ -104,7 +104,7 @@ const VerProducto = (id) => {
                 </View>
             </ScrollView>
 
-            <TouchableOpacity style={styles.ButtonCirculoAtras}>
+            <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
                 <View style={styles.CirculoAtras}>
                     <View style={{ flexDirection: 'row', marginTop: 25 }}>
                         <FontAwesomeIcon icon={faArrowLeftLong} size={38} color="white" />
@@ -127,39 +127,7 @@ const VerProducto = (id) => {
 
             </TouchableOpacity>
 
-            {/* Modal para seleccionar el tipo de estado */}
-            <Modal
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Seleccionar Filtro por Estado</Text>
-                        <TouchableOpacity onPress={() => filterDataByState('Aprobado')} style={styles.modalButton}>
-                            <Text>Aprobado</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => filterDataByState('Rechazado')} style={styles.modalButton}>
-                            <Text>Rechazado</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => filterDataByState('Reproceso')} style={styles.modalButton}>
-                            <Text>Reproceso</Text>
-                        </TouchableOpacity>
-
-                        <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
-                            <TouchableOpacity onPress={() => resetFilter()}>
-                                <Text style={{ fontSize: 14, color: '#260202', textTransform: 'uppercase' }}>Restablecer</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity onPress={() => setModalVisible(false)}>
-                                <Text style={{ fontSize: 14, color: '#bf6565', textTransform: 'uppercase' }}>Cancelar</Text>
-                            </TouchableOpacity>
-                        </View>
-
-
-                    </View>
-                </View>
-            </Modal>
+            
 
 
         </View>

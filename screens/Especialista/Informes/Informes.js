@@ -2,6 +2,8 @@ import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInp
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useState } from 'react';
+import { Nav, Footer } from '../../../components/shared';
+import { StatusBar } from 'react-native';
 
 
 // iconos propios 
@@ -13,7 +15,7 @@ const iconInformes = require('../../../assets/icons/iconInformes.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
 const iconVarita = require('../../../assets/icons/iconVarita.png')
 
-const Informes = () => {
+const Informes = ({navigation}) => {
     const [busqueda, setBusqueda] = useState(''); // Estado para la búsqueda
 
     const DATA = [
@@ -69,7 +71,7 @@ const Informes = () => {
 
             <View style={{ display: 'flex', backgroundColor: '#bf6565', padding: 3, borderRadius: 3 }}>
 
-                <TouchableOpacity >
+                <TouchableOpacity onPress={() => navigation.navigate('VerInforme', { id: item.id})}>
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
             </View>
@@ -122,48 +124,55 @@ const Informes = () => {
 
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.TituloPantalla}>Gestión de Registro.</Text>
 
-            <View style={styles.buscador}>
-                <Image source={iconLupa} style={styles.iconLupa} ></Image>
+        <>
+            <Nav />
+            <View style={styles.container}>
+                <Text style={styles.TituloPantalla}>Gestión de Registro.</Text>
 
-                <TextInput
-                    style={styles.inputBuscador}
-                    placeholder="Ingresa RUT o Nombre del Usuario"
-                    value={busqueda}
-                    onChangeText={handleBuscar}
-                />
-            </View>
-            <View style={styles.contenedorBotones}>
+                <View style={styles.buscador}>
+                    <Image source={iconLupa} style={styles.iconLupa} ></Image>
 
-
-                <TouchableOpacity style={styles.TouchableBoton} onPress={abrirModal}>
-                    <Image source={iconVarita} style={styles.iconsBotones} ></Image>
-                    <Text style={styles.botonText}>Generar Informe con IA</Text>
-                </TouchableOpacity>
-
-            </View>
-            <View>
-                {/*encabezado de la lista*/}
-                <View style={styles.encabezado}>
-                    <Text style={{ fontSize: 18 }}>Registros</Text>
-
-                </View>
-
-                {/* cuerpo de la lista*/}
-                <View style={styles.containerProductos}>
-                    <FlatList
-                        style={styles.flatList}
-                        data={usuariosFiltrados}
-                        keyExtractor={item => item.id}
-                        renderItem={renderItem}
+                    <TextInput
+                        style={styles.inputBuscador}
+                        placeholder="Ingresa RUT o Nombre del Usuario"
+                        value={busqueda}
+                        onChangeText={handleBuscar}
                     />
                 </View>
-            </View>
+                <View style={styles.contenedorBotones}>
 
-            {modalVisible && <ModalCrearInforme />}
-        </View>
+
+                    <TouchableOpacity style={styles.TouchableBoton} onPress={abrirModal}>
+                        <Image source={iconVarita} style={styles.iconsBotones} ></Image>
+                        <Text style={styles.botonText}>Generar Informe con IA</Text>
+                    </TouchableOpacity>
+
+                </View>
+                <View>
+                    {/*encabezado de la lista*/}
+                    <View style={styles.encabezado}>
+                        <Text style={{ fontSize: 18 }}>Registros</Text>
+
+                    </View>
+
+                    {/* cuerpo de la lista*/}
+                    <View style={styles.containerProductos}>
+                        <FlatList
+                            style={styles.flatList}
+                            data={usuariosFiltrados}
+                            keyExtractor={item => item.id}
+                            renderItem={renderItem}
+                        />
+                    </View>
+                </View>
+
+                {modalVisible && <ModalCrearInforme />}
+            </View>
+            <Footer />
+        </>
+
+
     );
 };
 

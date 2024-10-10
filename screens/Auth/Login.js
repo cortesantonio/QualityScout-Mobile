@@ -35,7 +35,7 @@ const Uvas = require('../../assets/images/Uvas.jpg');
 
 
 
-const Login = () => {
+const Login = ({navigation }) => {
   // Estado para controlar si se muestra la pantalla de inicio o el formulario
   const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -65,6 +65,8 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!rut || !password) {
+      navigation.navigate('Especialista');
+
       Alert.alert('Error', 'Por favor, ingrese su RUT y contraseña.');
       return;
     }
@@ -83,6 +85,14 @@ const Login = () => {
       if (response.ok) {
         const result = await response.text();
         Alert.alert('Login Successful', result);
+
+        const role = 'Especialista';
+        if (role === 'Especialista') {
+          navigation.navigate('Especialista');
+        } else if (role === 'ControlCalidad') {
+          navigation.navigate('ControlCalidad');
+        }
+
       } else {
         const error = await response.text();
         Alert.alert('Login Failed', error);
@@ -245,7 +255,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
     textTransform: 'uppercase',
-    fontWeight: 100,
+    fontWeight: 'light',
 
   },
   inputLogin: {
@@ -267,7 +277,7 @@ const styles = StyleSheet.create({
   },
   TextLoginSubTitle: {
     fontSize: 16,
-    fontWeight: 100,
+    fontWeight: 'light',
     color: '#0d0d0d',
     marginBottom: 20,
   },

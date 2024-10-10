@@ -10,7 +10,7 @@ import { Picker } from '@react-native-picker/picker';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const CrearProducto = () => {
+const CrearProducto = ({navigation}) => {
 
     const [producto, setProducto] = useState({
         id: '',
@@ -465,7 +465,7 @@ const CrearProducto = () => {
 
             </ScrollView>
 
-            <TouchableOpacity style={styles.ButtonCirculoAtras}>
+            <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
                 <View style={styles.CirculoAtras}>
                     <View style={{ flexDirection: 'row', marginTop: 25 }}>
                         <FontAwesomeIcon icon={faArrowLeftLong} size={38} color="white" />

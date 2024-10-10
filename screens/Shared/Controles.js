@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity,
 import React from 'react';
 import { PieChart } from 'react-native-svg-charts';
 import { Text as SvgText } from 'react-native-svg';
+import { Footer, Nav } from '../../components/shared';
 
 
 // iconos propios 
@@ -11,7 +12,10 @@ const iconReload = require('../../assets/icons/iconReload.png')
 const iconDislike = require('../../assets/icons/iconDislike.png')
 const iconStop = require('../../assets/icons/iconStop.png')
 const flechaSeguir = require('../../assets/icons/flechaSeguir.png')
-const Controles = () => {
+
+
+
+const Controles = ({navigation}) => {
     const calculatePercentages = (data) => {
         const total = data.reduce((sum, item) => sum + item.amount, 0);
         return data.map(item => ({
@@ -78,114 +82,128 @@ const Controles = () => {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.containerHomeAdmin}>
 
-                {/* Titulos / indicadores */}
 
-                <Text style={{ fontSize: 18, }}>Controles.</Text>
-                <View style={styles.ContainerAccesosRapidos} >
-                    {/* Controles diarios*/}
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconControlCheck} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>24</Text>
-                        <Text style={{ textAlign: 'center' }}>Controles{'\n'}Diarios</Text>
-                    </Pressable>
-                    {/* Controles semanales*/}
+        <>
 
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconControlCheck} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>120</Text>
-                        <Text style={{ textAlign: 'center' }}>Controles{'\n'}Semanales</Text>
-                    </Pressable>
-                    {/* Controles Mensuales*/}
+            <Nav />
 
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconControlCheck} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>912</Text>
-                        <Text style={{ textAlign: 'center' }}>Controles{'\n'}Mensuales</Text>
-                    </Pressable>
-                    {/* Controles reproceso*/}
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <View style={styles.containerHomeAdmin}>
 
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconReload} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>912</Text>
-                        <Text style={{ textAlign: 'center' }}>Controles {'\n'} en reproceso </Text>
-                    </Pressable>
-                    {/* Controles rechazados*/}
+                    {/* Titulos / indicadores */}
 
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconDislike} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>912</Text>
-                        <Text style={{ textAlign: 'center' }}>Controles {'\n'} Rechazados</Text>
-                    </Pressable>
-                    {/* Controles preventivos*/}
+                    <Text style={{ fontSize: 18, }}>Controles.</Text>
+                    <View style={styles.ContainerAccesosRapidos} >
+                        {/* Controles diarios*/}
+                        <Pressable style={styles.PressableCard}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconControlCheck} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>24</Text>
+                            <Text style={{ textAlign: 'center' }}>Controles{'\n'}Diarios</Text>
+                        </Pressable>
+                        {/* Controles semanales*/}
 
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconStop} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>912</Text>
-                        <Text style={{ textAlign: 'center' }}>Controles {'\n'} Preventivos</Text>
-                    </Pressable>
-                    <TouchableOpacity style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={flechaSeguir} style={{ width: 40, height: 40 }} resizeMode='contain' />
-                        </View>
-                        <Text style={{ fontSize: 12, marginTop:10,fontWeight: 'bold', textAlign: 'center' }}>ABRIR  {'\n'}REGISTROS</Text>
-                    </TouchableOpacity>
-                </View >
+                        <Pressable style={styles.PressableCard}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconControlCheck} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>120</Text>
+                            <Text style={{ textAlign: 'center' }}>Controles{'\n'}Semanales</Text>
+                        </Pressable>
+                        {/* Controles Mensuales*/}
 
-                {/* Indicadores de rendimientos */}
-                <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    {/* Pie Chart De porcentajes de estados de controles */}
+                        <Pressable style={styles.PressableCard}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconControlCheck} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>912</Text>
+                            <Text style={{ textAlign: 'center' }}>Controles{'\n'}Mensuales</Text>
+                        </Pressable>
+                        {/* Controles reproceso*/}
+
+                        <Pressable style={styles.PressableCard}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconReload} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>912</Text>
+                            <Text style={{ textAlign: 'center' }}>Controles {'\n'} en reproceso </Text>
+                        </Pressable>
+                        {/* Controles rechazados*/}
+
+                        <Pressable style={styles.PressableCard}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconDislike} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>912</Text>
+                            <Text style={{ textAlign: 'center' }}>Controles {'\n'} Rechazados</Text>
+                        </Pressable>
+                        {/* Controles preventivos*/}
+
+                        <Pressable style={styles.PressableCard}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconStop} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text style={{ fontSize: 32, fontWeight: 'bold', textAlign: 'center' }}>912</Text>
+                            <Text style={{ textAlign: 'center' }}>Controles {'\n'} Preventivos</Text>
+                        </Pressable>
+
+                        <TouchableOpacity style={styles.PressableCard} onPress={() => navigation.navigate('ListadoControles')}>
+                            <View style={styles.IconBackground}>
+                                <Image source={flechaSeguir} style={{ width: 40, height: 40 }} resizeMode='contain' />
+                            </View>
+                            <Text style={{ fontSize: 12, marginTop: 10, fontWeight: 'bold', textAlign: 'center' }}>ABRIR  {'\n'}REGISTROS</Text>
+                        </TouchableOpacity>
+                    </View >
+
+                    {/* Indicadores de rendimientos */}
                     <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        {/* Pie Chart De porcentajes de estados de controles */}
+                        <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
-                        <PieChart
-                            style={{ height: 150, width: 200 }}
-                            valueAccessor={({ item }) => item.amount}
-                            data={data}
-                            spacing={0}
-                            outerRadius={'80%'}
-                        >
-                            <Labels />
-                        </PieChart>
-                        <Text style={{ position: 'absolute', right: 5, top: 5, textAlign: 'center' }}>
-                            Porcentajes de{'\n'}estados de {'\n'}controles.
-                        </Text>
+                            <PieChart
+                                style={{ height: 150, width: 200 }}
+                                valueAccessor={({ item }) => item.amount}
+                                data={data}
+                                spacing={0}
+                                outerRadius={'80%'}
+                            >
+                                <Labels />
+                            </PieChart>
+                            <Text style={{ position: 'absolute', right: 5, top: 5, textAlign: 'center' }}>
+                                Porcentajes de{'\n'}estados de {'\n'}controles.
+                            </Text>
 
-                        <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                <View style={{ backgroundColor: '#f25757', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                                <Text>Aprobado</Text>
+                            <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                    <View style={{ backgroundColor: '#f25757', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
+                                    <Text>Aprobado</Text>
+                                </View>
+                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                    <View style={{ backgroundColor: '#ed8d8d', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
+                                    <Text>Reprocesos</Text>
+                                </View>
+                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                    <View style={{ backgroundColor: '#260202', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
+                                    <Text>Rechazados</Text>
+                                </View>
                             </View>
-                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                <View style={{ backgroundColor: '#ed8d8d', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                                <Text>Reprocesos</Text>
-                            </View>
-                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                <View style={{ backgroundColor: '#260202', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                                <Text>Rechazados</Text>
-                            </View>
+
                         </View>
+
+
 
                     </View>
+                </View >
+            </ScrollView >
+
+            <Footer />
+
+        </>
 
 
 
-                </View>
-            </View >
-        </ScrollView >
     );
 };
 
@@ -195,7 +213,7 @@ const styles = StyleSheet.create({
     scrollContainer: {
         flexGrow: 1,
         padding: 25,
-        paddingBottom:120
+        paddingBottom: 120
     },
     containerHomeAdmin: {
         display: 'flex',
