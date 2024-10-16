@@ -28,24 +28,6 @@ export const encryptText = (text) => {
   return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
 };
 
-const checkUserLoggedIn = async () => {
-  try {
-    const userToken = await AsyncStorage.getItem('userToken');
-    const userLogJSON = await AsyncStorage.getItem('userJson');
-
-    if (userToken && userLogJSON) {
-      // Si el token y los datos de usuario existen, el usuario está logueado
-      return true;
-    } else {
-      // Si no existe token o datos de usuario, el usuario no está logueado
-      return false;
-    }
-  } catch (error) {
-    console.error("Error verificando el estado de la sesión:", error);
-    return false;
-  }
-};
-
 // Imágenes
 const QualityScoutLogo = require('../../assets/images/QualityScoutLogo.png');
 const Uvas = require('../../assets/images/Uvas.jpg');
@@ -56,6 +38,7 @@ const Uvas = require('../../assets/images/Uvas.jpg');
 const Login = ({ navigation }) => {
 
 
+
   // Estado para controlar si se muestra la pantalla de inicio o el formulario
   const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -63,25 +46,43 @@ const Login = ({ navigation }) => {
   const containerHeight = useState(new Animated.Value(350))[0]; // Altura inicial de 350
 
   // Función para manejar el botón de acceso
-  const handleAccessPress = () => {
-    if (!checkUserLoggedIn) {
-      
-    } else {
+  const handleAccessPress = async () => {
+    const usuarioToken = await AsyncStorage.getItem('userToken');
+    const usuario = await AsyncStorage.getItem('userJson');
+
+    try {
+      if (usuarioToken && usuario) {
+        const role = JSON.parse(usuario).Rol;
+        if (role === 'Especialista') {
+          navigation.navigate('Especialista');
+        } else if (role === 'ControlCalidad') {
+          navigation.navigate('ControlCalidad');
+        }
+      } else {
+        setIsFormVisible(!isFormVisible);
+      }
+    }
+
+    catch (error) {
+      console.error('Error al verificar el token:', error);
       setIsFormVisible(!isFormVisible);
 
     }
+
+
+
   };
 
 
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     Animated.timing(containerHeight, {
       toValue: isFormVisible ? 600 : 350, // Altura final según el estado
       duration: 500, // Duración de la animación en milisegundos
-      useNativeDriver: false, 
+      useNativeDriver: false,
     }).start();
   }, [isFormVisible]);
 
@@ -90,7 +91,7 @@ const Login = ({ navigation }) => {
       Alert.alert('Error', 'Por favor, ingrese su RUT y contraseña.');
       return;
     }
-    setLoading(true); 
+    setLoading(true);
     try {
       const response = await fetch(`${URL_API_BACKEND}/api/authapi/login`, {
         method: 'POST',
@@ -163,7 +164,7 @@ const Login = ({ navigation }) => {
         </>
       ) : (
         <>
-          <TouchableOpacity onPress={handleAccessPress} style={styles.ButtonCirculoAtras}>
+          <TouchableOpacity onPress={() => setIsFormVisible(!isFormVisible)} style={styles.ButtonCirculoAtras}>
             <View style={styles.CirculoAtras}>
               <View style={{ flexDirection: 'row', marginTop: 25 }}>
                 <FontAwesomeIcon icon={faArrowLeftLong} size={38} color="white" />

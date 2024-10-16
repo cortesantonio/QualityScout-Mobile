@@ -7,31 +7,45 @@ import { useState } from 'react';
 import { Footer, Nav } from '../../../components/shared';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { width } from '@fortawesome/free-solid-svg-icons/fa0';
-
+import { URL_API_BACKEND } from '../../../config';
 const iconAdd = require('../../../assets/icons/iconAdd.png')
 
 const CrearUsuario = () => {
+
+    const [items, setItems] = useState([]);
+
+
+    const obtenerRoles = () => {
+        fetch(`${URL_API_BACKEND}/api/Rols`)
+            .then(response => response.json())
+            .then(data => {
+                setItems(data.map(rol => ({ label: rol.nombre, value: rol.idRol })));
+            })
+            .catch(error => console.error('Error al obtener los roles:', error));
+    };
+    obtenerRoles()
+
+    const handleChange = (field, value) => {
+        setUsuario({ ...Usuario, [field]: value });
+    };
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+
 
     const [Usuario, setUsuario] = useState({
         idUsuario: '',
         Nombre: '',
         Rut: '',
         Email: '',
-        Contraseña: '',
-        RolId: 0,
+        Password: '',
+        RolId: null,
     });
 
 
-    const handleChange = (field, value) => {
-        setUsuario({ ...Usuario, [field]: value });
-    };
 
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState(null);
-    const [items, setItems] = useState([
-        { label: 'Control de Calidad', value: 1 },
-        { label: 'Especialista', value: 0 },
-    ]);
+    const EnviarUsuario = async () => {
+        console.log(Usuario, value);
+    }
     return (
         <>
             <Nav />
@@ -49,13 +63,26 @@ const CrearUsuario = () => {
 
                     <View style={styles.form}>
                         <Text style={styles.label}>RUT</Text>
-                        <TextInput style={styles.input} />
-                        <Text style={styles.label}>Nombre Completo</Text>
-                        <TextInput style={styles.input} />
-                        <Text style={styles.label}>Email</Text>
-                        <TextInput style={styles.input} />
-                        <Text style={styles.label}>Rol</Text>
+                        <TextInput style={styles.input}
+                            value={Usuario.Rut}
+                            onChangeText={(value) => handleChange('Rut', value)} />
 
+
+                        <Text style={styles.label}>Nombre Completo</Text>
+                        <TextInput style={styles.input}
+                            value={Usuario.Nombre}
+                            onChangeText={(value) => handleChange('Nombre', value)}
+                        />
+
+
+                        <Text style={styles.label}>Email</Text>
+                        <TextInput style={styles.input}
+                            value={Usuario.Email}
+                            onChangeText={(value) => handleChange('Email', value)}
+                        />
+
+
+                        <Text style={styles.label}>Rol</Text>
                         <DropDownPicker
                             open={open}
                             value={value}
@@ -69,10 +96,17 @@ const CrearUsuario = () => {
                         />
 
                         <Text style={styles.label}>Contraseña</Text>
-                        <TextInput style={styles.input} secureTextEntry={true} />
+                        <TextInput style={styles.input} secureTextEntry={true}
+
+                            value={Usuario.Password}
+                            onChangeText={(value) => handleChange('Password ', value)}
+                        />
                         <Text style={{ color: 'gray', fontSize: 10 }}>CONTRASEÑA TEMPORAL*</Text>
 
-                        <TouchableOpacity style={styles.TouchableBoton} onPress={() => navigation.navigate('CrearUsuario')}>
+
+
+
+                        <TouchableOpacity style={styles.TouchableBoton} onPress={EnviarUsuario}>
                             <Image source={iconAdd} style={styles.iconsBotones} />
                             <Text style={styles.botonText}>Añadir Usuarios</Text>
                         </TouchableOpacity>
@@ -138,8 +172,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         gap: 5,
 
-        marginTop:15,
-        width:150
+        marginTop: 15,
+        width: 150
 
     },
     botonText: {
