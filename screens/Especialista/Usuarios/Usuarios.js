@@ -41,7 +41,6 @@ const Usuarios = ({ navigation }) => {
 
                 const datos = await response.json();
                 setUsuariosFiltrados(datos); // Guarda los datos en el estado
-                console.log('Datos obtenidos:', datos);
             } catch (error) {
                 console.error('Error obteniendo los datos:', error);
                 Alert.alert('Error', 'Ocurrió un error al obtener los datos.');
