@@ -29,7 +29,7 @@ export default function App() {
         <Stack.Screen name='Especialista' component={EspecialistaNavigator}/>
 
         {/* Control de Calidad */}
-
+        
         <Stack.Screen name="ControlCalidad" component={ControlCalidadNavigator} />
 
       </Stack.Navigator>

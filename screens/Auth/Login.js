@@ -8,7 +8,9 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import CryptoJS from 'crypto-js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { URL_API_BACKEND } from '../../config';
 
 
 // Clave secreta fija y vector de inicialización (IV) (deben ser de longitud adecuada)
@@ -26,7 +28,23 @@ export const encryptText = (text) => {
   return encrypted.ciphertext.toString(CryptoJS.enc.Base64);
 };
 
+const checkUserLoggedIn = async () => {
+  try {
+    const userToken = await AsyncStorage.getItem('userToken');
+    const userLogJSON = await AsyncStorage.getItem('userJson');
 
+    if (userToken && userLogJSON) {
+      // Si el token y los datos de usuario existen, el usuario está logueado
+      return true;
+    } else {
+      // Si no existe token o datos de usuario, el usuario no está logueado
+      return false;
+    }
+  } catch (error) {
+    console.error("Error verificando el estado de la sesión:", error);
+    return false;
+  }
+};
 
 // Imágenes
 const QualityScoutLogo = require('../../assets/images/QualityScoutLogo.png');
@@ -35,7 +53,9 @@ const Uvas = require('../../assets/images/Uvas.jpg');
 
 
 
-const Login = ({navigation }) => {
+const Login = ({ navigation }) => {
+
+
   // Estado para controlar si se muestra la pantalla de inicio o el formulario
   const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -44,35 +64,35 @@ const Login = ({navigation }) => {
 
   // Función para manejar el botón de acceso
   const handleAccessPress = () => {
-    setIsFormVisible(!isFormVisible);
+    if (!checkUserLoggedIn) {
+      
+    } else {
+      setIsFormVisible(!isFormVisible);
+
+    }
   };
 
 
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Estado para controlar la carga
+  const [loading, setLoading] = useState(false); 
 
-
-
-  // Efecto para animar la altura del contenedor cuando cambia el estado isFormVisible
   useEffect(() => {
     Animated.timing(containerHeight, {
       toValue: isFormVisible ? 600 : 350, // Altura final según el estado
       duration: 500, // Duración de la animación en milisegundos
-      useNativeDriver: false, // Necesario si estás animando propiedades que no son transformaciones
+      useNativeDriver: false, 
     }).start();
   }, [isFormVisible]);
 
   const handleLogin = async () => {
     if (!rut || !password) {
-      navigation.navigate('Especialista');
-
       Alert.alert('Error', 'Por favor, ingrese su RUT y contraseña.');
       return;
     }
-    setLoading(true); // Iniciar el estado de carga
+    setLoading(true); 
     try {
-      const response = await fetch('http://192.168.1.108:5071/api/authapi/login', {
+      const response = await fetch(`${URL_API_BACKEND}/api/authapi/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,15 +103,27 @@ const Login = ({navigation }) => {
         }),
       });
       if (response.ok) {
-        const result = await response.text();
-        Alert.alert('Login Successful', result);
+        const result = await response.json();
+        const User = JSON.stringify({
+          Email: result.Email,
+          Id: result.Id,
+          Nombre: result.Nombre,
+          Rut: result.Rut,
+          Token: result.Token,
+          Rol: result.NombreRol
+        })
+        AsyncStorage.setItem('userToken', result.Token);
+        AsyncStorage.setItem('userJson', User);
 
-        const role = 'Especialista';
+        const role = result.NombreRol;
+
         if (role === 'Especialista') {
           navigation.navigate('Especialista');
         } else if (role === 'ControlCalidad') {
           navigation.navigate('ControlCalidad');
         }
+
+
 
       } else {
         const error = await response.text();
@@ -262,7 +294,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: 50,
     marginBottom: 10,
-    backgroundColor: '#fdd8d8',
+    backgroundColor: '#e1e1e1',
     borderRadius: 15,
     padding: 10,
     fontSize: 18,

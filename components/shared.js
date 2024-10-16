@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { Dimensions, StyleSheet, Text, View, Image, ImageBackground, Button, Pressable, SafeAreaView } from 'react-native';
-import React from 'react';
 import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
 import { useNavigation } from '@react-navigation/native';  // Importa el hook de navegación
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const UserP = require('../assets/images/UserExample.jpg');
 // iconos propios 
@@ -18,40 +18,75 @@ const iconBuscador = require('../assets/icons/iconBuscador.png')
 
 
 
+import React, { useEffect, useState } from 'react';
 
-const Nav = ({}) => {
+const Nav = ({ navigate }) => {
+    const navigation = useNavigation();  // Usa el hook para obtener el objeto de navegación
+
+    const [userLog, setUserLog] = useState(null); // Estado para almacenar los datos del usuario
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const userLogJSON = await AsyncStorage.getItem('userJson');
+            if (userLogJSON) {
+                try {
+                    const userLogData = JSON.parse(userLogJSON); // Convertir de nuevo a objeto
+                    setUserLog(userLogData); // Actualiza el estado con los datos del usuario
+                } catch (error) {
+                    console.error("Error al parsear el JSON:", error);
+                }
+            }
+        };
+
+        fetchUserData(); // Llama a la función para recuperar los datos
+    }, []); // El efecto se ejecutará solo una vez al montar el componente
+
+
+    // Función para cerrar sesión
+    const handleLogout = async () => {
+        try {
+            // Eliminar el token y los datos del usuario de AsyncStorage
+            await AsyncStorage.removeItem('userToken');
+            await AsyncStorage.removeItem('userJson');
+
+            // Navegar a la pantalla de inicio de sesión o cualquier otra pantalla
+            navigation.navigate('Login')
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+            Alert.alert("Error", "No se pudo cerrar sesión. Inténtalo de nuevo.");
+        }
+    };
+
+
+
     return (
         <View style={styles.Nav}>
             <View style={styles.containerNav}>
-
-
-
                 <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Image source={UserP} style={{ width: 50, height: 50, borderRadius: 50, marginRight: 10 }} ></Image>
-                    <View >
+                    <Image source={UserP} style={{ width: 50, height: 50, borderRadius: 50, marginRight: 10 }} />
+                    <View>
                         <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>Bienvenido!</Text>
-                        <Text style={{ color: 'white', fontSize: 16 }}>Antonio Cortes</Text>
+                        {/* Usa el nombre del usuario recuperado */}
+                        <Text style={{ color: 'white', fontSize: 16 }}>{userLog ? userLog.Nombre : 'Cargando...'}</Text>
                     </View>
-
                 </View>
 
-                <Pressable style={{ width: 35, height: 35, backgroundColor: 'white', borderRadius: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Image source={require('../assets/icons/settings.png')} style={{ width: 25, height: 25 }}></Image>
+                <Pressable style={{ width: 35, height: 35, backgroundColor: 'white', borderRadius: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }} onPress={handleLogout}>
+                    <Image source={require('../assets/icons/settings.png')} style={{ width: 25, height: 25 }} />
                 </Pressable>
-
-
             </View>
-        </View >
+        </View>
     );
-}
+};
 
+export default Nav;
 
 const Footer = () => {
     const navigation = useNavigation();  // Usa el hook para obtener el objeto de navegación
 
     return (
         <View style={styles.Footer}>
-            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Buscador')} > 
+            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Buscador')} >
                 <Image source={iconBuscador} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Buscador</Text>
             </Pressable>
@@ -87,7 +122,7 @@ const styles = StyleSheet.create({
     Nav: {
         backgroundColor: 'transparent'
 
-       
+
     },
     containerNav: {
         backgroundColor: '#270403',

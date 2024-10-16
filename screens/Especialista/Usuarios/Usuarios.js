@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View, Text, TouchableOpacity, Image, TextInput, FlatList, Modal, StyleSheet, Dimensions
 } from 'react-native';
 import { Footer, Nav } from '../../../components/shared';
+import { URL_API_BACKEND } from '../../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // iconos propios
 const iconLupa = require('../../../assets/icons/iconLupa.png')
@@ -10,29 +12,46 @@ const iconAdd = require('../../../assets/icons/iconAdd.png')
 const iconUsuario = require('../../../assets/icons/iconUsuario.png')
 const iconBasurero = require('../../../assets/icons/iconBasurero.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
-
 const Usuarios = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
-    const [busqueda, setBusqueda] = useState(''); // Estado para la búsqueda
+    const [busqueda, setBusqueda] = useState('');
+    const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
+    const [loading, setLoading] = useState(true); // Estado para manejar la carga
 
-    const DATA = [
-        {
-            RUT: '20.967.892-6',
-            nombe: 'Antonio Cortes',
-            rol: 'Especialista',
-            correo: ''
-        },
-        {
-            RUT: '32.417.812-3',
-            nombe: 'Trinidad Garay',
-            rol: 'Control de Calidad',
-            correo: ''
+    useEffect(() => {
+        const obtenerDatos = async () => {
+            try {
+                const token = await AsyncStorage.getItem('userToken');
+                if (!token) {
+                    Alert.alert('Error', 'Token de autorización no encontrado.');
+                    return;
+                }
+                const response = await fetch(`${URL_API_BACKEND}/api/UsuariosApi`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-        },
-    ];
+                if (!response.ok) {
+                    throw new Error('Error en la solicitud');
+                }
 
-    const [usuariosFiltrados, setUsuariosFiltrados] = useState(DATA); // Estado para la lista filtrada
+                const datos = await response.json();
+                setUsuariosFiltrados(datos); // Guarda los datos en el estado
+                console.log('Datos obtenidos:', datos);
+            } catch (error) {
+                console.error('Error obteniendo los datos:', error);
+                Alert.alert('Error', 'Ocurrió un error al obtener los datos.');
+            } finally {
+                setLoading(false); // Cambia el estado de carga al final
+            }
+        };
+
+        obtenerDatos();
+    }, []); // Solo se ejecuta al montar el componente
 
     const abrirModal = (rut) => {
         setUsuarioSeleccionado(rut);
@@ -86,21 +105,24 @@ const Usuarios = ({ navigation }) => {
             </View>
 
             <View style={styles.infoCard}>
-                <Text style={styles.titleInfo}>{item.nombe}</Text>
-                <Text style={[styles.subtitleInfo, { textTransform: 'capitalize', fontSize: 10 }]}>{item.rol}</Text>
-                <Text style={styles.subtitleInfo}>{item.RUT}</Text>
+                <Text style={styles.titleInfo}>{item.nombre}</Text>
+                <Text style={[styles.subtitleInfo, { textTransform: 'capitalize', fontSize: 10 }]}>{item.nombreRol}</Text>
+                <Text style={styles.subtitleInfo}>{item.rut}</Text>
             </View>
 
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', gap: 10, padding: 3, borderRadius: 3 }}>
-                <TouchableOpacity onPress={() => abrirModal(item.RUT)}>
+                <TouchableOpacity onPress={() => abrirModal(item.rut)}>
                     <Image source={iconBasurero} style={styles.iconAcciones} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('VerUsuario', { RUT: item.RUT , Nombre : item.nombe , Rol: item.rol , Correo: item.Correo})}>
+                <TouchableOpacity onPress={() => navigation.navigate('VerUsuario', { RUT: item.rut, Nombre: item.nombre, Rol: item.nombreRol, Correo: item.email })}>
                     <Image source={iconGo} style={styles.iconAcciones} />
                 </TouchableOpacity>
             </View>
         </View>
     );
+    if (loading) {
+        return <Text>Cargando...</Text>; // Muestra un mensaje de carga mientras se obtienen los datos
+    }
 
     return (
         <>
@@ -134,7 +156,7 @@ const Usuarios = ({ navigation }) => {
                         <FlatList
                             style={styles.flatList}
                             data={usuariosFiltrados}
-                            keyExtractor={item => item.RUT}
+                            keyExtractor={item => item.id}
                             renderItem={renderItem}
                         />
                     </View>
