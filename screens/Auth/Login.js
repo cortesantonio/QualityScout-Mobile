@@ -111,18 +111,25 @@ const Login = ({ navigation }) => {
           Nombre: result.Nombre,
           Rut: result.Rut,
           Token: result.Token,
-          Rol: result.NombreRol
+          Rol: result.NombreRol,
+          Activo: result.Activo
         })
+        
+        if (result.Activo === false) {
+          Alert.alert('Usuario Inactivo', 'Su usuario no se encuentra activo en el sistema.');
+          return;
+        }
+        
         AsyncStorage.setItem('userToken', result.Token);
         AsyncStorage.setItem('userJson', User);
 
-        const role = result.NombreRol;
-
-        if (role === 'Especialista') {
+        if (result.NombreRol === 'Especialista') {
           navigation.navigate('Especialista');
         } else if (role === 'ControlCalidad') {
           navigation.navigate('ControlCalidad');
         }
+
+
 
 
 

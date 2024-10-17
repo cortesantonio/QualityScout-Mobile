@@ -12,6 +12,9 @@ const iconAdd = require('../../../assets/icons/iconAdd.png')
 const iconUsuario = require('../../../assets/icons/iconUsuario.png')
 const iconBasurero = require('../../../assets/icons/iconBasurero.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
+
+
+
 const Usuarios = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
@@ -119,8 +122,12 @@ const Usuarios = ({ navigation }) => {
             </View>
         </View>
     );
-    if (loading) {
-        return <Text>Cargando...</Text>; // Muestra un mensaje de carga mientras se obtienen los datos
+    if (loading){
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{fontSize:18, color:'gray'}}>Cargando...</Text>
+            </View>
+        );
     }
 
     return (

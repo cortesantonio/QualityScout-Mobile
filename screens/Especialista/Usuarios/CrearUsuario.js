@@ -8,12 +8,14 @@ import { Footer, Nav } from '../../../components/shared';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { width } from '@fortawesome/free-solid-svg-icons/fa0';
 import { URL_API_BACKEND } from '../../../config';
+import { useEffect } from 'react';
+import { React } from 'react';
 const iconAdd = require('../../../assets/icons/iconAdd.png')
 
-const CrearUsuario = () => {
+const CrearUsuario = ({ navigation }) => {
+
 
     const [items, setItems] = useState([]);
-
 
     const obtenerRoles = () => {
         fetch(`${URL_API_BACKEND}/api/Rols`)
@@ -23,7 +25,12 @@ const CrearUsuario = () => {
             })
             .catch(error => console.error('Error al obtener los roles:', error));
     };
-    obtenerRoles()
+    if (items.length == 0) {
+        obtenerRoles();
+    }
+
+
+
 
     const handleChange = (field, value) => {
         setUsuario({ ...Usuario, [field]: value });
@@ -44,8 +51,42 @@ const CrearUsuario = () => {
 
 
     const EnviarUsuario = async () => {
-        console.log(Usuario, value);
+        const UserToSend = { ...Usuario, RolId: value };
+        if (UserToSend.Rut == '' || UserToSend.Nombre == '' || UserToSend.Email == '' || UserToSend.Password == '' || UserToSend.RolId == null) {
+            Alert.alert('Campos incompletos', 'Por favor complete todos los campos')
+        }
+        try {
+            const response = await fetch(`${URL_API_BACKEND}/api/authapi/CreateUsuario`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Nombre: UserToSend.Nombre,
+                    Rut: UserToSend.Rut,
+                    Email: UserToSend.Email,
+                    Password: UserToSend.Password,
+                    RolId: UserToSend.RolId,
+                }),
+            });
+            if (response.ok) {
+                Alert.alert('Usuario Creado', 'Usuario creado correctamente.');
+                navigation.navigate('Usuarios');
+            } else {
+                const errorData = await response.json();
+                Alert.alert('Error al crear usuario', errorData.message);
+            }
+        }
+        catch (error) {
+            console.error('Error during login:', error);
+            Alert.alert('Login Error', 'An error occurred during login.');
+        }
+
     }
+
+
+
+
     return (
         <>
             <Nav />
@@ -99,7 +140,7 @@ const CrearUsuario = () => {
                         <TextInput style={styles.input} secureTextEntry={true}
 
                             value={Usuario.Password}
-                            onChangeText={(value) => handleChange('Password ', value)}
+                            onChangeText={(value) => handleChange('Password', value)}
                         />
                         <Text style={{ color: 'gray', fontSize: 10 }}>CONTRASEÑA TEMPORAL*</Text>
 
