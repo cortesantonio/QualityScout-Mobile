@@ -5,22 +5,50 @@ import {
 import { Footer, Nav } from '../../../components/shared';
 import { URL_API_BACKEND } from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 // iconos propios
 const iconLupa = require('../../../assets/icons/iconLupa.png')
 const iconAdd = require('../../../assets/icons/iconAdd.png')
 const iconUsuario = require('../../../assets/icons/iconUsuario.png')
-const iconBasurero = require('../../../assets/icons/iconBasurero.png')
+const iconPausa = require('../../../assets/icons/iconPausaWhite.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
-
+const iconActivarUser = require('../../../assets/icons/iconActivarUser.png')
 
 
 const Usuarios = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+    const [usuarioActivo, setUsuarioActivo] = useState();
+
     const [busqueda, setBusqueda] = useState('');
     const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
     const [loading, setLoading] = useState(true); // Estado para manejar la carga
+
+
+    const actualizarEstadoActivo = async (idUsuario) => {
+        try {
+            const response = await fetch(`${URL_API_BACKEND}/api/UsuariosApi/UpdateActivo/${idUsuario}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                alert('El estado del usuario ha sido actualizado correctamente.');
+            } else {
+                alert('Hubo un problema al actualizar el estado del usuario.');
+            }
+        } catch (error) {
+            console.error('Error al actualizar el estado del usuario:', error);
+            alert('Error', 'Ocurrió un error al intentar actualizar el estado del usuario.');
+        }
+    };
+
+
+
+
 
     useEffect(() => {
         const obtenerDatos = async () => {
@@ -44,6 +72,7 @@ const Usuarios = ({ navigation }) => {
 
                 const datos = await response.json();
                 setUsuariosFiltrados(datos); // Guarda los datos en el estado
+
             } catch (error) {
                 console.error('Error obteniendo los datos:', error);
                 Alert.alert('Error', 'Ocurrió un error al obtener los datos.');
@@ -55,13 +84,16 @@ const Usuarios = ({ navigation }) => {
         obtenerDatos();
     }, []); // Solo se ejecuta al montar el componente
 
-    const abrirModal = (rut) => {
+    const abrirModal = (rut, activo) => {
         setUsuarioSeleccionado(rut);
+        setUsuarioActivo(activo);
         setModalVisible(true);
     };
 
     const cerrarModal = () => {
         setModalVisible(false);
+        setUsuarioSeleccionado(null);
+        setUsuarioActivo(null);
     };
 
     const ModalDesactivarUsuario = () => (
@@ -73,13 +105,18 @@ const Usuarios = ({ navigation }) => {
         >
             <View style={styles.modalContainer}>
                 <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>Desea desactivar al usuario con rut {usuarioSeleccionado}?</Text>
+                    <Text style={styles.modalTitle}>Desea {usuarioActivo ? 'desactivar' : 'activar'} al usuario con rut {usuarioSeleccionado}?</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'space-around' }}>
-                        <TouchableOpacity onPress={cerrarModal}>
-                            <Text style={{ fontSize: 14, color: '#260202', textTransform: 'uppercase' }}>No</Text>
+                        <TouchableOpacity onPress={cerrarModal} style={{ backgroundColor: '#bf6565', padding: 10, borderRadius: 5, }}>
+                            <Text style={{ fontSize: 14, color: 'white', textTransform: 'uppercase' }}>No</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={cerrarModal}>
-                            <Text style={{ fontSize: 14, color: '#bf6565', textTransform: 'uppercase' }}>Si</Text>
+
+                        <TouchableOpacity onPress={() => {
+                            actualizarEstadoActivo(usuarioSeleccionado, usuarioActivo ? false : true);
+                            cerrarModal();
+                        }}
+                            style={{ backgroundColor: '#bf6565', padding: 10, borderRadius: 5, }}>
+                            <Text style={{ fontSize: 14, color: 'white', textTransform: 'uppercase' }}>Si</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -110,22 +147,25 @@ const Usuarios = ({ navigation }) => {
                 <Text style={styles.titleInfo}>{item.nombre}</Text>
                 <Text style={[styles.subtitleInfo, { textTransform: 'capitalize', fontSize: 10 }]}>{item.nombreRol}</Text>
                 <Text style={styles.subtitleInfo}>{item.rut}</Text>
+
             </View>
 
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', gap: 10, padding: 3, borderRadius: 3 }}>
-                <TouchableOpacity onPress={() => abrirModal(item.rut)}>
-                    <Image source={iconBasurero} style={styles.iconAcciones} />
+                <TouchableOpacity onPress={() => abrirModal(item.rut, item.activo)}>
+                    {item.activo ? <Image source={iconPausa} style={styles.iconAcciones} /> : <Image source={iconActivarUser} style={styles.iconAcciones} />}
                 </TouchableOpacity>
+
+
                 <TouchableOpacity onPress={() => navigation.navigate('VerUsuario', { RUT: item.rut, Nombre: item.nombre, Rol: item.nombreRol, Correo: item.email })}>
                     <Image source={iconGo} style={styles.iconAcciones} />
                 </TouchableOpacity>
             </View>
         </View>
     );
-    if (loading){
+    if (loading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{fontSize:18, color:'gray'}}>Cargando...</Text>
+                <Text style={{ fontSize: 18, color: 'gray' }}>Cargando...</Text>
             </View>
         );
     }
