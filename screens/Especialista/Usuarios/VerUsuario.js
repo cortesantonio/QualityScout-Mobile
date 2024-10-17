@@ -10,22 +10,15 @@ import { useRoute } from '@react-navigation/native';
 // iconos propios
 const iconUsuario = require('../../../assets/icons/iconUsuario.png')
 const iconContrasena = require('../../../assets/icons/iconContrasena.png')
-const VerUsuario = () => {
+
+
+const VerUsuario = ({ navigation }) => {
 
 
     const route = useRoute();
     const { RUT, Nombre, Rol, Correo } = route.params;
 
-    const DATA =
-    {
 
-        RUT: '20.967.892-6',
-        nombe: 'Antonio Cortes',
-        rol: 'Especialista',
-        correo: 'contacto@gmail.cl',
-
-
-    }
 
     return (
 
@@ -59,7 +52,7 @@ const VerUsuario = () => {
                     <Text style={styles.label}>Correo</Text>
                     <Text style={styles.dataInfo}>{Correo}</Text>
 
-                    <TouchableOpacity style={styles.buttonEditarContrasena}>
+                    <TouchableOpacity style={styles.buttonEditarContrasena} onPress={() => navigation.navigate('EditarUsuario', { RUT: RUT, Nombre: Nombre, Rol: Rol, Correo: Correo })}>
                         <Image source={iconContrasena} style={{ width: 20, height: 20, resizeMode: 'contain' }} />
                         <Text style={{ color: '#4b0404', textAlign: 'center', color: 'white' }}>Editar Contraseña</Text>
                     </TouchableOpacity>

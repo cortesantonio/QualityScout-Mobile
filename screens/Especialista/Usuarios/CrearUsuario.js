@@ -10,6 +10,9 @@ import { width } from '@fortawesome/free-solid-svg-icons/fa0';
 import { URL_API_BACKEND } from '../../../config';
 import { useEffect } from 'react';
 import { React } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 const iconAdd = require('../../../assets/icons/iconAdd.png')
 
 const CrearUsuario = ({ navigation }) => {
@@ -51,15 +54,21 @@ const CrearUsuario = ({ navigation }) => {
 
 
     const EnviarUsuario = async () => {
+        const token = await AsyncStorage.getItem('userToken');
         const UserToSend = { ...Usuario, RolId: value };
         if (UserToSend.Rut == '' || UserToSend.Nombre == '' || UserToSend.Email == '' || UserToSend.Password == '' || UserToSend.RolId == null) {
             Alert.alert('Campos incompletos', 'Por favor complete todos los campos')
+        } if (token == null){
+            alert('No se encontro token, no se pudo crear el usuario.')
+            return;
         }
         try {
             const response = await fetch(`${URL_API_BACKEND}/api/authapi/CreateUsuario`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+
                 },
                 body: JSON.stringify({
                     Nombre: UserToSend.Nombre,
@@ -72,6 +81,7 @@ const CrearUsuario = ({ navigation }) => {
             if (response.ok) {
                 Alert.alert('Usuario Creado', 'Usuario creado correctamente.');
                 navigation.navigate('Usuarios');
+
             } else {
                 const errorData = await response.json();
                 Alert.alert('Error al crear usuario', errorData.message);

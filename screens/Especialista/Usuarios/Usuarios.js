@@ -26,17 +26,71 @@ const Usuarios = ({ navigation }) => {
     const [loading, setLoading] = useState(true); // Estado para manejar la carga
 
 
+    const [DATA, setDATA] = useState('');
+
+
+
+
+
+    const obtenerDatos = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (token == null) {
+                alert('Token de autorización no encontrado.');
+                return;
+            }
+            const response = await fetch(`${URL_API_BACKEND}/api/UsuariosApi`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+
+            setDATA(await response.json())
+
+        } catch (error) {
+            console.error('Error obteniendo los datos:', error);
+            alert( 'Ocurrió un error al obtener los datos.');
+        } finally {
+            setLoading(false); // Cambia el estado de carga al final
+        }
+    };
+
+
+
+    useEffect(() => {
+        obtenerDatos(); // Llama a la función al montar el componente
+    }, []); // Solo se ejecuta al montar el componente
+
+
+
     const actualizarEstadoActivo = async (idUsuario) => {
+
+        const token = await AsyncStorage.getItem('userToken');
+
+        if (token == null){
+            alert('No se encontro token, no se pudo crear el usuario.')
+            return;
+        }
         try {
             const response = await fetch(`${URL_API_BACKEND}/api/UsuariosApi/UpdateActivo/${idUsuario}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+
                 },
             });
 
             if (response.ok) {
                 alert('El estado del usuario ha sido actualizado correctamente.');
+                obtenerDatos()
+
             } else {
                 alert('Hubo un problema al actualizar el estado del usuario.');
             }
@@ -45,44 +99,6 @@ const Usuarios = ({ navigation }) => {
             alert('Error', 'Ocurrió un error al intentar actualizar el estado del usuario.');
         }
     };
-
-
-
-
-
-    useEffect(() => {
-        const obtenerDatos = async () => {
-            try {
-                const token = await AsyncStorage.getItem('userToken');
-                if (!token) {
-                    Alert.alert('Error', 'Token de autorización no encontrado.');
-                    return;
-                }
-                const response = await fetch(`${URL_API_BACKEND}/api/UsuariosApi`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Error en la solicitud');
-                }
-
-                const datos = await response.json();
-                setUsuariosFiltrados(datos); // Guarda los datos en el estado
-
-            } catch (error) {
-                console.error('Error obteniendo los datos:', error);
-                Alert.alert('Error', 'Ocurrió un error al obtener los datos.');
-            } finally {
-                setLoading(false); // Cambia el estado de carga al final
-            }
-        };
-
-        obtenerDatos();
-    }, []); // Solo se ejecuta al montar el componente
 
     const abrirModal = (rut, activo) => {
         setUsuarioSeleccionado(rut);
@@ -124,12 +140,17 @@ const Usuarios = ({ navigation }) => {
         </Modal>
     );
 
+
+    useEffect(() => {
+        setUsuariosFiltrados(DATA); // Inicialmente muestra todos los datos
+    }, [DATA]); // Se ejecuta cuando los datos cambian
+
     const handleBuscar = (text) => {
         setBusqueda(text);
         if (text) {
             const filtrados = DATA.filter(item =>
-                item.nombe.toLowerCase().includes(text.toLowerCase()) ||
-                item.RUT.includes(text)
+                item.nombre.toLowerCase().includes(text.toLowerCase()) ||
+                item.rut.includes(text)
             );
             setUsuariosFiltrados(filtrados);
         } else {
@@ -201,8 +222,8 @@ const Usuarios = ({ navigation }) => {
                     <View style={styles.containerProductos}>
                         <FlatList
                             style={styles.flatList}
-                            data={usuariosFiltrados}
-                            keyExtractor={item => item.id}
+                            data={usuariosFiltrados}  // Cambia de DATA a usuariosFiltrados
+                            keyExtractor={item => item.id.toString()}  // Asegúrate de que el ID sea una cadena si es necesario
                             renderItem={renderItem}
                         />
                     </View>
