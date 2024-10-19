@@ -72,7 +72,7 @@ const Nav = ({ navigate }) => {
                 </View>
 
                 <Pressable style={{ width: 35, height: 35, backgroundColor: 'white', borderRadius: 50, display: 'flex', justifyContent: 'center', alignItems: 'center' }} onPress={handleLogout}>
-                    <Image source={require('../assets/icons/settings.png')} style={{ width: 25, height: 25 }} />
+                    <Image source={require('../assets/icons/iconLogout.png')} style={{ width: 20, height: 20, resizeMode: 'contain' }} />
                 </Pressable>
             </View>
         </View>
@@ -106,7 +106,6 @@ const Footer = () => {
                 <Image source={iconUsuarios} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Usuarios</Text>
             </Pressable>
-
             <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Home')}>
                 <Image source={require('../assets/icons/home.png')} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Inicio</Text>

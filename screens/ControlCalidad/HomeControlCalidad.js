@@ -2,7 +2,7 @@ import { Dimensions, StyleSheet, Text, View, Image, Pressable, ScrollView } from
 import React from 'react';
 import { PieChart } from 'react-native-svg-charts';
 import { Text as SvgText } from 'react-native-svg';
-
+import { Nav, Footer } from '../../components/shared';
 
 // iconos propios 
 const iconDashboard = require('../../assets/icons/iconDashboard.png')
@@ -84,130 +84,137 @@ const HomeControlCalidad = () => {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-            <View style={styles.containerHomeAdmin}>
+        <>
+            <Nav />
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <View style={styles.containerHomeAdmin}>
 
-                {/* Accesos Rapidos */}
+                    {/* Accesos Rapidos */}
 
-                <Text style={{ fontSize: 18, }}>Accesos Rapidos.</Text>
-                <View style={styles.ContainerAccesosRapidos} >
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconBuscador} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                    <Text style={{ fontSize: 18, }}>Accesos Rapidos.</Text>
+                    <View style={styles.ContainerAccesosRapidos} >
+                        <Pressable style={styles.PressableCard}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconBuscador} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text>Buscador</Text>
+                        </Pressable>
+                        <Pressable style={styles.PressableCard}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconControles} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text>Controles</Text>
+                        </Pressable>
+
+                        <Pressable style={styles.PressableCard}>
+                            <View style={styles.IconBackground}>
+                                <Image source={iconProductos} style={{ width: 50, height: 50 }} resizeMode='contain' />
+                            </View>
+                            <Text>Productos</Text>
+                        </Pressable>
+
+                    </View >
+
+                    {/* Indicadores de rendimientos */}
+                    <Text style={{ fontSize: 18, }}>Estado Actual.</Text>
+                    <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+
+                        {/* Estadisticas */}
+                        <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                <View style={{ backgroundColor: '#f25757', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
+                                <Text>Aprobado</Text>
+                            </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                <View style={{ backgroundColor: '#ed8d8d', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
+                                <Text>Reprocesos</Text>
+                            </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                                <View style={{ backgroundColor: '#260202', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
+                                <Text>Rechazados</Text>
+                            </View>
                         </View>
-                        <Text>Buscador</Text>
-                    </Pressable>
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconControles} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text>Controles</Text>
-                    </Pressable>
 
-                    <Pressable style={styles.PressableCard}>
-                        <View style={styles.IconBackground}>
-                            <Image source={iconProductos} style={{ width: 50, height: 50 }} resizeMode='contain' />
-                        </View>
-                        <Text>Productos</Text>
-                    </Pressable>
+                        <PieChart
+                            style={{ width: '100%', height: 200 }}
+                            valueAccessor={({ item }) => item.amount}
+                            data={data}
+                            spacing={0}
+                            outerRadius={'85%'}
 
+                        >
+                            <Labels />
+                        </PieChart>
+
+
+                        <View style={styles.containerCard}>
+
+
+                            <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
+                                <Text style={[styles.tituloCard, { color: '#260202' }]}> Controles Aprobados </Text>
+                                <Text style={styles.numeroCard}>16</Text>
+                                <Text style={styles.porcentajeCard} >%</Text>
+                                <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
+                                <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
+                            </View>
+
+                            <View style={[styles.CardEstadisticas, { backgroundColor: '#260202' }]}>
+                                <Text style={[styles.tituloCard, { color: 'white' }]}> Controles Rechazados </Text>
+                                <Text style={styles.numeroCard}>5</Text>
+                                <Text style={styles.porcentajeCard} >%</Text>
+                                <Image source={iconBajada} style={styles.IconFlechaEstadistica} resizeMode='contain' />
+                                <Text style={[styles.indicadorCard, { color: 'red', }]}> -</Text>
+                            </View>
+
+                            <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
+                                <Text style={[styles.tituloCard, { color: '#260202' }]}> Reprocesos </Text>
+                                <Text style={styles.numeroCard}>8</Text>
+                                <Text style={styles.porcentajeCard} >%</Text>
+                                <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
+                                <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
+                            </View>
+
+                        </View>
+                        <View style={styles.SubcontainerCard}>
+                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
+                                <Text style={[styles.SubtituloCard, { color: 'white' }]}> Nuevos Productos </Text>
+                                <Text style={styles.SubnumeroCard}>8</Text>
+                            </View>
+                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
+                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Actualizaciones de prod. </Text>
+                                <Text style={styles.SubnumeroCard}>12</Text>
+                            </View>
+
+                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#260202' }]}>
+                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Prod. Eliminados </Text>
+                                <Text style={styles.SubnumeroCard}>0</Text>
+                            </View>
+                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#260202' }]}>
+                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Rechazos de Control </Text>
+                                <Text style={styles.SubnumeroCard}>16</Text>
+                            </View>
+
+                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
+                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Nuevos Reprocesos </Text>
+                                <Text style={styles.SubnumeroCard}>8</Text>
+                            </View>
+                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
+                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Nuevos Controles </Text>
+                                <Text style={styles.SubnumeroCard}>12</Text>
+                            </View>
+
+                        </View>
+
+
+
+                    </View>
                 </View >
-
-                {/* Indicadores de rendimientos */}
-                <Text style={{ fontSize: 18, }}>Estado Actual.</Text>
-                <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-
-                    {/* Estadisticas */}
-                    <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
-                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ backgroundColor: '#f25757', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                            <Text>Aprobado</Text>
-                        </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ backgroundColor: '#ed8d8d', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                            <Text>Reprocesos</Text>
-                        </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <View style={{ backgroundColor: '#260202', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                            <Text>Rechazados</Text>
-                        </View>
-                    </View>
-
-                    <PieChart
-                        style={{ width: '100%', height: 200 }}
-                        valueAccessor={({ item }) => item.amount}
-                        data={data}
-                        spacing={0}
-                        outerRadius={'85%'}
-
-                    >
-                        <Labels />
-                    </PieChart>
-
-
-                    <View style={styles.containerCard}>
-
-
-                        <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
-                            <Text style={[styles.tituloCard, { color: '#260202' }]}> Controles Aprobados </Text>
-                            <Text style={styles.numeroCard}>16</Text>
-                            <Text style={styles.porcentajeCard} >%</Text>
-                            <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
-                            <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
-                        </View>
-
-                        <View style={[styles.CardEstadisticas, { backgroundColor: '#260202' }]}>
-                            <Text style={[styles.tituloCard, { color: 'white' }]}> Controles Rechazados </Text>
-                            <Text style={styles.numeroCard}>5</Text>
-                            <Text style={styles.porcentajeCard} >%</Text>
-                            <Image source={iconBajada} style={styles.IconFlechaEstadistica} resizeMode='contain' />
-                            <Text style={[styles.indicadorCard, { color: 'red', }]}> -</Text>
-                        </View>
-
-                        <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
-                            <Text style={[styles.tituloCard, { color: '#260202' }]}> Reprocesos </Text>
-                            <Text style={styles.numeroCard}>8</Text>
-                            <Text style={styles.porcentajeCard} >%</Text>
-                            <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
-                            <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
-                        </View>
-
-                    </View>
-                    <View style={styles.SubcontainerCard}>
-                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
-                            <Text style={[styles.SubtituloCard, { color: 'white' }]}> Nuevos Productos </Text>
-                            <Text style={styles.SubnumeroCard}>8</Text>
-                        </View>
-                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
-                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Actualizaciones de prod. </Text>
-                            <Text style={styles.SubnumeroCard}>12</Text>
-                        </View>
-
-                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#260202' }]}>
-                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Prod. Eliminados </Text>
-                            <Text style={styles.SubnumeroCard}>0</Text>
-                        </View>
-                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#260202' }]}>
-                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Rechazos de Control </Text>
-                            <Text style={styles.SubnumeroCard}>16</Text>
-                        </View>
-
-                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
-                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Nuevos Reprocesos </Text>
-                            <Text style={styles.SubnumeroCard}>8</Text>
-                        </View>
-                        <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
-                            <Text style={[styles.SubtituloCard, { color: 'white' }]}>Nuevos Controles </Text>
-                            <Text style={styles.SubnumeroCard}>12</Text>
-                        </View>
-
-                    </View>
+            </ScrollView >
+            <Footer />
+        </>
 
 
 
-                </View>
-            </View >
-        </ScrollView >
     );
 };
 

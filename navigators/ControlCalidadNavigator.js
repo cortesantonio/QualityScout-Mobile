@@ -2,10 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 
-import HomeEspecialista from '../screens/Especialista/HomeEspecialista';
-
-import Informes from '../screens/Especialista/Informes/Informes';
-import VerInforme from "../screens/Especialista/Informes/VerInforme"
+import HomeControlCalidad from '../screens/ControlCalidad/HomeControlCalidad';
 
 import VerUsuario from '../screens/Especialista/Usuarios/VerUsuario';
 import EditarUsuario from '../screens/Especialista/Usuarios/EditarUsuario';
@@ -23,10 +20,15 @@ const Stack = createNativeStackNavigator();
 
 export default function EspecialistaNavigator() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeEspecialista} />
-      <Stack.Screen name="Informes" component={Informes} />
-      <Stack.Screen name="VerInforme" component={VerInforme} />
+    <Stack.Navigator
+
+      screenOptions={{
+        headerShown: false,
+
+      }}
+    >
+      <Stack.Screen name="Home" component={HomeControlCalidad} />
+      {/*BORRAR INFORME */}
       <Stack.Screen name="Productos" component={Productos} />
       <Stack.Screen name="VerProducto" component={VerProducto} />
       <Stack.Screen name="Usuarios" component={VerUsuario} />

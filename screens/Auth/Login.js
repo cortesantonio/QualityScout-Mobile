@@ -55,7 +55,7 @@ const Login = ({ navigation }) => {
         const role = JSON.parse(usuario).Rol;
         if (role === 'Especialista') {
           navigation.navigate('Especialista');
-        } else if (role === 'ControlCalidad') {
+        } else if (role === 'Control de Calidad') {
           navigation.navigate('ControlCalidad');
         }
       } else {
@@ -125,7 +125,7 @@ const Login = ({ navigation }) => {
 
         if (result.NombreRol === 'Especialista') {
           navigation.navigate('Especialista');
-        } else if (role === 'ControlCalidad') {
+        } else if (result.NombreRol === 'Control de Calidad') {
           navigation.navigate('ControlCalidad');
         }
 
