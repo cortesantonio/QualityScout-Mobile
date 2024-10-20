@@ -1,10 +1,12 @@
 import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput } from 'react-native';
-import React ,{useState} from 'react';
+import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Footer, Nav } from '../../../components/shared';
 
 import { useRoute } from '@react-navigation/native';
 import { useEffect } from 'react';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // iconos propios 
 
@@ -19,7 +21,27 @@ const iconVino = require('../../../assets/icons/iconVino.png')
 const iconBasurero = require('../../../assets/icons/iconBasurero.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
 
-const Productos = ({navigation}) => {
+const Productos = ({ navigation }) => {
+
+    const [UserSession, setUserSession] = useState(null); // Estado para almacenar los datos del usuario
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const sessionUser = await AsyncStorage.getItem('userJson');
+            if (sessionUser) {
+                try {
+                    const userLogData = JSON.parse(sessionUser); // Convertir de nuevo a objeto
+                    setUserSession(userLogData.Rol); // Actualiza el estado con los datos del usuario
+                } catch (error) {
+                    console.error("Error al parsear el JSON:", error);
+                }
+            }
+        };
+
+        fetchUserData(); // Llama a la función para recuperar los datos
+    }, []);
+
+
     const DATA = [
         {
             cod: '12312323123',
@@ -33,7 +55,7 @@ const Productos = ({navigation}) => {
             reserva: 'Reserva',
             destino: 'Chile'
         },
-        
+
     ]
 
 
@@ -41,40 +63,49 @@ const Productos = ({navigation}) => {
     const [filteredData, setFilteredData] = useState(DATA);
 
     const route = useRoute();
-    
+
     const handleSearch = (text) => {
         setSearchText(text);
-        const filtered = DATA.filter(item => 
+        const filtered = DATA.filter(item =>
             item.cod.includes(text) || item.nombe.toLowerCase().includes(text.toLowerCase())
         );
         setFilteredData(filtered);
     };
     const { codigo } = route.params || {};
 
-   
+
     useEffect(() => {
         if (codigo) {
             handleSearch(codigo);  // Ejecutar la búsqueda con el código una vez
         }
-    }, [codigo]); 
-    
+    }, [codigo]);
+
 
     const renderItem = ({ item }) => (
         <View style={styles.item}>
-            <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7 }}>
-                <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={iconVino} />
-            </View>
+            <>
+                <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7 }}>
+                    <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={iconVino} />
+                </View>
 
-            <View style={styles.infoCard} >
-                <Text style={styles.titleInfo}>{item.nombe} - {item.reserva}</Text>
-                <Text style={styles.subtitleInfo}>VE: {item.cod}  Destino: {item.destino}</Text>
-            </View>
+                <View style={styles.infoCard} >
+                    <Text style={styles.titleInfo}>{item.nombe} - {item.reserva}</Text>
+                    <Text style={styles.subtitleInfo}>VE: {item.cod}  Destino: {item.destino}</Text>
+                </View>
+
+
+            </>
 
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', gap: 10, padding: 3, borderRadius: 3 }}>
-                <TouchableOpacity >
-                    <Image source={iconBasurero} style={styles.iconAcciones}></Image>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('VerProducto') } >
+
+                {UserSession === "Especialista" && (
+
+                    <TouchableOpacity >
+                        <Image source={iconBasurero} style={styles.iconAcciones}></Image>
+                    </TouchableOpacity>
+
+                )}
+                <TouchableOpacity onPress={() => navigation.navigate('VerProducto')} >
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
             </View>
@@ -89,9 +120,9 @@ const Productos = ({navigation}) => {
 
                 <View style={styles.buscador}>
                     <Image source={iconLupa} style={styles.iconLupa} ></Image>
-                    <TextInput 
-                        style={styles.inputBuscador} 
-                        placeholder='Ingresa codigo o nombre del producto' 
+                    <TextInput
+                        style={styles.inputBuscador}
+                        placeholder='Ingresa codigo o nombre del producto'
                         value={searchText}
                         onChangeText={handleSearch}  // Actualiza el estado cuando el usuario escribe
                     />
@@ -102,11 +133,12 @@ const Productos = ({navigation}) => {
                         <Text style={styles.botonText}>Abrir Escaner</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.TouchableBoton} onPress={() => navigation.navigate('CrearProducto')}>
-                        <Image source={iconAdd} style={styles.iconsBotones} ></Image>
-                        <Text style={styles.botonText}>Añadir Productos</Text>
-                    </TouchableOpacity>
-
+                    {UserSession === "Especialista" && (
+                        <TouchableOpacity style={styles.TouchableBoton} onPress={() => navigation.navigate('CrearProducto')}>
+                            <Image source={iconAdd} style={styles.iconsBotones} ></Image>
+                            <Text style={styles.botonText}>Añadir Productos</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
                 <View>
                     {/*encabezado de la lista*/}

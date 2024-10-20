@@ -12,7 +12,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { URL_API_BACKEND } from '../../config';
 
-
 // Clave secreta fija y vector de inicialización (IV) (deben ser de longitud adecuada)
 const secretKey = "E93{P254sNRJy2XG"; // Debe tener 16, 24 o 32 bytes
 const iv = 'E93{P254sNRJy2XG'; // Debe ser de 16 bytes
@@ -32,13 +31,7 @@ export const encryptText = (text) => {
 const QualityScoutLogo = require('../../assets/images/QualityScoutLogo.png');
 const Uvas = require('../../assets/images/Uvas.jpg');
 
-
-
-
 const Login = ({ navigation }) => {
-
-
-
   // Estado para controlar si se muestra la pantalla de inicio o el formulario
   const [isFormVisible, setIsFormVisible] = useState(false);
 
@@ -47,12 +40,14 @@ const Login = ({ navigation }) => {
 
   // Función para manejar el botón de acceso
   const handleAccessPress = async () => {
+
     const usuarioToken = await AsyncStorage.getItem('userToken');
     const usuario = await AsyncStorage.getItem('userJson');
-
+    console.log(usuarioToken, usuario);
     try {
       if (usuarioToken && usuario) {
         const role = JSON.parse(usuario).Rol;
+        console.log(role);
         if (role === 'Especialista') {
           navigation.navigate('Especialista');
         } else if (role === 'Control de Calidad') {
@@ -69,10 +64,7 @@ const Login = ({ navigation }) => {
 
     }
 
-
-
   };
-
 
   const [rut, setRut] = useState('');
   const [password, setPassword] = useState('');
@@ -114,12 +106,12 @@ const Login = ({ navigation }) => {
           Rol: result.NombreRol,
           Activo: result.Activo
         })
-        
+
         if (result.Activo === false) {
           Alert.alert('Usuario Inactivo', 'Su usuario no se encuentra activo en el sistema.');
           return;
         }
-        
+
         AsyncStorage.setItem('userToken', result.Token);
         AsyncStorage.setItem('userJson', User);
 
@@ -128,10 +120,6 @@ const Login = ({ navigation }) => {
         } else if (result.NombreRol === 'Control de Calidad') {
           navigation.navigate('ControlCalidad');
         }
-
-
-
-
 
       } else {
         const error = await response.text();

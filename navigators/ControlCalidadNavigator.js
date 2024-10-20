@@ -14,7 +14,9 @@ import Buscador from '../screens/Shared/Buscador'
 
 import Controles from '../screens/Shared/Controles';
 import ListadoControles from '../screens/Shared/ListadoControles';
-
+import CrearControl from '../screens/Shared/CrearControl';
+import EditarControl from '../screens/Shared/EditarControl';
+import VerControl from '../screens/Shared/VerControl';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,11 +33,17 @@ export default function EspecialistaNavigator() {
       {/*BORRAR INFORME */}
       <Stack.Screen name="Productos" component={Productos} />
       <Stack.Screen name="VerProducto" component={VerProducto} />
-      <Stack.Screen name="Usuarios" component={VerUsuario} />
+      <Stack.Screen name="VerUsuario" component={VerUsuario} />
       <Stack.Screen name="EditarUsuario" component={EditarUsuario} />
       <Stack.Screen name="Buscador" component={Buscador} />
+
       <Stack.Screen name="Controles" component={Controles} />
+      
       <Stack.Screen name="ListadoControles" component={ListadoControles} />
+      <Stack.Screen name="CrearControl" component={CrearControl} />
+      <Stack.Screen name="EditarControl" component={EditarControl} />
+      <Stack.Screen name="VerControl" component={VerControl} /> 
+
     </Stack.Navigator>
   );
 }

@@ -108,7 +108,7 @@ const EditarUsuario = ({ navigation }) => {
                             <Text style={{ textAlign: 'center', color: 'white' }}>Guardar Cambios</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.buttonEditarContrasena, { backgroundColor: 'white' }]}>
+                        <TouchableOpacity style={[styles.buttonEditarContrasena, { backgroundColor: 'white' }]} onPress={() =>  navigation.goBack() } >
                             <Text style={{ color: 'black', textAlign: 'center', }}>Cancelar Cambios</Text>
                         </TouchableOpacity>
                     </View>

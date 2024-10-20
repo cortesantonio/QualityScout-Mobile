@@ -17,7 +17,7 @@ const iconBajada = require('../../assets/icons/flechaBajada.png')
 
 
 
-const HomeControlCalidad = () => {
+const HomeControlCalidad = ({ navigation }) => {
     const calculatePercentages = (data) => {
         const total = data.reduce((sum, item) => sum + item.amount, 0);
         return data.map(item => ({
@@ -25,7 +25,6 @@ const HomeControlCalidad = () => {
             percentage: ((item.amount / total) * 100).toFixed(2) // Calcula el porcentaje y lo formatea
         }));
     };
-    const screenWidth = Dimensions.get('window').width;
 
     const data = calculatePercentages([{
         key: 1,
@@ -93,21 +92,21 @@ const HomeControlCalidad = () => {
 
                     <Text style={{ fontSize: 18, }}>Accesos Rapidos.</Text>
                     <View style={styles.ContainerAccesosRapidos} >
-                        <Pressable style={styles.PressableCard}>
+                        <Pressable style={styles.PressableCard} onPress={() => navigation.navigate('Buscador')}>
                             <View style={styles.IconBackground}>
                                 <Image source={iconBuscador} style={{ width: 50, height: 50 }} resizeMode='contain' />
                             </View>
                             <Text>Buscador</Text>
                         </Pressable>
-                        <Pressable style={styles.PressableCard}>
+                        <Pressable style={styles.PressableCard} onPress={() => navigation.navigate('Controles')}>
                             <View style={styles.IconBackground}>
                                 <Image source={iconControles} style={{ width: 50, height: 50 }} resizeMode='contain' />
                             </View>
                             <Text>Controles</Text>
                         </Pressable>
 
-                        <Pressable style={styles.PressableCard}>
-                            <View style={styles.IconBackground}>
+                        <Pressable style={styles.PressableCard} onPress={ () => navigation.navigate('Productos')}>
+                            <View style={styles.IconBackground}  >
                                 <Image source={iconProductos} style={{ width: 50, height: 50 }} resizeMode='contain' />
                             </View>
                             <Text>Productos</Text>

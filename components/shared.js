@@ -4,7 +4,7 @@ import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
 import { useNavigation } from '@react-navigation/native';  // Importa el hook de navegación
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const UserP = require('../assets/images/UserExample.jpg');
+const UserP = require('../assets/icons/iconUsuario.png')
 // iconos propios 
 const iconDashboard = require('../assets/icons/iconDashboard.png')
 const iconUsuarios = require('../assets/icons/iconUsuarios.png')
@@ -63,7 +63,7 @@ const Nav = ({ navigate }) => {
         <View style={styles.Nav}>
             <View style={styles.containerNav}>
                 <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Image source={UserP} style={{ width: 50, height: 50, borderRadius: 50, marginRight: 10 }} />
+                    <Image source={UserP} style={{ width: 40, height: 40, borderRadius: 50, marginRight: 10 , resizeMode:"contain"}} />
                     <View>
                         <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>Bienvenido!</Text>
                         {/* Usa el nombre del usuario recuperado */}
@@ -80,9 +80,26 @@ const Nav = ({ navigate }) => {
 };
 
 export default Nav;
-
 const Footer = () => {
     const navigation = useNavigation();  // Usa el hook para obtener el objeto de navegación
+    const [UserSession, setUserSession] = useState(null); // Estado para almacenar los datos del usuario
+    const [user, setUser] = useState(null);
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const sessionUser = await AsyncStorage.getItem('userJson');
+            if (sessionUser) {
+                try {
+                    const userLogData = JSON.parse(sessionUser);
+                    setUser(userLogData);
+                    setUserSession(userLogData.Rol); // Actualiza el estado con los datos del usuario
+                } catch (error) {
+                    console.error("Error al parsear el JSON:", error);
+                }
+            }
+        };
+
+        fetchUserData(); // Llama a la función para recuperar los datos
+    }, []); // El efecto se ejecutará solo una vez al montar el componente    
 
     return (
         <View style={styles.Footer}>
@@ -90,10 +107,14 @@ const Footer = () => {
                 <Image source={iconBuscador} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Buscador</Text>
             </Pressable>
-            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Informes')}>
-                <Image source={iconInformes} style={styles.iconPressable}></Image>
-                <Text style={{ color: 'white', fontSize: 8 }}>Informes</Text>
-            </Pressable>
+            {UserSession === "Especialista" && (
+                <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Informes')}>
+                    <Image source={iconInformes} style={styles.iconPressable}></Image>
+                    <Text style={{ color: 'white', fontSize: 8 }}>Informes</Text>
+                </Pressable>
+
+            )}
+
             <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Productos')}>
                 <Image source={iconProductos} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Productos</Text>
@@ -102,16 +123,20 @@ const Footer = () => {
                 <Image source={iconControles} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Controles</Text>
             </Pressable>
-            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Usuarios')}>
-                <Image source={iconUsuarios} style={styles.iconPressable}></Image>
-                <Text style={{ color: 'white', fontSize: 8 }}>Usuarios</Text>
-            </Pressable>
+            {UserSession === "Especialista" && (
+
+                <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Usuarios')}>
+                    <Image source={iconUsuarios} style={styles.iconPressable}></Image>
+                    <Text style={{ color: 'white', fontSize: 8 }}>Usuarios</Text>
+                </Pressable>
+            )}
+
             <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Home')}>
                 <Image source={require('../assets/icons/home.png')} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Inicio</Text>
             </Pressable>
-            <Pressable style={styles.PressableFooter} >
-                <Image source={UserP} style={[styles.iconPressable, { borderRadius: 50 }]} resizeMode='cover' ></Image>
+            <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('VerUsuario', { RUT: user.Rut, Nombre: user.Nombre, Rol: user.Rol, Correo: user.Email })} >
+                <Image source={UserP} style={[styles.iconPressable, { resizeMode:'contain'}]}  ></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Perfil</Text>
             </Pressable>
         </View>
