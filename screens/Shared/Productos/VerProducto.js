@@ -1,7 +1,6 @@
-import { Dimensions, TouchableOpacity, StyleSheet, View, Text, Image, Button, Pressable, SafeAreaView, ScrollView, StatusBar, Modal } from 'react-native';
+import {  TouchableOpacity, StyleSheet, View, Text, Image, ScrollView,  } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
-import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
 import { useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,7 +34,9 @@ const VerProducto = ({ navigation }) => {
 
             const data = await response.json();
             setJsonProducto(data); // Almacena los datos en el estado
+            
             setIsLoading(false);
+            
 
         } catch (error) {
             console.error('Error obteniendo los datos:', error);
@@ -56,6 +57,7 @@ const VerProducto = ({ navigation }) => {
         );
     }
 
+    
 
     const actualizarEstadoActivo = async (id) => {
 
@@ -77,7 +79,7 @@ const VerProducto = ({ navigation }) => {
 
             if (response.ok) {
                 alert('El estado del producto ha sido actualizado correctamente.');
-
+                navigation.goBack()
             } else {
                 alert('Hubo un problema al actualizar el estado del producto.');
             }

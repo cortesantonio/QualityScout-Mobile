@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { URL_API_BACKEND } from '../../../config';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 
 // iconos propios 
@@ -21,8 +22,11 @@ const iconAdd = require('../../../assets/icons/iconAdd.png')
 const iconCamara = require('../../../assets/icons/iconCamara.png')
 
 const iconVino = require('../../../assets/icons/iconVino.png')
-const iconBasurero = require('../../../assets/icons/iconBasurero.png')
+const iconPausaWhite = require('../../../assets/icons/iconPausaWhite.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
+const iconCheck = require('../../../assets/icons/iconCheck.png')
+
+const iconReload = require('../../../assets/icons/iconReload.png')
 
 const Productos = ({ navigation }) => {
 
@@ -96,6 +100,48 @@ const Productos = ({ navigation }) => {
         setFilteredData(filtered);
     };
 
+
+
+
+
+    const actualizarEstadoActivo = async (id) => {
+
+        const token = await AsyncStorage.getItem('userToken');
+
+        if (token == null) {
+            alert('No se encontro token, no se pudo crear el producto.')
+            return;
+        }
+        try {
+            const response = await fetch(`${URL_API_BACKEND}/api/ProductosApi/UpdateActivo/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+
+                },
+            });
+
+            if (response.ok) {
+                alert('El estado del producto ha sido actualizado correctamente.');
+                obtenerDatos()
+
+            } else {
+                alert('Hubo un problema al actualizar el estado del producto.');
+            }
+        } catch (error) {
+            console.error('Error al actualizar el estado del producto:', error);
+            alert('Error', 'Ocurrió un error al intentar actualizar el estado del producto.');
+        }
+    };
+
+
+
+
+
+
+
+
     // Renderiza cada elemento de la lista
     const renderItem = ({ item }) => (
         <View style={styles.item}>
@@ -110,15 +156,18 @@ const Productos = ({ navigation }) => {
                 </View>
             </>
 
-            <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', gap: 10, padding: 3, borderRadius: 3 }}>
+            <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', gap: 10, padding: 5, borderRadius: 3 }}>
                 {UserSession === "Especialista" && (
-                    <TouchableOpacity>
-                        <Image source={iconBasurero} style={styles.iconAcciones}></Image>
+
+                    <TouchableOpacity onPress={() => { actualizarEstadoActivo(item.id) }}>
+                        {item.activo ? <Image source={iconPausaWhite} style={styles.iconAcciones} /> : <Image source={iconCheck} style={styles.iconAcciones} />}
                     </TouchableOpacity>
                 )}
-                <TouchableOpacity onPress={() => navigation.navigate('VerProducto', {id: item.id})}>
+
+                {item.activo ? <TouchableOpacity onPress={() => navigation.navigate('VerProducto', { id: item.id })}>
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
-                </TouchableOpacity>
+                </TouchableOpacity> : <></>}
+
             </View>
         </View>
     );
@@ -127,7 +176,10 @@ const Productos = ({ navigation }) => {
         <>
             <Nav />
             <View style={styles.container}>
-                <Text style={styles.TituloPantalla}>Gestión de productos.</Text>
+                <Text style={styles.TituloPantalla}>Gestión de productos. <TouchableOpacity style={{backgroundColor:'#4b0404' , padding: 3, borderRadius:5}} onPress={() => { obtenerDatos() }}>
+                    <Image source={iconReload} style={{width:10, height:10}}></Image>
+                </TouchableOpacity></Text>
+
 
                 <View style={styles.buscador}>
                     <Image source={iconLupa} style={styles.iconLupa}></Image>
