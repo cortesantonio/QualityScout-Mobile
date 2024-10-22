@@ -8,6 +8,9 @@ import { useEffect } from 'react';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { URL_API_BACKEND } from '../../../config';
+
+
 // iconos propios 
 
 const iconFiltro = require('../../../assets/icons/iconFiltro.png')
@@ -24,10 +27,15 @@ const iconGo = require('../../../assets/icons/iconGo.png')
 const Productos = ({ navigation }) => {
 
     const [UserSession, setUserSession] = useState(null); // Estado para almacenar los datos del usuario
+    const [DATA, setDATA] = useState([]); // Inicializa el estado de DATA como un array vacío
+    const [searchText, setSearchText] = useState('');
+    const [filteredData, setFilteredData] = useState([]); // Inicializa filteredData como un array vacío
 
+    // Efecto para obtener la sesión de usuario desde AsyncStorage
     useEffect(() => {
         const fetchUserData = async () => {
             const sessionUser = await AsyncStorage.getItem('userJson');
+
             if (sessionUser) {
                 try {
                     const userLogData = JSON.parse(sessionUser); // Convertir de nuevo a objeto
@@ -41,46 +49,54 @@ const Productos = ({ navigation }) => {
         fetchUserData(); // Llama a la función para recuperar los datos
     }, []);
 
+    // Función para obtener los datos de productos
+    const obtenerDatos = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (token == null) {
+                alert('Token de autorización no encontrado.');
+                return;
+            }
+            const response = await fetch(`${URL_API_BACKEND}/api/ProductosApi`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
 
-    const DATA = [
-        {
-            cod: '12312323123',
-            nombe: 'Sauvignon 1234k',
-            reserva: 'Reserva Especial',
-            destino: 'Chile'
-        },
-        {
-            cod: '444444',
-            nombe: 'Sauvignonk',
-            reserva: 'Reserva',
-            destino: 'Chile'
-        },
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
 
-    ]
+            const data = await response.json();
+            setDATA(data); // Almacena los datos en el estado DATA
+        } catch (error) {
+            console.error('Error obteniendo los datos:', error);
+            alert('Ocurrió un error al obtener los datos.');
+        }
+    };
 
+    // Efecto para obtener los datos al montar el componente
+    useEffect(() => {
+        obtenerDatos(); // Llama a la función al montar el componente
+    }, []); // Solo se ejecuta al montar el componente
 
-    const [searchText, setSearchText] = useState('');
-    const [filteredData, setFilteredData] = useState(DATA);
+    // Efecto para actualizar `filteredData` cuando cambie `DATA`
+    useEffect(() => {
+        setFilteredData(DATA);  // Actualiza filteredData cuando DATA cambia
+    }, [DATA]);
 
-    const route = useRoute();
-
+    // Manejo de la búsqueda
     const handleSearch = (text) => {
         setSearchText(text);
         const filtered = DATA.filter(item =>
-            item.cod.includes(text) || item.nombe.toLowerCase().includes(text.toLowerCase())
+            item.cod.includes(text) || item.nombre.toLowerCase().includes(text.toLowerCase())
         );
         setFilteredData(filtered);
     };
-    const { codigo } = route.params || {};
 
-
-    useEffect(() => {
-        if (codigo) {
-            handleSearch(codigo);  // Ejecutar la búsqueda con el código una vez
-        }
-    }, [codigo]);
-
-
+    // Renderiza cada elemento de la lista
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <>
@@ -89,23 +105,18 @@ const Productos = ({ navigation }) => {
                 </View>
 
                 <View style={styles.infoCard} >
-                    <Text style={styles.titleInfo}>{item.nombe} - {item.reserva}</Text>
-                    <Text style={styles.subtitleInfo}>VE: {item.cod}  Destino: {item.destino}</Text>
+                    <Text style={styles.titleInfo}>{item.nombre} - {item.informacionQuimica.cepa}</Text>
+                    <Text style={styles.subtitleInfo}>Cod. Barra: {item.codigoBarra}  Destino: {item.paisDestino} </Text>
                 </View>
-
-
             </>
 
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', gap: 10, padding: 3, borderRadius: 3 }}>
-
                 {UserSession === "Especialista" && (
-
-                    <TouchableOpacity >
+                    <TouchableOpacity>
                         <Image source={iconBasurero} style={styles.iconAcciones}></Image>
                     </TouchableOpacity>
-
                 )}
-                <TouchableOpacity onPress={() => navigation.navigate('VerProducto')} >
+                <TouchableOpacity onPress={() => navigation.navigate('VerProducto', {id: item.id})}>
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
             </View>
@@ -119,7 +130,7 @@ const Productos = ({ navigation }) => {
                 <Text style={styles.TituloPantalla}>Gestión de productos.</Text>
 
                 <View style={styles.buscador}>
-                    <Image source={iconLupa} style={styles.iconLupa} ></Image>
+                    <Image source={iconLupa} style={styles.iconLupa}></Image>
                     <TextInput
                         style={styles.inputBuscador}
                         placeholder='Ingresa codigo o nombre del producto'
@@ -128,58 +139,49 @@ const Productos = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.contenedorBotones}>
-                    <TouchableOpacity style={styles.TouchableBoton} onPress={() => navigation.navigate('Buscador')} >
+                    <TouchableOpacity style={styles.TouchableBoton} onPress={() => navigation.navigate('Buscador')}>
                         <Image source={iconCamara} style={styles.iconsBotones}></Image>
                         <Text style={styles.botonText}>Abrir Escaner</Text>
                     </TouchableOpacity>
 
                     {UserSession === "Especialista" && (
                         <TouchableOpacity style={styles.TouchableBoton} onPress={() => navigation.navigate('CrearProducto')}>
-                            <Image source={iconAdd} style={styles.iconsBotones} ></Image>
+                            <Image source={iconAdd} style={styles.iconsBotones}></Image>
                             <Text style={styles.botonText}>Añadir Productos</Text>
                         </TouchableOpacity>
                     )}
                 </View>
+
                 <View>
-                    {/*encabezado de la lista*/}
+                    {/* Encabezado de la lista */}
                     <View style={styles.encabezado}>
                         <Text style={{ fontSize: 18 }}>Registros</Text>
                         <View style={styles.filtros}>
                             <TouchableOpacity style={styles.TouchableBotonLista}>
                                 <Image source={iconFiltro} style={styles.iconsBotones}></Image>
-                                <Text>
-                                    Filtro
-                                </Text>
-
+                                <Text>Filtro</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.TouchableBotonLista}>
                                 <Image source={iconOrden} style={styles.iconsBotones}></Image>
-
-                                <Text>
-                                    Ordenar
-                                </Text>
+                                <Text>Ordenar</Text>
                             </TouchableOpacity>
-
                         </View>
                     </View>
 
-                    {/* cuerpo de la lista*/}
+                    {/* Cuerpo de la lista */}
                     <View style={styles.containerProductos}>
                         <FlatList
                             style={styles.flatList}
                             data={filteredData}
-                            keyExtractor={item => item.cod}
+                            keyExtractor={item => item.codigoBarra}
                             renderItem={renderItem}
                         />
                     </View>
                 </View>
-
             </View>
 
             <Footer />
         </>
-
-
     );
 };
 
@@ -288,7 +290,7 @@ const styles = StyleSheet.create({
     ,
     infoCard: {
         width: '60%'
-    }, titleInfo: { fontSize: 16 }
+    }, titleInfo: { fontSize: 16, textTransform: 'capitalize' }
     , subtitleInfo: {
         fontSize: 12,
         color: 'gray'

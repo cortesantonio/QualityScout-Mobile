@@ -1,105 +1,183 @@
-import { Dimensions, TouchableOpacity, StyleSheet, View, Text, Image, Button, Pressable, SafeAreaView, ScrollView, StatusBar, Modal} from 'react-native';
+import { Dimensions, TouchableOpacity, StyleSheet, View, Text, Image, Button, Pressable, SafeAreaView, ScrollView, StatusBar, Modal } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
+import { useRoute } from '@react-navigation/native';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { URL_API_BACKEND } from '../../../config';
 
+const VerProducto = ({ navigation }) => {
 
-const VerProducto = ({navigation}) => {
-    DATA = {
-        'id': 1,
-        "nombre_vino": "Gran Reserva Merlotx",
-        "cepa_vino": "Merlot",
-        "pais_origen": "Chile",
-        "pais_destino": "EE.UU.",
-        "fecha_cosecha": "2018-04-15",
-        "fecha_produccion": "2019-01-10",
-        "capacidad_ml": 750,
-        "grado_alcoholico": 13.5,
-        "azucar_gr": 1.2,
-        "sulfuros_mg_l": 35.0,
-        "densidad_g_ml": 0.995,
-        "tipo_capsula": "PVC",
-        "tipo_etiqueta": "Estándar",
-        "color_botella": "Verde",
-        "medalla": true,
-        "color_capsula": "Rojo",
-        "tipo_corcho": "Natural",
-        "tipo_botella": "Bordelesa",
-        "altura_botella_mm": 30,
-        "ancho_botella_mm": 8,
-        "unidad_medida_etiqueta": "cc",
-        "medida_etiqueta_corcho": 7,
-        "medida_etiqueta_base": 10,
-        "activo": true,
-        "fecha_registro": "2024-09-04 10:30:00",
-        "idioma": "Español",
-        "descripcion_capsula": "Cápsula de PVC color rojo"
+    const route = useRoute();
+    const { id } = route.params;
+    const [JsonProducto, setJsonProducto] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
 
+    const obtenerDatos = async (id) => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (token == null) {
+                alert('Token de autorización no encontrado.');
+                return;
+            }
+            const response = await fetch(`${URL_API_BACKEND}/api/ProductosApi/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+
+            const data = await response.json();
+            setJsonProducto(data); // Almacena los datos en el estado
+            setIsLoading(false);
+
+        } catch (error) {
+            console.error('Error obteniendo los datos:', error);
+            alert('Ocurrió un error al obtener los datos.');
+        }
+    };
+
+    // Efecto para obtener los datos al montar el componente
+    useEffect(() => {
+        obtenerDatos(id); // Llama a la función al montar el componente
+    }, [id]); // Solo se ejecuta al montar el componente
+
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: 'black' }}>Cargando...</Text>
+            </View>
+        );
     }
-    const VinoEjemplo = require('../../../assets/images/VinoEjemplo.jpg')
-    const iconEditarProducto = require('../../../assets/icons/editarProducto.png')
-    const iconPausa = require('../../../assets/icons/iconPausa.png')
-    const iconBuscador = require('../../../assets/icons/iconBuscador.png')
+
+
+    const actualizarEstadoActivo = async (id) => {
+
+        const token = await AsyncStorage.getItem('userToken');
+
+        if (token == null){
+            alert('No se encontro token, no se pudo crear el producto.')
+            return;
+        }
+        try {
+            const response = await fetch(`${URL_API_BACKEND}/api/ProductosApi/UpdateActivo/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+
+                },
+            });
+
+            if (response.ok) {
+                alert('El estado del producto ha sido actualizado correctamente.');
+
+            } else {
+                alert('Hubo un problema al actualizar el estado del producto.');
+            }
+        } catch (error) {
+            console.error('Error al actualizar el estado del producto:', error);
+            alert('Error', 'Ocurrió un error al intentar actualizar el estado del producto.');
+        }
+    };
+
+
+
+    const formatearFecha = (fechaIso, soloFecha) => {
+        const fecha = new Date(fechaIso);
+        const dia = fecha.getDate().toString().padStart(2, '0');
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+        const anio = fecha.getFullYear();
+        const horas = fecha.getHours().toString().padStart(2, '0');
+        const minutos = fecha.getMinutes().toString().padStart(2, '0');
+        const segundos = fecha.getSeconds().toString().padStart(2, '0');
+        if(soloFecha){
+            return `${dia}-${mes}-${anio}`;
+        }
+        
+        return `${dia}-${mes}-${anio} ${horas}:${minutos}:${segundos}`;
+
+
+        
+    };
+
+    const iconEditarProducto = require('../../../assets/icons/editarProducto.png');
+    const iconPausa = require('../../../assets/icons/iconPausa.png');
+    const iconBuscador = require('../../../assets/icons/iconBuscador.png');
+
+    let VinoImagen = ''
+    if (JsonProducto.urlImagen == null || JsonProducto.urlImagen == '' || JsonProducto.urlImagen == undefined) {
+        JsonProducto.urlImagen = require('../../../assets/images/VinoEjemplo.jpg');
+    } else {
+        VinoImagen = { uri: JsonProducto.urlImagen };
+    }
+
+
+
+
     return (
-
         <View style={styles.container}>
-
-
             <ScrollView style={styles.scroll}>
-                <Image source={VinoEjemplo} style={styles.image} />
+                <Image source={VinoImagen} style={styles.image} />
 
-                <View style={styles.containerInfo} >
-                    <View style={{ marginBottom: 20, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
+                <View style={styles.containerInfo}>
+                    <View style={{ marginBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View style={{ width: '75%' }}>
-                            <Text style={{ fontSize: 21, fontWeight: 'bold' }}>{DATA.nombre_vino}</Text>
-                            <Text style={{ fontSize: 10 }}>CODIGO: {DATA.id}</Text>
-                            <Text style={{ fontSize: 10 }}>COD. VE: {DATA.id}</Text>
-
+                            <Text style={{ fontSize: 21, fontWeight: 'bold', textTransform: 'capitalize' }}>{JsonProducto.nombre}</Text>
+                            <Text style={{ fontSize: 10 }}>CODIGO: {JsonProducto.codigoBarra}</Text>
+                            <Text style={{ fontSize: 10 }}>COD. VE: {JsonProducto.codigoVE}</Text>
+                            <Text style={{ fontSize: 10 }}>ENCARGADO: {JsonProducto.idUsuarios}</Text>
                         </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', gap: 10 }}>
-
-                            <TouchableOpacity style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <View style={{ flexDirection: 'row', gap: 10 }}>
+                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}>
                                 <Image source={iconEditarProducto} style={{ width: 20, height: 20 }} />
-                                <Text style={{ fontSize: 8, }}>EDITAR</Text>
+                                <Text style={{ fontSize: 8 }}>EDITAR</Text>
                             </TouchableOpacity>
-
-                            <TouchableOpacity style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={()=>{actualizarEstadoActivo(JsonProducto.id)}}>
                                 <Image source={iconPausa} style={{ width: 20, height: 20 }} />
-                                <Text style={{ fontSize: 8, }}>DESACTIVAR</Text>
+                                <Text style={{ fontSize: 8 }}>DESACTIVAR</Text>
                             </TouchableOpacity>
-
-
                         </View>
                     </View>
-                    <Text style={{ fontSize: 14 }}>Codigo VE: {DATA.id}</Text>
-                    <Text style={{ fontSize: 14 }}>Cepa: {DATA.cepa_vino}</Text>
-                    <Text style={{ fontSize: 14 }}>País de Origen: {DATA.pais_origen}</Text>
-                    <Text style={{ fontSize: 14 }}>País de Destino: {DATA.pais_destino}</Text>
-                    <Text style={{ fontSize: 14 }}>Fecha de Cosecha: {DATA.fecha_cosecha}</Text>
-                    <Text style={{ fontSize: 14 }}>Fecha de Producción: {DATA.fecha_produccion}</Text>
-                    <Text style={{ fontSize: 14 }}>Capacidad: {DATA.capacidad_ml} ml</Text>
-                    <Text style={{ fontSize: 14 }}>Grado Alcohólico: {DATA.grado_alcoholico}%</Text>
-                    <Text style={{ fontSize: 14 }}>Azúcar: {DATA.azucar_gr} g</Text>
-                    <Text style={{ fontSize: 14 }}>Sulfuros: {DATA.sulfuros_mg_l} mg/L</Text>
-                    <Text style={{ fontSize: 14 }}>Densidad: {DATA.densidad_g_ml} g/ml</Text>
-                    <Text style={{ fontSize: 14 }}>Tipo de Capsula: {DATA.tipo_capsula}</Text>
-                    <Text style={{ fontSize: 14 }}>Tipo de Etiqueta: {DATA.tipo_etiqueta}</Text>
-                    <Text style={{ fontSize: 14 }}>Color de la Botella: {DATA.color_botella}</Text>
-                    <Text style={{ fontSize: 14 }}>Medalla: {DATA.medalla ? 'Sí' : 'No'}</Text>
-                    <Text style={{ fontSize: 14 }}>Color de la Capsula: {DATA.color_capsula}</Text>
-                    <Text style={{ fontSize: 14 }}>Tipo de Corcho: {DATA.tipo_corcho}</Text>
-                    <Text style={{ fontSize: 14 }}>Tipo de Botella: {DATA.tipo_botella}</Text>
-                    <Text style={{ fontSize: 14 }}>Altura de la Botella: {DATA.altura_botella_mm} mm</Text>
-                    <Text style={{ fontSize: 14 }}>Ancho de la Botella: {DATA.ancho_botella_mm} mm</Text>
-                    <Text style={{ fontSize: 14 }}>Unidad de Medida de la Etiqueta: {DATA.unidad_medida_etiqueta}</Text>
-                    <Text style={{ fontSize: 14 }}>Medida de la Etiqueta (Corcho): {DATA.medida_etiqueta_corcho} {DATA.unidad_medida_etiqueta}</Text>
-                    <Text style={{ fontSize: 14 }}>Medida de la Etiqueta (Base): {DATA.medida_etiqueta_base} {DATA.unidad_medida_etiqueta}</Text>
-                    <Text style={{ fontSize: 14 }}>Fecha de Registro: {DATA.fecha_registro}</Text>
-                    <Text style={{ fontSize: 14 }}>Idioma: {DATA.idioma}</Text>
-                    <Text style={{ fontSize: 14 }}>Descripción de la Capsula: {DATA.descripcion_capsula}</Text>
+
+                    <Text style={[styles.textInfo, { fontWeight: 'bold', marginBottom: 5 }]}>Informacion Producto.</Text>
+                    <Text style={styles.textInfo}>Nombre: {JsonProducto.nombre}</Text>
+                    <Text style={styles.textInfo}>Pais Destino: {JsonProducto.paisDestino}</Text>
+                    <Text style={styles.textInfo}>Fecha Registro: {formatearFecha(JsonProducto.fechaRegistro)}</Text>
+                    <Text style={styles.textInfo}>Idioma: {JsonProducto.idioma}</Text>
+                    <Text style={styles.textInfo}>Unidad de Medida: {JsonProducto.unidadMedida}</Text>
+                    <Text style={styles.textInfo}>Descripcion de Capsula: {JsonProducto.descripcionCapsula}</Text>
+
+                    <Text style={[styles.textInfo, { fontWeight: 'bold', marginBottom: 5, marginTop: 20 }]}>Informacion Quimica del Producto.</Text>
+                    <Text style={styles.textInfo}>Cepa: {JsonProducto.informacionQuimica?.cepa}</Text>
+                    <Text style={styles.textInfo}>Azucar: {JsonProducto.informacionQuimica?.minAzucar} - {JsonProducto.informacionQuimica?.maxAzucar}</Text>
+                    <Text style={styles.textInfo}>Sulfuro: {JsonProducto.informacionQuimica?.minSulfuroso} - {JsonProducto.informacionQuimica?.maxSulfuroso}</Text>
+                    <Text style={styles.textInfo}>Densidad: {JsonProducto.informacionQuimica?.minDensidad} - {JsonProducto.informacionQuimica?.maxDensidad}</Text>
+                    <Text style={styles.textInfo}>Grados Alcoholicos: {JsonProducto.informacionQuimica?.minGradoAlcohol} - {JsonProducto.informacionQuimica?.maxGradoAlcohol}</Text>
+
+                    <Text style={[styles.textInfo, { fontWeight: 'bold', marginBottom: 5, marginTop: 20 }]}>Detalles del Producto.</Text>
+                    <Text style={styles.textInfo}>Capacidad: {JsonProducto.productoDetalles[0]?.capacidad}</Text>
+                    <Text style={styles.textInfo}>Tipo de Capsula: {JsonProducto.productoDetalles[0]?.tipoCapsula}</Text>
+                    <Text style={styles.textInfo}>Tipo de Etiqueta: {JsonProducto.productoDetalles[0]?.tipoEtiqueta}</Text>
+                    <Text style={styles.textInfo}>Color de Botella: {JsonProducto.productoDetalles[0]?.colorBotella}</Text>
+                    <Text style={styles.textInfo}>Medalla: {JsonProducto.productoDetalles[0]?.medalla ? <Text>Si</Text> : <Text>No</Text>}</Text>
+                    <Text style={styles.textInfo}>Color de Capsula: {JsonProducto.productoDetalles[0]?.colorCapsula}</Text>
+                    <Text style={styles.textInfo}>Tipo de Corcho: {JsonProducto.productoDetalles[0]?.tipoCorcho}</Text>
+                    <Text style={styles.textInfo}>Medida de Etiqueta a Boquete: {JsonProducto.productoDetalles[0]?.medidaEtiquetaABoquete}</Text>
+                    <Text style={styles.textInfo}>Medida de Etiqueta a Base: {JsonProducto.productoDetalles[0]?.medidaEtiquetaABase}</Text>
 
 
 
+                    <Text style={[styles.textInfo, { fontWeight: 'bold', marginBottom: 5, marginTop: 20 }]}>Historial del Producto.</Text>
+                    <Text style={styles.textInfo}>Fecha de Cosecha: {formatearFecha(JsonProducto.productoHistorial[0]?.fechaCosecha , true)}</Text>
+                    <Text style={styles.textInfo}>Fecha de Producción: {formatearFecha(JsonProducto.productoHistorial[0]?.fechaProduccion, true)}</Text>
+                    <Text style={styles.textInfo}>Fecha de Envasado: {formatearFecha(JsonProducto.productoHistorial[0]?.fechaEnvasado , true)}</Text>
 
                 </View>
             </ScrollView>
@@ -114,27 +192,17 @@ const VerProducto = ({navigation}) => {
                 </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.botonRealizarControl} onPress={() => navigation.navigate('CrearControl', {idProducto: DATA.id, codigo: DATA.id, nombre_vino : DATA.nombre_vino})}>  
-                <Text style={{ color: 'white', }}>
-                    REALIZAR CONTROL
-
-                </Text>
-
+            <TouchableOpacity style={styles.botonRealizarControl} onPress={() => navigation.navigate('CrearControl', { idProducto: JsonProducto.id, codigo: JsonProducto.codigoBarra, nombre_vino: JsonProducto.nombre })}>
+                <Text style={{ color: 'white' }}>REALIZAR CONTROL</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.botonBuscadorFlotante} >
-                <Image source={iconBuscador} style={{ width: 30, height: 30 }} resizeMode='contain' />
-
+            <TouchableOpacity style={styles.botonBuscadorFlotante} onPress={() => navigation.navigate('Buscador')}>
+                <Image source={iconBuscador} style={{ width: 30, height: 30 }} resizeMode="contain" />
             </TouchableOpacity>
-
-            
-
-
         </View>
+    );
+};
 
-
-    )
-}
 
 const styles = StyleSheet.create({
     container: {
@@ -202,6 +270,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 50
+    },
+    textInfo: {
+        fontSize: 14,
     }
 
 })
