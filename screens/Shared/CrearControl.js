@@ -4,113 +4,181 @@ import {
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RadioButton } from 'react-native-paper';
+import { URL_API_BACKEND } from '../../config';
 
-const CrearControl = ({navigation}) => {
 
-    const [producto, setProducto] = useState({
-        id: 1,
-        idProductos: 1,
-        linea: 'Tinto',
-        paisDestino: 'España',
-        comentario: 'Comentario de ejemplo',
-        tipodecontrol: 'Control de calidad',
-        fechaHoraPrimerControl: '',
-        estado: 'En proceso',
-        estadoFinal: 'Finalizado',
-        idUsuarios: 1,
-        fechaHoraControlFinal: '',
 
-    });
+const CrearControl = ({ navigation }) => {
+    const route = useRoute();
+    const { productoRecibido } = route.params;
 
     const iconRA = require('../../assets/icons/iconRA.png')
 
-    const VinoEjemplo = require('../../assets/images/VinoEjemplo.jpg')
+    let vinoImagen = ''
+    if (!productoRecibido.urlImagen) {
+        vinoImagen = require('../../assets/images/VinoEjemplo.jpg')
+    } else {
+        vinoImagen = { uri: productoRecibido.urlImagen }
+    }
 
-    const route = useRoute();
-    const { idProducto, codigo, nombre_vino } = route.params;
+    const [value, setValue] = React.useState('Rechazado'); // Estado inicial predeterminado
+    const [value2, setValue2] = React.useState('Reproceso');
 
-    const [value, setValue] = React.useState('first');
-    const [value2, setValue2] = React.useState('first');
+    const [user, setUser] = useState({});
+    const [control, setControl] = useState({
+        idProductos: productoRecibido.id,
+        linea: 'L-21',
+        paisDestino: productoRecibido.paisDestino,
+        comentario: 'predereminado',
+        tipodecontrol: 'Reproceso',  // Se puede asignar el valor adecuado basado en la selección
+        estado: 'Rechazado',
+        idUsuario: 1,  // Inicialmente null hasta que se cargue el usuario
+    });
+
+    const obtenerUsuario = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            const userJson = await AsyncStorage.getItem('userJson');
+            if (token == null) {
+                alert('Token de autorización no encontrado.');
+                return;
+            }
+            const user = JSON.parse(userJson);
+            setUser(user);
+        } catch (error) {
+            console.error('Error al obtener el usuario', error);
+        }
+    };
+
+    useEffect(() => {
+        obtenerUsuario();
+    }, []); // Se ejecuta solo una vez al montar el componente
+
+    const enviarControl = async () => {
+        const controlToSend = { ...control, idUsuario: user.Id };  // Aseguramos que idUsuario se asigna correctamente
+        const token = await AsyncStorage.getItem('userToken');
+        if (token == null) {
+            alert('No se encontro token, no se pudo crear el producto.');
+            return;
+        }
+        try {
+            const response = await fetch(`${URL_API_BACKEND}/api/ApiControles/CrearControl`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    idProducto: controlToSend.idProductos,
+                    Linea: controlToSend.linea,
+                    PaisDestino: controlToSend.paisDestino,
+                    Comentario: controlToSend.comentario,
+                    TipoDeControl: controlToSend.tipodecontrol,
+                    Estado: controlToSend.estado,
+                    idUsuario: controlToSend.idUsuario
+                }
+                ),
+            });
+            if (response.ok) {
+                alert('Control creado correctamente.');
+                navigation.navigate('Controles');
+            } else {
+                alert('Hubo un problema al crear el control.');
+            }
+        } catch (error) {
+            console.error('Error al crear el control:', error);
+            alert('Error', 'Ocurrió un error al intentar crear el control.');
+        }
+
+
+
+
+    };
+
+
+
 
     return (
-
         <View style={styles.container}>
-
-
             <ScrollView style={styles.scroll}>
-                <Image source={VinoEjemplo} style={styles.image} />
-
-
-
-                <View style={styles.containerInfo} >
-                    <View style={{ marginBottom: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
+                <Image source={vinoImagen} style={styles.image} />
+                <View style={styles.containerInfo}>
+                    <View style={{ marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                         <View style={{ width: '90%' }}>
                             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>
-                                {nombre_vino}
+                                {productoRecibido.nombre}
                             </Text>
                             <Text style={{ fontSize: 12, fontWeight: 'light' }}>
-                                CODIGO: {codigo}
+                                CODIGO: {productoRecibido.codigoBarra}
                             </Text>
-
                         </View>
-
                     </View>
 
-
+                    {/* Línea Controlada */}
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Linea Controlada</Text>
                         <TextInput
                             style={styles.input}
                             keyboardType="numeric"
+                            value={control.linea}
+                            onChangeText={(value) => setControl({ ...control, linea: value })}
                         />
                     </View>
 
-
+                    {/* Tipo de Control */}
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Tipo de Control</Text>
-                        <RadioButton.Group onValueChange={value2 => setValue2(value2)} value={value2} style>
+                        <RadioButton.Group
+                            onValueChange={value2 => {
+                                setValue2(value2);
+                                setControl(prevControl => ({ ...prevControl, tipodecontrol: value2 }));
+                            }}
+                            value={value2}
+                        >
                             <RadioButton.Item label="Reproceso" value="Reproceso" />
                             <RadioButton.Item label="Preventivo" value="Preventivo" />
                         </RadioButton.Group>
                     </View>
 
+                    {/* Estado de Control */}
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Estado de Control</Text>
-                        <View>
-                            <RadioButton.Group onValueChange={value => setValue(value)} value={value} style>
-                                <RadioButton.Item label="Rechazado" value="Rechazado" />
-                                <RadioButton.Item label="Reproceso" value="Reproceso" />
-                                <RadioButton.Item label="Aprobado" value="Aprobado" />
-                            </RadioButton.Group>
-
-                        </View>
+                        <RadioButton.Group
+                            onValueChange={value => {
+                                setValue(value);
+                                setControl(prevControl => ({ ...prevControl, estado: value }));
+                            }}
+                            value={value}
+                        >
+                            <RadioButton.Item label="Rechazado" value="Rechazado" />
+                            <RadioButton.Item label="Reproceso" value="Reproceso" />
+                            <RadioButton.Item label="Aprobado" value="Aprobado" />
+                        </RadioButton.Group>
                     </View>
+
+                    {/* Comentario sobre control */}
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Comentario sobre control:</Text>
                         <TextInput
                             style={styles.inputComentario}
-                            keyboardType="text"
                             multiline={true}
-
+                            value={control.comentario}
+                            onChangeText={(value) => setControl({ ...control, comentario: value })}
                         />
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image source={iconRA} style={styles.iconRA} />
                             <Text style={{ marginTop: 10 }}>Completar con inteligencia artificial.</Text>
                         </TouchableOpacity>
                     </View>
-
-
-
-
                 </View>
-
             </ScrollView>
 
+            {/* Botón para retroceder */}
             <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
                 <View style={styles.CirculoAtras}>
                     <View style={{ flexDirection: 'row', marginTop: 25 }}>
@@ -121,23 +189,16 @@ const CrearControl = ({navigation}) => {
                 </View>
             </TouchableOpacity>
 
-            <View style={styles.botonRealizarControl} >
-
-                <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} >
-                    <Text style={{ color: 'white', fontSize: 18 }}>
-                        Agregar control
-                    </Text>
-
+            {/* Botón para agregar control */}
+            <View style={styles.botonRealizarControl}>
+                <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} onPress={enviarControl}>
+                    <Text style={{ color: 'white', fontSize: 18 }}>Agregar control</Text>
                 </TouchableOpacity>
-
             </View>
-
-
         </View>
+    );
+};
 
-
-    )
-}
 
 const styles = StyleSheet.create({
     container: {

@@ -9,30 +9,38 @@ import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
 
 import { RadioButton } from 'react-native-paper';
+import { jsx } from 'react/jsx-runtime';
 
 const VerControl = ({ navigation }) => {
-    const [producto, setProducto] = useState({
-        id: 1,
-        idProductos: 1,
-        linea: 'Tinto',
-        paisDestino: 'España',
-        comentario: 'Comentario de ejemplo',
-        tipodecontrol: 'Control de calidad',
-        fechaHoraPrimerControl: '90-10-2024 13:01:21',
-        fechaHoraControlFinal: '10-10-2024 18:11:31',
-        estado: 'Reproceso',
-        estadoFinal: 'Aprobado',
-        idUsuarios: 1,
-        nombre_usuario: 'Antonio',
-
-    });
-
-    const iconRA = require('../../assets/icons/iconRA.png')
-
-    const VinoEjemplo = require('../../assets/images/VinoEjemplo.jpg')
-
     const route = useRoute();
-    const { idProducto, codigo, nombre_vino, PrimerEstado } = route.params;
+    const { ControlJson } = route.params;
+
+    function formatearFecha(fechaISO) {
+        // Convertir la cadena ISO 8601 a un objeto Date
+        const fecha = new Date(fechaISO);
+      
+        // Formatear la fecha como "dd/MM/yyyy HH:mm:ss"
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Día
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Mes (getMonth() devuelve 0 para enero)
+        const anio = fecha.getFullYear(); // Año
+      
+        const horas = fecha.getHours().toString().padStart(2, '0'); // Horas
+        const minutos = fecha.getMinutes().toString().padStart(2, '0'); // Minutos
+        const segundos = fecha.getSeconds().toString().padStart(2, '0'); // Segundos
+      
+        // Devolver la fecha formateada
+        return `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
+      }
+
+
+    let VinoEjemplo
+    if (ControlJson.productos.urlImagen == '' || ControlJson.productos.urlImagen == null || ControlJson.productos.urlImagen == undefined) {
+
+        VinoEjemplo = require('../../assets/images/VinoEjemplo.jpg')
+
+    } else {
+        VinoEjemplo = { uri: ControlJson.productos.urlImagen }
+    }
 
 
 
@@ -54,54 +62,51 @@ const VerControl = ({ navigation }) => {
                     <View style={{ marginBottom: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
                         <View style={{ width: '90%' }}>
                             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>
-                                INFORMACION CONTROL N.{producto.id}
+                                INFORMACION CONTROL N.{ControlJson.id}
                             </Text>
                             <Text style={{ fontSize: 15, fontWeight: 'light' }}>
-                                {nombre_vino} - CODIGO: {codigo}
+                                {ControlJson.productos.nombre} - CODIGO: {ControlJson.productos.codigoBarra}
                             </Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold', color: 'gray', textTransform: 'uppercase', marginTop: 10 }}>
-                                Encargado de control: {producto.nombre_usuario}
+                                Encargado de control: {ControlJson.usuarios.nombre}
                             </Text>
                         </View>
 
                     </View>
 
 
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Numero de control</Text>
-                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{producto.id}</Text>
-                    </View>
+                    
 
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Linea Controlada</Text>
-                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{producto.linea}</Text>
+                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{ControlJson.linea}</Text>
                     </View>
 
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Tipo de control</Text>
-                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{producto.tipodecontrol}</Text>
+                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{ControlJson.tipodecontrol}</Text>
                     </View>
 
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Fecha control inicial</Text>
-                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{producto.fechaHoraPrimerControl}</Text>
+                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{formatearFecha(ControlJson.fechaHoraPrimerControl)}</Text>
                     </View>
 
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Estado control inicial</Text>
-                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{producto.estado}</Text>
+                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{ControlJson.estado}</Text>
                     </View>
 
 
-                    {producto.estadoFinal != null ?
+                    {ControlJson.estadoFinal != null ?
                         <View>
                             <View style={styles.TextAndPickerForm}>
                                 <Text style={{ fontSize: 18 }}>Fecha control final</Text>
-                                <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{producto.fechaHoraControlFinal}</Text>
+                                <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{ControlJson.fechaHoraControlFinal}</Text>
                             </View>
                             <View style={styles.TextAndPickerForm}>
                                 <Text style={{ fontSize: 18 }}>Estado control final</Text>
-                                <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{producto.estadoFinal}</Text>
+                                <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{ControlJson.estadoFinal}</Text>
                             </View>
                         </View>
 
@@ -129,10 +134,10 @@ const VerControl = ({ navigation }) => {
             </TouchableOpacity>
 
 
-            {producto.estado == 'Reproceso' && producto.estadoFinal != null ?
+            {ControlJson.estado == 'Reproceso' && ControlJson.estadoFinal == null ?
                 <View style={styles.botonRealizarControl} >
 
-                    <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} onPress={() => navigation.navigate('EditarControl', { idProducto: idProducto, codigo: codigo })}>
+                    <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} onPress={() => navigation.navigate('EditarControl', { ControlJson: ControlJson})}>
                         <Text style={{ color: 'white', fontSize: 18 }}>
                             Actualizar control
                         </Text>

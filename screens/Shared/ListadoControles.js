@@ -1,9 +1,9 @@
 import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Modal, Button } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Footer, Nav } from '../../components/shared';
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { URL_API_BACKEND } from '../../config';
 // iconos propios 
 
 const iconFiltro = require('../../assets/icons/iconFiltro.png')
@@ -16,29 +16,73 @@ const iconControlCheck = require('../../assets/icons/iconControlCheck.png')
 
 
 const ListadoControles = ({ navigation }) => {
-    const DATA = [
-        {
-            cod: '12312323123',
-            nombe: 'Sauvignon',
-            reserva: 'Especial',
-            destino: 'Chile',
-            fecha: '13/12/2023',
-            hora: '12:00',
-            estado: 'Aprobado'
-        }, {
-            cod: '123123444123',
-            nombe: 'Sauvignon Especial',
-            reserva: 'Reserva Especial',
-            destino: 'Chile',
-            fecha: '12/11/2023',
-            hora: '12:00',
-            estado: 'Rechazado'
-        },
-    ];
+    const [DATA, setDATA] = useState([]); // Inicializa el estado de DATA como un array vacío
+
 
     const [filteredData, setFilteredData] = useState(DATA);
     const [isAscending, setIsAscending] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
+
+
+
+    const obtenerDatos = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (token == null) {
+                alert('Token de autorización no encontrado.');
+                return;
+            }
+            const response = await fetch(`${URL_API_BACKEND}/api/ApiControles`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+
+            const data = await response.json();
+            setDATA(data); // Almacena los datos en el estado DATA
+        } catch (error) {
+            console.error('Error obteniendo los datos:', error);
+            alert('Ocurrió un error al obtener los datos.');
+        }
+    };
+    // Efecto para obtener los datos al montar el componente
+    useEffect(() => {
+        obtenerDatos(); // Llama a la función al montar el componente
+    }, []); // Solo se ejecuta al montar el componente
+    useEffect(() => {
+        setFilteredData(DATA);  // Actualiza filteredData cuando DATA cambia
+    }, [DATA]);
+
+
+
+
+    function formatearFecha(fechaISO) {
+        // Convertir la cadena ISO 8601 a un objeto Date
+        const fecha = new Date(fechaISO);
+      
+        // Formatear la fecha como "dd/MM/yyyy HH:mm:ss"
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Día
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Mes (getMonth() devuelve 0 para enero)
+        const anio = fecha.getFullYear(); // Año
+      
+        const horas = fecha.getHours().toString().padStart(2, '0'); // Horas
+        const minutos = fecha.getMinutes().toString().padStart(2, '0'); // Minutos
+        const segundos = fecha.getSeconds().toString().padStart(2, '0'); // Segundos
+      
+        // Devolver la fecha formateada
+        return `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
+      }
+      
+      
+      
+
+
 
     const getBackgroundColor = (estado) => {
         switch (estado.toLowerCase()) {
@@ -68,15 +112,18 @@ const ListadoControles = ({ navigation }) => {
 
     const sortDataByDate = () => {
         const sortedData = [...filteredData].sort((a, b) => {
-            const dateA = new Date(a.fecha.split('/').reverse().join('-'));
-            const dateB = new Date(b.fecha.split('/').reverse().join('-'));
-
+            // Convertimos las fechas ISO a objetos Date
+            const dateA = new Date(a.fechaHoraPrimerControl);
+            const dateB = new Date(b.fechaHoraPrimerControl);
+    
+            // Ordenamos por fecha
             return isAscending ? dateA - dateB : dateB - dateA;
         });
-
+    
         setFilteredData(sortedData);
         setIsAscending(!isAscending);
     };
+    
     const resetFilter = () => {
         setFilteredData(DATA); // Restablecer a los datos originales
         setModalVisible(false); // Cerrar el modal después de seleccionar un filtro
@@ -95,12 +142,12 @@ const ListadoControles = ({ navigation }) => {
             </View>
 
             <View style={styles.infoCard}>
-                <Text style={styles.titleInfo}>{item.nombe} - {item.reserva}</Text>
-                <Text style={styles.subtitleInfo}>Fecha: {item.fecha} Hora: {item.hora} | Estado:<Text style={{ color: getStateColor(item.estado), textTransform: 'uppercase' }}>{item.estado}</Text></Text>
+                <Text style={styles.titleInfo}>{item.productos.nombre}</Text>
+                <Text style={styles.subtitleInfo}>Fecha: {formatearFecha(item.fechaHoraPrimerControl)} | Estado:<Text style={{ color: getStateColor(item.estado), textTransform: 'uppercase' }}>{item.estado}</Text></Text>
             </View>
 
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', borderRadius: 3, width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-                <TouchableOpacity onPress={() => navigation.navigate('VerControl', { codigo: item.cod, PrimerEstado: item.estado })} >
+                <TouchableOpacity onPress={() => navigation.navigate('VerControl', { ControlJson: item })} >
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
             </View>
@@ -298,8 +345,10 @@ const styles = StyleSheet.create({
     infoCard: {
         width: '70%'
     },
-    titleInfo:
-        { fontSize: 16 }
+    titleInfo: {
+        fontSize: 16,
+        textTransform: 'capitalize'
+    }
     , subtitleInfo: {
         fontSize: 10,
         color: 'gray',

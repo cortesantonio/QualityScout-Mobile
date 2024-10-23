@@ -194,7 +194,7 @@ const VerProducto = ({ navigation }) => {
                 </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.botonRealizarControl} onPress={() => navigation.navigate('CrearControl', { idProducto: JsonProducto.id, codigo: JsonProducto.codigoBarra, nombre_vino: JsonProducto.nombre })}>
+            <TouchableOpacity style={styles.botonRealizarControl} onPress={() => navigation.navigate('CrearControl', { productoRecibido: JsonProducto})}>
                 <Text style={{ color: 'white' }}>REALIZAR CONTROL</Text>
             </TouchableOpacity>
 
