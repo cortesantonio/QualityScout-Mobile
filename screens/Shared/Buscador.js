@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import { Footer } from "../../components/shared";
-import { useFocusEffect } from '@react-navigation/native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -65,7 +66,20 @@ export default function App({ navigation }) {
       </View>
 
 
+      <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
+        <View style={styles.CirculoAtras}>
+          <View style={{ flexDirection: 'row', marginTop: 25 }}>
+            <FontAwesomeIcon icon={faArrowLeftLong} size={38} color="white" />
+            <Text style={{ color: 'white', fontSize: 34 }}>Atrás</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+
+
       <Footer />
+
+
+
     </View>
 
   );
@@ -107,6 +121,23 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 16,
     color: 'white'
-  }
+  }, ButtonCirculoAtras: {
+    position: 'absolute',
+    top: -40,
+    left: -25,
+    zIndex: 1
+},
+
+CirculoAtras: {
+    width: 225,
+    height: 225,
+    borderRadius: 125,
+    backgroundColor: '#270403',
+    display: 'flex',
+
+    justifyContent: 'center',
+    alignItems: 'center',
+
+}
 
 });

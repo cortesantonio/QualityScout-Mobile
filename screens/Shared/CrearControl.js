@@ -32,11 +32,11 @@ const CrearControl = ({ navigation }) => {
     const [user, setUser] = useState({});
     const [control, setControl] = useState({
         idProductos: productoRecibido.id,
-        linea: 'L-21',
+        linea: '',
         paisDestino: productoRecibido.paisDestino,
-        comentario: 'predereminado',
-        tipodecontrol: 'Reproceso',  // Se puede asignar el valor adecuado basado en la selección
-        estado: 'Rechazado',
+        comentario: '',
+        tipodecontrol: '',  // Se puede asignar el valor adecuado basado en la selección
+        estado: '',
         idUsuario: 1,  // Inicialmente null hasta que se cargue el usuario
     });
 
@@ -60,6 +60,12 @@ const CrearControl = ({ navigation }) => {
     }, []); // Se ejecuta solo una vez al montar el componente
 
     const enviarControl = async () => {
+
+        if(control.linea == '' || control.comentario == '' || control.tipodecontrol == '' || control.estado == ''){
+            alert('Por favor, complete todos los campos.');
+            return;
+        }
+
         const controlToSend = { ...control, idUsuario: user.Id };  // Aseguramos que idUsuario se asigna correctamente
         const token = await AsyncStorage.getItem('userToken');
         if (token == null) {
@@ -124,7 +130,6 @@ const CrearControl = ({ navigation }) => {
                         <Text style={{ fontSize: 18 }}>Linea Controlada</Text>
                         <TextInput
                             style={styles.input}
-                            keyboardType="numeric"
                             value={control.linea}
                             onChangeText={(value) => setControl({ ...control, linea: value })}
                         />
@@ -219,8 +224,8 @@ const styles = StyleSheet.create({
     },
 
     CirculoAtras: {
-        width: 220,
-        height: 220,
+        width: 250,
+        height: 250,
         borderRadius: 125,
         backgroundColor: '#270403',
         display: 'flex',

@@ -18,19 +18,19 @@ const VerControl = ({ navigation }) => {
     function formatearFecha(fechaISO) {
         // Convertir la cadena ISO 8601 a un objeto Date
         const fecha = new Date(fechaISO);
-      
+
         // Formatear la fecha como "dd/MM/yyyy HH:mm:ss"
         const dia = fecha.getDate().toString().padStart(2, '0'); // Día
         const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Mes (getMonth() devuelve 0 para enero)
         const anio = fecha.getFullYear(); // Año
-      
+
         const horas = fecha.getHours().toString().padStart(2, '0'); // Horas
         const minutos = fecha.getMinutes().toString().padStart(2, '0'); // Minutos
         const segundos = fecha.getSeconds().toString().padStart(2, '0'); // Segundos
-      
+
         // Devolver la fecha formateada
-        return `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
-      }
+        return `${dia}/${mes}/${anio} ${horas}:${minutos}`;
+    }
 
 
     let VinoEjemplo
@@ -41,12 +41,6 @@ const VerControl = ({ navigation }) => {
     } else {
         VinoEjemplo = { uri: ControlJson.productos.urlImagen }
     }
-
-
-
-
-    const [value, setValue] = React.useState('first');
-    const [value2, setValue2] = React.useState('first');
 
     return (
 
@@ -75,7 +69,7 @@ const VerControl = ({ navigation }) => {
                     </View>
 
 
-                    
+
 
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Linea Controlada</Text>
@@ -102,7 +96,7 @@ const VerControl = ({ navigation }) => {
                         <View>
                             <View style={styles.TextAndPickerForm}>
                                 <Text style={{ fontSize: 18 }}>Fecha control final</Text>
-                                <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{ControlJson.fechaHoraControlFinal}</Text>
+                                <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{formatearFecha( ControlJson.fechaHoraControlFinal )}</Text>
                             </View>
                             <View style={styles.TextAndPickerForm}>
                                 <Text style={{ fontSize: 18 }}>Estado control final</Text>
@@ -112,13 +106,10 @@ const VerControl = ({ navigation }) => {
 
                         : null}
 
-
-
-
-
-
-
-
+                    <View style={styles.TextAndPickerForm}>
+                        <Text style={{ fontSize: 18 }}>Comentarios</Text>
+                        <Text style={{ fontSize: 16, paddingLeft: 10, color: 'gray' }}>{ControlJson.comentario}</Text>
+                    </View>
                 </View>
 
             </ScrollView>
@@ -137,7 +128,7 @@ const VerControl = ({ navigation }) => {
             {ControlJson.estado == 'Reproceso' && ControlJson.estadoFinal == null ?
                 <View style={styles.botonRealizarControl} >
 
-                    <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} onPress={() => navigation.navigate('EditarControl', { ControlJson: ControlJson})}>
+                    <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} onPress={() => navigation.navigate('EditarControl', { ControlJson: ControlJson })}>
                         <Text style={{ color: 'white', fontSize: 18 }}>
                             Actualizar control
                         </Text>
@@ -166,7 +157,6 @@ const styles = StyleSheet.create({
         width: '100%',
         resizeMode: 'cover',
     },
-
     ButtonCirculoAtras: {
         position: 'absolute',
         top: -50,
@@ -175,8 +165,8 @@ const styles = StyleSheet.create({
     },
 
     CirculoAtras: {
-        width: 220,
-        height: 220,
+        width: 250,
+        height: 250,
         borderRadius: 125,
         backgroundColor: '#270403',
         display: 'flex',

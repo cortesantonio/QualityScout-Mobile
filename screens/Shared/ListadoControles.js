@@ -65,38 +65,45 @@ const ListadoControles = ({ navigation }) => {
     function formatearFecha(fechaISO) {
         // Convertir la cadena ISO 8601 a un objeto Date
         const fecha = new Date(fechaISO);
-      
+
         // Formatear la fecha como "dd/MM/yyyy HH:mm:ss"
         const dia = fecha.getDate().toString().padStart(2, '0'); // Día
         const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Mes (getMonth() devuelve 0 para enero)
         const anio = fecha.getFullYear(); // Año
-      
+
         const horas = fecha.getHours().toString().padStart(2, '0'); // Horas
         const minutos = fecha.getMinutes().toString().padStart(2, '0'); // Minutos
         const segundos = fecha.getSeconds().toString().padStart(2, '0'); // Segundos
-      
+
         // Devolver la fecha formateada
-        return `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
-      }
-      
-      
-      
+        return `${dia}/${mes}/${anio} ${horas}`;
+    }
 
 
 
-    const getBackgroundColor = (estado) => {
+
+    const getBackgroundColor = (estado, estadoFinal) => {
+        // Si el estadoFinal tiene datos, no aplicar color de fondo
+        if (estadoFinal) {
+            return 'rgba(255, 255, 255, 0)'; // Sin color de fondo
+        }
+    
+        // Solo aplica color si el estado es "reproceso"
+        if (estado.toLowerCase() === 'reproceso') {
+            return 'rgba(0, 0, 255, 0.1)'; // Color para reproceso
+        }
+    
+        // Aplica colores según el estado inicial
         switch (estado.toLowerCase()) {
             case 'aprobado':
-                return 'rgba(0, 128, 0, 0.1)';
+                return 'rgba(0, 128, 0, 0)'; // Verde claro para aprobado
             case 'rechazado':
-                return 'rgba(255, 0, 0, 0.1)';
-            case 'reproceso':
-                return 'rgba(0, 0, 255, 0.1)';
+                return 'rgba(255, 0, 0, 0.1)'; // Rojo claro para rechazado
             default:
-                return 'rgba(255, 255, 255, 0)';
+                return 'rgba(255, 255, 255, 0)'; // Sin color de fondo por defecto
         }
     };
-
+    
     const getStateColor = (estado) => {
         switch (estado.toLowerCase()) {
             case 'aprobado':
@@ -109,7 +116,7 @@ const ListadoControles = ({ navigation }) => {
                 return '#bf6565';
         }
     };
-
+    
     const sortDataByDate = () => {
         const sortedData = [...filteredData].sort((a, b) => {
             // Convertimos las fechas ISO a objetos Date
@@ -127,32 +134,40 @@ const ListadoControles = ({ navigation }) => {
     const resetFilter = () => {
         setFilteredData(DATA); // Restablecer a los datos originales
         setModalVisible(false); // Cerrar el modal después de seleccionar un filtro
-
     };
+    
     const filterDataByState = (estado) => {
         const filtered = DATA.filter(item => item.estado.toLowerCase() === estado.toLowerCase());
         setFilteredData(filtered);
         setModalVisible(false); // Cerrar el modal después de seleccionar un filtro
     };
-
+    
     const renderItem = ({ item }) => (
-        <View style={[styles.item, { backgroundColor: getBackgroundColor(item.estado) }]}>
+        <View style={[styles.item, { backgroundColor: getBackgroundColor(item.estado, item.estadoFinal) }]}>
             <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7 }}>
                 <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={iconControlCheck} />
             </View>
-
+    
             <View style={styles.infoCard}>
                 <Text style={styles.titleInfo}>{item.productos.nombre}</Text>
-                <Text style={styles.subtitleInfo}>Fecha: {formatearFecha(item.fechaHoraPrimerControl)} | Estado:<Text style={{ color: getStateColor(item.estado), textTransform: 'uppercase' }}>{item.estado}</Text></Text>
+                <Text style={styles.subtitleInfo}>
+                    Fecha: {formatearFecha(item.fechaHoraPrimerControl)} | <Text>Estado: </Text>
+                    {item.estadoFinal == null ? 
+                        <Text style={{ color: getStateColor(item.estado), textTransform: 'uppercase' }}>{item.estado}</Text> 
+                        : 
+                        <Text style={{ color: getStateColor(item.estadoFinal), textTransform: 'uppercase' }}>{item.estadoFinal}</Text>
+                    }
+                </Text>
             </View>
-
+    
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', borderRadius: 3, width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-                <TouchableOpacity onPress={() => navigation.navigate('VerControl', { ControlJson: item })} >
+                <TouchableOpacity onPress={() => navigation.navigate('VerControl', { ControlJson: item })}>
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
             </View>
         </View>
     );
+
 
     return (
 
@@ -196,7 +211,7 @@ const ListadoControles = ({ navigation }) => {
                     >
                         <View style={styles.modalContainer}>
                             <View style={styles.modalContent}>
-                                <Text style={styles.modalTitle}>Seleccionar Filtro por Estado</Text>
+                                <Text style={styles.modalTitle}>Seleccionar filtro por estado inicial</Text>
                                 <TouchableOpacity onPress={() => filterDataByState('Aprobado')} style={styles.modalButton}>
                                     <Text>Aprobado</Text>
                                 </TouchableOpacity>
@@ -217,7 +232,6 @@ const ListadoControles = ({ navigation }) => {
                                     </TouchableOpacity>
                                 </View>
 
-
                             </View>
                         </View>
                     </Modal>
@@ -227,7 +241,7 @@ const ListadoControles = ({ navigation }) => {
                         <FlatList
                             style={styles.flatList}
                             data={filteredData}
-                            keyExtractor={item => item.cod}
+                            keyExtractor={item => item.id}
                             renderItem={renderItem}
                         />
                     </View>
@@ -343,7 +357,7 @@ const styles = StyleSheet.create({
 
     ,
     infoCard: {
-        width: '70%'
+        width: '75%'
     },
     titleInfo: {
         fontSize: 16,

@@ -7,39 +7,88 @@ import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
-
 import { RadioButton } from 'react-native-paper';
+import { URL_API_BACKEND } from '../../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const EditarControl = ({navigation}) => {
+
+
+const EditarControl = ({ navigation }) => {
     const [value, setValue] = React.useState('first');
     const [value2, setValue2] = React.useState('first');
 
-    const [producto, setProducto] = useState({
-        id: 1,
-        idProductos: 1,
-        linea: 'Tinto',
-        paisDestino: 'España',
-        comentario: 'Comentario de ejemplo',
-        tipodecontrol: 'Control de calidad',
-        fechaHoraPrimerControl: '',
-        fechaHoraControlFinal: '',
-        estado: 'Reproceso',
-        estadoFinal: 'Finalizado',
-        idUsuarios: 1,
-        nombre_usuario: 'Antonio',
+    const route = useRoute();
+    const { ControlJson } = route.params;
 
+    const [control, setControl] = useState({
+        id: ControlJson.id,
+        comentario: ControlJson.comentario,
+        estadoFinal: '',
     });
 
     const iconRA = require('../../assets/icons/iconRA.png')
 
-    const VinoEjemplo = require('../../assets/images/VinoEjemplo.jpg')
+    function formatearFecha(fechaISO) {
+        // Convertir la cadena ISO 8601 a un objeto Date
+        const fecha = new Date(fechaISO);
 
-    const route = useRoute();
-    const { idProducto, codigo, nombre_vino } = route.params;
+        // Formatear la fecha como "dd/MM/yyyy HH:mm:ss"
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Día
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Mes (getMonth() devuelve 0 para enero)
+        const anio = fecha.getFullYear(); // Año
+
+        const horas = fecha.getHours().toString().padStart(2, '0'); // Horas
+        const minutos = fecha.getMinutes().toString().padStart(2, '0'); // Minutos
+        const segundos = fecha.getSeconds().toString().padStart(2, '0'); // Segundos
+
+        // Devolver la fecha formateada
+        return `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
+    }
 
 
+    let VinoEjemplo
+    if (ControlJson.productos.urlImagen == '' || ControlJson.productos.urlImagen == null || ControlJson.productos.urlImagen == undefined) {
 
+        VinoEjemplo = require('../../assets/images/VinoEjemplo.jpg')
 
+    } else {
+        VinoEjemplo = { uri: ControlJson.productos.urlImagen }
+    }
+
+    const ActualizarControl = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (!token) {
+                alert('Token de autorización no encontrado.');
+                return;
+            }
+    
+            const response = await fetch(`${URL_API_BACKEND}/api/ApiControles/EditarControl`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: control.id,
+                    comentario: control.comentario,
+                    estadoFinal: control.estadoFinal,
+                })
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json(); // Obtener el mensaje de error del servidor
+                throw new Error(errorData.message || 'Error en la solicitud');
+            }
+    
+            // Si la respuesta es exitosa, puedes manejar la lógica aquí
+            alert('Control actualizado con éxito.');
+            
+        } catch (error) {
+            console.error('Error al actualizar los datos:', error);
+            alert('Ocurrió un error al actualizar los datos: ' + error.message);
+        }
+    };
 
     return (
 
@@ -55,13 +104,13 @@ const EditarControl = ({navigation}) => {
                     <View style={{ marginBottom: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
                         <View style={{ width: '90%' }}>
                             <Text style={{ fontSize: 24, fontWeight: 'bold' }}>
-                                REPROCESO CONTROL N.{producto.id}
+                                REPROCESO CONTROL N.{ControlJson.id}
                             </Text>
                             <Text style={{ fontSize: 15, fontWeight: 'light' }}>
-                                {nombre_vino} - CODIGO: {codigo}
+                                {ControlJson.productos.nombre} - CODIGO: {ControlJson.codigoBarra}
                             </Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold', color: 'gray', textTransform: 'uppercase', marginTop: 10 }}>
-                                Encargado de control: {producto.nombre_usuario}
+                                Encargado de control: {ControlJson.usuarios.nombre}
                             </Text>
                         </View>
 
@@ -69,19 +118,19 @@ const EditarControl = ({navigation}) => {
 
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Fecha primer control</Text>
-                        <Text style={{ fontSize: 16, paddingLeft: 10 }}>{producto.fechaHoraPrimerControl}</Text>
+                        <Text style={{ fontSize: 16, paddingLeft: 10 }}>{formatearFecha(ControlJson.fechaHoraPrimerControl)}</Text>
                     </View>
 
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Linea Controlada</Text>
-                        <Text style={{ fontSize: 16, paddingLeft: 10 }}>{producto.linea}</Text>
+                        <Text style={{ fontSize: 16, paddingLeft: 10 }}>{ControlJson.linea}</Text>
 
                     </View>
 
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Estado de control Inicial</Text>
                         <View>
-                            <Text style={{ fontSize: 16, paddingLeft: 10 }}>{producto.estado}</Text>
+                            <Text style={{ fontSize: 16, paddingLeft: 10 }}>{ControlJson.estado}</Text>
 
 
                         </View>
@@ -90,9 +139,13 @@ const EditarControl = ({navigation}) => {
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Estado de Control final</Text>
                         <View>
-                            <RadioButton.Group onValueChange={value => setValue(value)} value={value} style>
+                        <RadioButton.Group
+                                onValueChange={value => {
+                                    setControl(prevControl => ({ ...prevControl, estadoFinal: value }));
+                                }}
+                                value={control.estadoFinal} // Usa el estadoFinal del objeto control
+                            >
                                 <RadioButton.Item label="Rechazado" value="Rechazado" />
-                                <RadioButton.Item label="Reproceso" value="Reproceso" />
                                 <RadioButton.Item label="Aprobado" value="Aprobado" />
                             </RadioButton.Group>
 
@@ -110,6 +163,7 @@ const EditarControl = ({navigation}) => {
                             style={styles.inputComentario}
                             keyboardType="text"
                             multiline={true}
+                            value={control.comentario}
 
                         />
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -137,7 +191,7 @@ const EditarControl = ({navigation}) => {
 
             <View style={styles.botonRealizarControl} >
 
-                <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} >
+                <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} onPress={ActualizarControl}>
                     <Text style={{ color: 'white', fontSize: 18 }}>
                         Actualizar control
                     </Text>
@@ -163,7 +217,6 @@ const styles = StyleSheet.create({
         width: '100%',
         resizeMode: 'cover',
     },
-
     ButtonCirculoAtras: {
         position: 'absolute',
         top: -50,
@@ -172,8 +225,8 @@ const styles = StyleSheet.create({
     },
 
     CirculoAtras: {
-        width: 220,
-        height: 220,
+        width: 250,
+        height: 250,
         borderRadius: 125,
         backgroundColor: '#270403',
         display: 'flex',

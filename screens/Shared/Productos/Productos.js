@@ -176,7 +176,7 @@ const Productos = ({ navigation }) => {
         <>
             <Nav />
             <View style={styles.container}>
-                <Text style={styles.TituloPantalla}>Gestión de productos. <TouchableOpacity style={{backgroundColor:'#4b0404' , padding: 3, borderRadius:5}} onPress={() => { obtenerDatos() }}>
+                <Text style={styles.TituloPantalla}>Gestión de productos. <TouchableOpacity style={{backgroundColor:'#4b0404' , padding: 5, borderRadius:10}} onPress={() => { obtenerDatos() }}>
                     <Image source={iconReload} style={{width:10, height:10}}></Image>
                 </TouchableOpacity></Text>
 
@@ -208,16 +208,7 @@ const Productos = ({ navigation }) => {
                     {/* Encabezado de la lista */}
                     <View style={styles.encabezado}>
                         <Text style={{ fontSize: 18 }}>Registros</Text>
-                        <View style={styles.filtros}>
-                            <TouchableOpacity style={styles.TouchableBotonLista}>
-                                <Image source={iconFiltro} style={styles.iconsBotones}></Image>
-                                <Text>Filtro</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.TouchableBotonLista}>
-                                <Image source={iconOrden} style={styles.iconsBotones}></Image>
-                                <Text>Ordenar</Text>
-                            </TouchableOpacity>
-                        </View>
+                       
                     </View>
 
                     {/* Cuerpo de la lista */}
@@ -316,7 +307,10 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginBottom: 10,
+        marginTop: 10,
+        marginTop:10
     },
 
     containerProductos: {
