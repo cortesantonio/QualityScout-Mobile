@@ -1,4 +1,4 @@
-import {  TouchableOpacity, StyleSheet, View, Text, Image, ScrollView,  } from 'react-native';
+import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { useRoute } from '@react-navigation/native';
@@ -12,6 +12,7 @@ const VerProducto = ({ navigation }) => {
     const { id } = route.params;
     const [JsonProducto, setJsonProducto] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [jsonBotella, setJsonBotella] = useState({})
 
     const obtenerDatos = async (id) => {
         try {
@@ -34,15 +35,42 @@ const VerProducto = ({ navigation }) => {
 
             const data = await response.json();
             setJsonProducto(data); // Almacena los datos en el estado
-            
             setIsLoading(false);
-            
-
+            obtenerBotella(data.productoDetalles[0]?.idBotellaDetalles)
         } catch (error) {
             console.error('Error obteniendo los datos:', error);
             alert('Ocurrió un error al obtener los datos.');
         }
     };
+
+
+    const obtenerBotella = async (id) => {
+
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (token == null) {
+                alert('Token de autorización no encontrado.');
+                return;
+            }
+            const response = await fetch(`${URL_API_BACKEND}/api/ProductosApi/getbotella/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la solicitud');
+            }
+
+            const data = await response.json();
+            setJsonBotella(data); // Almacena los datos en el estado
+        } catch (error) {
+            console.error('Error obteniendo los datos:', error);
+            alert('Ocurrió un error al obtener los datos.');
+        }
+    }
 
     // Efecto para obtener los datos al montar el componente
     useEffect(() => {
@@ -57,13 +85,13 @@ const VerProducto = ({ navigation }) => {
         );
     }
 
-    
+
 
     const actualizarEstadoActivo = async (id) => {
 
         const token = await AsyncStorage.getItem('userToken');
 
-        if (token == null){
+        if (token == null) {
             alert('No se encontro token, no se pudo crear el producto.')
             return;
         }
@@ -99,14 +127,14 @@ const VerProducto = ({ navigation }) => {
         const horas = fecha.getHours().toString().padStart(2, '0');
         const minutos = fecha.getMinutes().toString().padStart(2, '0');
         const segundos = fecha.getSeconds().toString().padStart(2, '0');
-        if(soloFecha){
+        if (soloFecha) {
             return `${dia}-${mes}-${anio}`;
         }
-        
+
         return `${dia}-${mes}-${anio} ${horas}:${minutos}:${segundos}`;
 
 
-        
+
     };
 
     const iconEditarProducto = require('../../../assets/icons/editarProducto.png');
@@ -141,7 +169,7 @@ const VerProducto = ({ navigation }) => {
                                 <Image source={iconEditarProducto} style={{ width: 20, height: 20 }} />
                                 <Text style={{ fontSize: 8 }}>EDITAR</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={()=>{actualizarEstadoActivo(JsonProducto.id)}}>
+                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => { actualizarEstadoActivo(JsonProducto.id) }}>
                                 <Image source={iconPausa} style={{ width: 20, height: 20 }} />
                                 <Text style={{ fontSize: 8 }}>DESACTIVAR</Text>
                             </TouchableOpacity>
@@ -177,9 +205,17 @@ const VerProducto = ({ navigation }) => {
 
 
                     <Text style={[styles.textInfo, { fontWeight: 'bold', marginBottom: 5, marginTop: 20 }]}>Historial del Producto.</Text>
-                    <Text style={styles.textInfo}>Fecha de Cosecha: {formatearFecha(JsonProducto.productoHistorial[0]?.fechaCosecha , true)}</Text>
+                    <Text style={styles.textInfo}>Fecha de Cosecha: {formatearFecha(JsonProducto.productoHistorial[0]?.fechaCosecha, true)}</Text>
                     <Text style={styles.textInfo}>Fecha de Producción: {formatearFecha(JsonProducto.productoHistorial[0]?.fechaProduccion, true)}</Text>
-                    <Text style={styles.textInfo}>Fecha de Envasado: {formatearFecha(JsonProducto.productoHistorial[0]?.fechaEnvasado , true)}</Text>
+                    <Text style={styles.textInfo}>Fecha de Envasado: {formatearFecha(JsonProducto.productoHistorial[0]?.fechaEnvasado, true)}</Text>
+
+
+                    <Text style={[styles.textInfo, { fontWeight: 'bold', marginBottom: 5, marginTop: 20 }]}>Detalle de botella.</Text>
+                    <Text style={styles.textInfo}>Nombre: {jsonBotella.nombreBotella}</Text>
+                    <Text style={styles.textInfo}>Altura: {jsonBotella.alturaBotella}cm.</Text>
+                    <Text style={styles.textInfo}>Ancho: {jsonBotella.anchoBotella}cm.</Text>
+
+
 
                 </View>
             </ScrollView>
@@ -194,7 +230,7 @@ const VerProducto = ({ navigation }) => {
                 </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.botonRealizarControl} onPress={() => navigation.navigate('CrearControl', { productoRecibido: JsonProducto})}>
+            <TouchableOpacity style={styles.botonRealizarControl} onPress={() => navigation.navigate('CrearControl', { productoRecibido: JsonProducto })}>
                 <Text style={{ color: 'white' }}>REALIZAR CONTROL</Text>
             </TouchableOpacity>
 
