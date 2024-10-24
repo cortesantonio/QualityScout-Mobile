@@ -4,47 +4,137 @@ import {
     TextInput, Switch, Platform, Button, Alert
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { faArrowLeftLong, faGuaraniSign, faSleigh } from '@fortawesome/free-solid-svg-icons';
+import { useState, useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
-
+import DropDownPicker from 'react-native-dropdown-picker';
+import { URL_API_BACKEND } from '../../../config';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-const CrearProducto = ({navigation}) => {
+const CrearProducto = ({ navigation }) => {
+
+    {/* DROPDOWNPICKER DE UNIDAD DE MEDIDAS */ }
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState([]);
+
+
+    {/**Informacion quimioca */ }
+    const [infoQuimica, setInfoQuimica] = useState([]);
+    const [agregarInfoQuimica, setAgregarInfoQuimica] = useState(false); // Cambié el nombre para evitar conflictos
+    const [nuevaInfoQuimica, setNuevaInfoQuimicaX] = useState(false); // Manejo de nuevo registro
+
+
+
+    // Asincronía para obtener la info química desde la API
+    const obtenerInfoQuimica = async () => {
+        try {
+            const response = await fetch(`${URL_API_BACKEND}/api/ProductosApi/GetInfoQuimica`);
+            const data = await response.json();
+            setInfoQuimica(data); // Asignación correcta de la info
+        } catch (error) {
+            console.error('Error al obtener la info química:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (infoQuimica.length === 0) {
+            obtenerInfoQuimica(); // Solo carga si aún no hay datos
+        }
+    }, [infoQuimica]);
+
+
+
+    const [botellas, setBotellas] = useState([])
+
+    // Asincronía para obtener la info química desde la API
+    const obtenerBotellas = async () => {
+        try {
+            const response = await fetch(`${URL_API_BACKEND}/api/ProductosApi/GetBotellas`);
+            const data = await response.json();
+            setBotellas(data); // Asignación correcta de la info
+        } catch (error) {
+            console.error('Error al obtener la info química:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (botellas.length === 0) {
+            obtenerBotellas(); // Solo carga si aún no hay datos
+        }
+    }, [botellas]);
+
+
+
+
+    {/* PRODUCTO*/ }
+
+
+    {/**detalles del producto */ }
+
+    const [agregarDetalles, setAgregarDetallesX] = useState(false)
+
+    {/*Agregar botella */ }
+    const [agregarBotella, setAgregarBotellaX] = useState(false)
+
+
+    {/*historial del producto */ }
+    const [agregarHistorial, setAgregarHistorialX] = useState(false)
+
+    const [mode, setMode] = useState('date');
+
 
     const [producto, setProducto] = useState({
-        id: '',
+        codigoBarra: '',
         codigoVE: '',
-        nombre_vino: '',
-        cepa_vino: '',
-        pais_origen: 'Chile',
-        pais_destino: '',
-        fecha_cosecha: '',
-        fecha_produccion: '',
-        capacidad_ml: '',
-        grado_alcoholico: '',
-        azucar_gr: '',
-        sulfuros_mg_l: '',
-        densidad_g_ml: '',
-        tipo_capsula: '',
-        tipo_etiqueta: '',
-        color_botella: '',
+        nombreVino: '',
+        paisDestino: '',
+        idioma: '',
+        unidadMedida: '',
+        descripcionCapsula: '',
+
+        capacidad: 0,
+        tipoCapsula: '',
+        colorCapsula: '',
+        colorBotella: '',
+        tipoEtiqueta: '',
+        tipoCorcho: '',
+        medidaEtiquetaBoquete: 0,
+        medidaEtiquetaBase: 0,
         medalla: false,
-        color_capsula: '',
-        tipo_corcho: '',
-        tipo_botella: '',
-        altura_botella_mm: '',
-        ancho_botella_mm: '',
-        unidad_medida_etiqueta: '',
-        medida_etiqueta_corcho: '',
-        medida_etiqueta_base: '',
-        fecha_registro: ''
+
+        idInformacionQuimica: 0,
+        cepa: '',
+        azucarMin: 0,
+        azucarMax: 0,
+        sulfurosMin: 0,
+        sulfurosMax: 0,
+        densidadMin: 0,
+        densidadMax: 0,
+        gradoAlcoholicoMin: 0,
+        gradoAlcoholicoMax: 0,
+
+        idBotellaDetalle: 0,
+        nombreBotella: '',
+        AltoBotella: 0,
+        AnchoBotella: 0,
+
+        guardarHistorial: false, // booleano
+        fechaCosecha: '',
+        fechaProduccion: '',
+        fechaEnvasado: '',
     });
 
-    
+
+    const handleChange = (name, value) => {
+        setProducto(prevState => ({
+            ...prevState,
+            [name]: value
+        }))
+    }
+
 
     const VinoEjemplo = require('../../../assets/images/VinoEjemplo.jpg')
-    const [medalla, setMedalla] = useState(false);
     const toggleSwitch = () => {
         setProducto((prevProducto) => ({
             ...prevProducto,
@@ -52,86 +142,185 @@ const CrearProducto = ({navigation}) => {
         }));
     };
 
-    const handleChange = (field, value) => {
-        setProducto({ ...producto, [field]: value });
-    };
+    const setAgregarDetalles = (bool) => {
+        if (bool) {
 
-    
+            handleChange('capacidad', 0)
+            handleChange('tipoCapsula', '')
+            handleChange('colorCapsula', '')
+            handleChange('colorBotella', '')
+            handleChange('tipoEtiqueta', '')
+            handleChange('tipoCorcho', '')
+            handleChange('medidaEtiquetaBoquete', 0)
+            handleChange('medidaEtiquetaBase', 0)
+            setAgregarDetallesX(bool)
+        } else {
+            setAgregarDetallesX(bool)
+        }
+    }
+
+    const setAgregarBotella = (bool) => {
+        if (bool) {
+            handleChange('nombreBotella', '')
+            handleChange('AltoBotella', 0)
+            handleChange('AnchoBotella', 0)
+            setAgregarBotellaX(bool)
+        } else {
+            handleChange('idBotellaDetalle', 0)
+            setAgregarBotellaX(bool)
+        }
+    }
+
+    const setAgregarHistorial = (bool) => {
+        if (bool) {
+            handleChange('guardarHistorial', true)
+            setAgregarHistorialX(bool)
+        } else {
+            handleChange('guardarHistorial', false)
+            setAgregarHistorialX(bool)
+        }
+    }
+
+    const setNuevaInfoQuimica = (bool) => {
+        if (bool) {
+            handleChange('idInformacionQuimica', 0)
+            setNuevaInfoQuimicaX(bool)
+        } else {
+            handleChange('cepa', '')
+            handleChange('azucarMin', 0)
+            handleChange('azucarMax', 0)
+            handleChange('sulfurosMin', 0)
+            handleChange('sulfurosMax', 0)
+            handleChange('densidadMin', 0)
+            handleChange('densidadMax', 0)
+            handleChange('gradoAlcoholicoMin', 0)
+            handleChange('gradoAlcoholicoMax', 0)
+
+            setNuevaInfoQuimicaX(bool)
+
+        }
+    }
+
+
 
     const enviarProducto = async () => {
-        try {
-            // Recuperar el producto almacenado
-            const productoJson = JSON.stringify(producto);
+        handleChange('fechaCosecha', dateCosecha.toLocaleString())
+        handleChange('fechaProduccion', dateProduccion.toLocaleString())
+        handleChange('fechaEnvasado', dateEnvasado.toLocaleString())
 
-            if (productoJson) {
-                const response = await fetch('https://tu-api-endpoint.com/productos', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(productoJson),
-                });
 
-                const result = await response.json();
-                if (response.ok) {
-                    Alert.alert('Éxito', 'Producto enviado exitosamente');
-                } else {
-                    Alert.alert('Error', `Error al enviar producto: ${result.message}`);
+        if (agregarDetalles) {
+            if (producto.capacidad == 0 || producto.tipoCapsula == '' || producto.colorCapsula == '' || producto.tipoEtiqueta == ''
+                || producto.tipoCorcho == '' || producto.medidaEtiquetaBoquete == 0 || producto.medidaEtiquetaBase == 0) {
+                return alert('Por favor, complete todos los campos de detalles.')
+            }
+            if (agregarBotella) {
+                if (producto.nombreBotella == '' || producto.AltoBotella == 0 || producto.AnchoBotella == 0) {
+                    return alert('Por favor, complete todos los campos de detalle de botella.')
                 }
+
+            } else if (producto.idBotellaDetalle == 0) {
+                return alert('Por favor, seleccione una botella.')
+            }
+
+        }
+
+        if (nuevaInfoQuimica) {
+            if (producto.cepa != '' && producto.azucarMax != '' && producto.azucarMin != '' && producto.sulfurosMax != ''
+                && producto.sulfurosMin != '' && producto.densidadMax != '' && producto.densidadMin != '' && producto.gradoAlcoholicoMax != ''
+                && producto.gradoAlcoholicoMin != '') {
+                console.log('Informacion quimica agregada')
             } else {
-                Alert.alert('Error', 'No hay producto guardado localmente.');
+                return alert('Por favor, complete todos los campos de información química.')
+            }
+        } else {
+            if (producto.idInformacionQuimica == 0 || producto.idInformacionQuimica == null) {
+                return alert('Por favor, seleccione una información química.')
+            }
+        }
+
+
+        console.log(producto)
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            if (token == null) {
+                alert('No se encontro token, no se pudo crear el producto.')
+                return;
+            }
+
+            const response = await fetch(`${URL_API_BACKEND}/api/ProductosApi/CrearProducto`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(producto)
+            });
+            const data = await response.json();
+            if (response.ok) {
+                Alert.alert('Éxito', 'Producto creado correctamente');
+            } else {
+                alert(data.message);
             }
         } catch (error) {
-            Alert.alert('Error', 'No se pudo conectar con la API.');
+            console.error('Error al enviar el producto:', error);
+            Alert.alert('Error', 'Error al enviar el producto');
         }
+
     };
 
-    const [dateCosecha, setDateCosecha] = useState(new Date(1598051730000));
-    const [dateProduccion, setDateProduccion] = useState(new Date(1598051730000));
-    const [mode, setMode] = useState('date');
+
+
+    // Estado para manejar las fechas seleccionadas
+    const [dateCosecha, setDateCosecha] = useState(new Date());
+    const [dateProduccion, setDateProduccion] = useState(new Date());
+    const [dateEnvasado, setDateEnvasado] = useState(new Date());
+
+    // Estado para mostrar u ocultar los pickers en Android
     const [showCosecha, setShowCosecha] = useState(false);
     const [showProduccion, setShowProduccion] = useState(false);
+    const [showEnvasado, setShowEnvasado] = useState(false);
 
+    // Estado general del producto
+
+    // Funciones para manejar los cambios de fecha
     const onChangeCosecha = (event, selectedDate) => {
         const currentDate = selectedDate || dateCosecha;
-        setShowCosecha(false);
-        setDateCosecha(currentDate);
+        setShowCosecha(Platform.OS === 'ios');  // Mantener visible en iOS
+        setDateCosecha(currentDate);  // Actualizar el estado del picker
+        handleChange('fechaCosecha', currentDate.toISOString());  // Actualizar el estado del producto
     };
 
     const onChangeDateProduccion = (event, selectedDate) => {
         const currentDate = selectedDate || dateProduccion;
-        setShowProduccion(false);
+        setShowProduccion(Platform.OS === 'ios');
         setDateProduccion(currentDate);
+        handleChange('fechaProduccion', currentDate.toISOString());
     };
 
-    const showModeCosecha = (currentMode) => {
-        setShowCosecha(true);
-        setMode(currentMode);
+    const onChangeDateEnvasado = (event, selectedDate) => {
+        const currentDate = selectedDate || dateEnvasado;
+        setShowEnvasado(Platform.OS === 'ios');
+        setDateEnvasado(currentDate);
+        handleChange('fechaEnvasado', currentDate.toISOString());
     };
 
-    const showModeProduccion = (currentMode) => {
-        setShowProduccion(true);
-        setMode(currentMode);
-    };
-
+    // Funciones para mostrar los pickers en Android
     const showDatepickerCosecha = () => {
-        showModeCosecha('date');
-    };
-
-    const showTimepickerCosecha = () => {
-        showModeCosecha('time');
+        setShowCosecha(true);
     };
 
     const showDatepickerProduccion = () => {
-        showModeProduccion('date');
+        setShowProduccion(true);
     };
 
-    const showTimepickerProduccion = () => {
-        showModeProduccion('time');
+    const showDatepickerEnvasado = () => {
+        setShowEnvasado(true);
     };
 
 
     return (
+
 
         <View style={styles.container}>
 
@@ -142,19 +331,21 @@ const CrearProducto = ({navigation}) => {
                 <View style={styles.containerInfo} >
                     <View style={{ marginBottom: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
                         <View style={{ width: '90%' }}>
-                            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Registrar Nuevo Producto</Text>
+                            <Text style={{ fontSize: 26, fontWeight: 'bold' }}>Registrar Producto</Text>
 
                         </View>
 
                     </View>
 
+                    <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22 }]}>Informacion de Producto</Text>
+
                     <View style={styles.TextAndInputForm}>
                         <Text style={{ fontSize: 18 }}>Código Barra:</Text>
                         <TextInput
                             style={styles.input}
-                            value={producto.id.toString()}
                             keyboardType="numeric"
-                            onChangeText={(text) => handleChange('id', text)}
+                            value={producto.id}
+                            onChangeText={(text) => handleChange('codigoBarra', text)}
                         />
                     </View>
 
@@ -164,25 +355,15 @@ const CrearProducto = ({navigation}) => {
                             style={styles.input}
                             value={producto.codigoVE}
                             keyboardType="numeric"
-                            onChangeText={(text) => handleChange('codigoVE', text)}
-                        />
+                            onChangeText={(text) => handleChange('codigoVE', text)} />
                     </View>
 
                     <View style={styles.TextAndInputForm}>
                         <Text style={{ fontSize: 18 }}>Nombre:</Text>
                         <TextInput
                             style={styles.input}
-                            value={producto.nombre_vino}
-                            onChangeText={(text) => handleChange('nombre_vino', text)}
-                        />
-                    </View>
-
-                    <View style={styles.TextAndInputForm}>
-                        <Text style={{ fontSize: 18 }}>Cepa:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={producto.cepa_vino}
-                            onChangeText={(text) => handleChange('cepa_vino', text)}
+                            value={producto.nombreVino}
+                            onChangeText={(text) => handleChange('nombreVino', text)}
                         />
                     </View>
 
@@ -191,279 +372,578 @@ const CrearProducto = ({navigation}) => {
                         <Picker
                             itemStyle={{ height: 120, fontSize: 14 }}
                             style={styles.itemInPicker}
+                            selectedValue={producto.paisDestino}
+                            onValueChange={(itemValue) => handleChange('paisDestino', itemValue)}
                         >
                             <Picker.Item label="Chile" value="Chile" />
                             <Picker.Item label="Argentina" value="Argentina" />
+                            <Picker.Item label="Francia" value="Francia" />
+                            <Picker.Item label="Italia" value="Italia" />
+                            <Picker.Item label="España" value="España" />
+                            <Picker.Item label="Estados Unidos" value="Estados Unidos" />
+                            <Picker.Item label="Australia" value="Australia" />
+                            <Picker.Item label="Sudáfrica" value="Sudáfrica" />
+                            <Picker.Item label="Portugal" value="Portugal" />
+                            <Picker.Item label="Nueva Zelanda" value="Nueva Zelanda" />
                         </Picker>
 
                     </View>
-
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Fecha de Cosecha: {dateCosecha.toLocaleString()} </Text>
-
-                        {Platform.OS === 'ios' ? (
-                            <DateTimePicker
-                                testID="dateTimePicker"
-                                value={dateCosecha}
-                                mode="datetime"
-                                is24Hour={true}
-                                onChange={onChangeCosecha}
-                                display="inline"
-                            />
-                        ) : Platform.OS === 'android' ? (
-                            <>
-                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                                    <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerCosecha}>
-                                        <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerCosecha}>
-                                        <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                                {showCosecha && (
-                                    <DateTimePicker
-                                        testID="dateTimePicker"
-                                        value={dateCosecha}
-                                        mode={mode}
-                                        is24Hour={true}
-                                        onChange={onChangeCosecha}
-                                    />
-                                )}
-                            </>
-                        ) : (
-                            <Text>Plataforma desconocida</Text>
-                        )}
-                    </View>
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Fecha de Producción: {dateProduccion.toLocaleString()} </Text>
-
-                        {Platform.OS === 'ios' ? (
-                            <DateTimePicker
-                                testID="dateTimePicker"
-                                value={dateProduccion}
-                                mode="datetime"
-                                is24Hour={true}
-                                onChange={onChangeDateProduccion}
-                                display="inline"
-                            />
-                        ) : Platform.OS === 'android' ? (
-                            <>
-                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                                    <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerProduccion}>
-                                        <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerProduccion}>
-                                        <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                                {showProduccion && (
-                                    <DateTimePicker
-                                        testID="dateTimePicker"
-                                        value={dateProduccion}
-                                        mode={mode}
-                                        is24Hour={true}
-                                        onChange={onChangeDateProduccion}
-                                    />
-                                )}
-                            </>
-                        ) : (
-                            <Text>Plataforma desconocida</Text>
-                        )}
-                    </View>
-
-                    <View style={styles.TextAndInputForm}>
-                        <Text style={{ fontSize: 18 }}>Capacidad:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={producto.capacidad_ml.toString()}
-                            keyboardType="numeric"
-                            onChangeText={(text) => handleChange('capacidad_ml', text)}
-                        />
-                        <Text style={{ fontSize: 18 }}>ml.</Text>
-
-                    </View>
-
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Tipo de Cápsula:</Text>
-                        <Picker itemStyle={styles.itemInPicker}
-                            style={styles.itemInPicker}
-                        >
-                            <Picker.Item label="PVC" value="PVC" />
-                            <Picker.Item label="Estaño" value="Estaño" />
-                            <Picker.Item label="Aluminio" value="Aluminio" />
-                            <Picker.Item label="Complejo" value="Complejo" />
-                            <Picker.Item label="Otros" value="Otros" />
-
-
-                        </Picker>
-
-                    </View>
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Tipo de Etiqueta:</Text>
-                        <Picker itemStyle={{ height: 100, fontSize: 14 }}
-                            style={styles.itemInPicker}
-                        >
-                            <Picker.Item label="Adhesivas" value="Adhesivas" />
-                            <Picker.Item label="Engomadas" value="Engomadas" />
-
-                        </Picker>
-                    </View>
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Color de la Botella:</Text>
-                        <Picker itemStyle={{ height: 180, fontSize: 14 }}
-                            style={styles.itemInPicker}
-                        >
-                            <Picker.Item label="Verde" value="Verde" />
-                            <Picker.Item label="Ámbar" value="Ámbar" />
-                            <Picker.Item label="Transparente" value="Transparente" />
-                            <Picker.Item label="Azul" value="Azul" />
-                            <Picker.Item label="Marrón" value="Marrón" />
-                        </Picker>
-
-                    </View>
-
-                    <View style={styles.TextAndInputForm}>
-                        <Text style={{ fontSize: 18 }}>Medalla:</Text>
-                        <Switch
-                            trackColor={{ false: '#767577', true: '#bf6565' }}
-                            thumbColor={producto.medalla ? '#f4f3f4' : '#f4f3f4'}
-                            onValueChange={toggleSwitch}
-                            value={producto.medalla}
-                            style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }} // Reducir tamaño
-                        />
-                    </View>
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Color de la Cápsula:</Text>
-                        <Picker itemStyle={{ height: 180, fontSize: 14 }}
-                            style={styles.itemInPicker}
-                        >
-                            <Picker.Item label="Rojo" value="Rojo" />
-                            <Picker.Item label="Dorado" value="Dorado" />
-                            <Picker.Item label="Plateado" value="Plateado" />
-                            <Picker.Item label="Negro" value="Negro" />
-                            <Picker.Item label="Azul" value="Azul" />
-                            <Picker.Item label="Verde" value="Verde" />
-                        </Picker>
-
-                    </View>
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Tipo de Corcho:</Text>
-                        <Picker itemStyle={{ height: 180, fontSize: 14 }}
-                            style={styles.itemInPicker}
-                        >
-                            <Picker.Item label="Corcho Natural" value="CorchoNatural" />
-                            <Picker.Item label="Corcho Aglomerado" value="CorchoAglomerado" />
-                            <Picker.Item label="Corcho Colmatado" value="CorchoColmatado" />
-                            <Picker.Item label="Corcho Sintético" value="CorchoSintetico" />
-                            <Picker.Item label="Tapa a Rosca" value="TapaRosca" />
-                        </Picker>
-
-                    </View>
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Tipo de Botella:</Text>
-                        <Picker itemStyle={{ height: 180, fontSize: 14 }}
-                            style={styles.itemInPicker}
-                        >
-                            <Picker.Item label="Bordeaux" value="Bordeaux" />
-                            <Picker.Item label="Borgoña" value="Borgoña" />
-                            <Picker.Item label="Champagne" value="Champagne" />
-                            <Picker.Item label="Rin" value="Rin" />
-                            <Picker.Item label="Jerez" value="Jerez" />
-                            <Picker.Item label="Porto" value="Porto" />
-                        </Picker>
-                    </View>
-
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Unidad de Medida de Etiqueta:</Text>
-                        <Picker itemStyle={{ height: 100, fontSize: 14 }}
-                            style={styles.itemInPicker}
-                        >
-                            <Picker.Item label="Centimetros" value="cm" />
-                            <Picker.Item label="Milimetros" value="mm" />
-
-                        </Picker>
-                    </View>
-
-                    <View style={styles.TextAndInputForm}>
-                        <Text style={{ fontSize: 18 }}>Medida de Etiqueta a Corcho:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={producto.medida_etiqueta_corcho.toString()}
-                            keyboardType="numeric"
-                            onChangeText={(text) => handleChange('medida_etiqueta_corcho', text)}
-                        />
-                    </View>
-
-                    <View style={styles.TextAndInputForm}>
-                        <Text style={{ fontSize: 18 }}>Medida de Etiqueta a Base:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={producto.medida_etiqueta_base.toString()}
-                            keyboardType="numeric"
-                            onChangeText={(text) => handleChange('medida_etiqueta_base', text)}
-                        />
-                    </View>
-
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Idioma:</Text>
-                        <Picker itemStyle={{ height: 140, fontSize: 14 }}
+                        <Picker
+                            itemStyle={{ height: 120, fontSize: 14 }}
                             style={styles.itemInPicker}
+                            selectedValue={producto.idioma}
+                            onValueChange={(itemValue) => handleChange('idioma', itemValue)}
                         >
-                            <Picker.Item label="Español" value="Español" />
                             <Picker.Item label="Inglés" value="Inglés" />
+                            <Picker.Item label="Árabe" value="Árabe" />
+                            <Picker.Item label="Español" value="Español" />
                             <Picker.Item label="Francés" value="Francés" />
-                            <Picker.Item label="Alemán" value="Alemán" />
                             <Picker.Item label="Italiano" value="Italiano" />
+                            <Picker.Item label="Alemán" value="Alemán" />
                             <Picker.Item label="Portugués" value="Portugués" />
                             <Picker.Item label="Chino" value="Chino" />
                             <Picker.Item label="Japonés" value="Japonés" />
                             <Picker.Item label="Ruso" value="Ruso" />
-                            <Picker.Item label="Árabe" value="Árabe" />
                         </Picker>
-
                     </View>
+                    <Text style={{ fontSize: 18 }}>Unidad Medida</Text>
+                    <Picker
+                        itemStyle={{ height: 120, fontSize: 14 }}
+                        style={styles.itemInPicker}
+                        selectedValue={producto.unidadMedida}
+                        onValueChange={(itemValue) => handleChange('unidadMedida', itemValue)}
 
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Desc. de Cápsula:</Text>
+                    >
+                        <Picker.Item label="Onzas (oz)" value="oz" />
+                        <Picker.Item label="Mililitros (ml)" value="ml" />
+                        <Picker.Item label="Litros (L)" value="L" />
+                        <Picker.Item label="Centilitros (cl)" value="cl" />
+                        <Picker.Item label="Gramos (g)" value="g" />
+                        <Picker.Item label="Kilogramos (kg)" value="kg" />
+                        <Picker.Item label="Galones (gal)" value="gal" />
+                    </Picker>
+
+                    <View style={styles.TextAndInputForm}>
+                        <Text style={{ fontSize: 18 }}>Descripcion de capsula:</Text>
                         <TextInput
                             style={styles.input}
-                            value={producto.descripcion_capsula}
-                            onChangeText={(text) => handleChange('descripcion_capsula', text)}
+                            multiline={true}
+                            value={producto.descripcionCapsula}
+                            onChangeText={(text) => handleChange('descripcionCapsula', text)}
                         />
+
                     </View>
 
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Desc. de Etiqueta:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={producto.descripcion_etiqueta}
-                            onChangeText={(text) => handleChange('descripcion_etiqueta', text)}
-                        />
-                    </View>
 
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Desc. de Botella:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={producto.descripcion_botella}
-                            onChangeText={(text) => handleChange('descripcion_botella', text)}
-                        />
-                    </View>
+                    <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Detalles de producto</Text>
+
+                    {agregarDetalles ? <>
+
+                        <View style={styles.TextAndInputForm}>
+                            <Text style={{ fontSize: 18 }}>Capacidad:</Text>
+                            <TextInput style={styles.input}
+                                value={producto.capacidad}
+                                keyboardType="numeric"
+                                onChangeText={(text) => handleChange('capacidad', text)}
+                            />
+                            <Text>ml.</Text>
+                        </View>
+
+
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Tipo de capsula:</Text>
+                            <Picker
+                                itemStyle={{ height: 120, fontSize: 14 }}
+                                style={styles.itemInPicker}
+                                selectedValue={producto.tipoCapsula}
+                                onValueChange={(itemValue) => handleChange('tipoCapsula', itemValue)}
+                            >
+                                <Picker.Item label="Estándar" value="estandar" />
+                                <Picker.Item label="Térmica" value="termica" />
+                                <Picker.Item label="Corcho" value="corcho" />
+                                <Picker.Item label="Twist-off" value="twist-off" />
+                                <Picker.Item label="Cápsula de aluminio" value="aluminio" />
+                                <Picker.Item label="Cápsula de estaño" value="estano" />
+                                <Picker.Item label="Cápsula retráctil" value="retráctil" />
+                            </Picker>
+                        </View>
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Color de capsula:</Text>
+                            <Picker
+                                itemStyle={{ height: 120, fontSize: 14 }}
+                                style={styles.itemInPicker}
+                                selectedValue={producto.colorCapsula}
+                                onValueChange={(itemValue) => handleChange('colorCapsula', itemValue)}
+
+                            >
+                                <Picker.Item label="Rojo" value="rojo" />
+                                <Picker.Item label="Negro" value="negro" />
+                                <Picker.Item label="Dorado" value="dorado" />
+                                <Picker.Item label="Plata" value="plata" />
+                                <Picker.Item label="Verde" value="verde" />
+                                <Picker.Item label="Azul" value="azul" />
+                                <Picker.Item label="Blanco" value="blanco" />
+                                <Picker.Item label="Marrón" value="marron" />
+                                <Picker.Item label="Violeta" value="violeta" />
+                            </Picker>
+                        </View>
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Color de botella:</Text>
+                            <Picker
+                                itemStyle={{ height: 120, fontSize: 14 }}
+                                style={styles.itemInPicker}
+                                selectedValue={producto.colorBotella}
+                                onValueChange={(itemValue) => handleChange('colorBotella', itemValue)}
+
+                            >
+                                <Picker.Item label="Rojo" value="rojo" />
+                                <Picker.Item label="Negro" value="negro" />
+                                <Picker.Item label="Dorado" value="dorado" />
+                                <Picker.Item label="Plata" value="plata" />
+                                <Picker.Item label="Verde" value="verde" />
+                                <Picker.Item label="Azul" value="azul" />
+                                <Picker.Item label="Blanco" value="blanco" />
+                                <Picker.Item label="Marrón" value="marron" />
+                                <Picker.Item label="Violeta" value="violeta" />
+                            </Picker>
+                        </View>
+
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Medalla:</Text>
+                            <Picker
+                                itemStyle={{ height: 120, fontSize: 14 }}
+                                style={styles.itemInPicker}
+                                selectedValue={producto.medalla}
+                                onValueChange={toggleSwitch}
+                            >
+                                <Picker.Item label="SI" value={true} />
+                                <Picker.Item label="NO" value={false} />
+                            </Picker>
+                        </View>
+
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Tipo de etiqueta:</Text>
+                            <Picker
+                                itemStyle={{ height: 120, fontSize: 14 }}
+                                style={styles.itemInPicker}
+                                selectedValue={producto.tipoEtiqueta}
+                                onValueChange={(itemValue) => handleChange('tipoEtiqueta', itemValue)}
+
+                            >
+                                <Picker.Item label="Clásica" value="clasica" />
+                                <Picker.Item label="Moderna" value="moderna" />
+                                <Picker.Item label="Minimalista" value="minimalista" />
+                                <Picker.Item label="Elegante" value="elegante" />
+                                <Picker.Item label="Vintage" value="vintage" />
+                                <Picker.Item label="Ecológica" value="ecologica" />
+                                <Picker.Item label="Edición limitada" value="edicion-limitada" />
+                                <Picker.Item label="Personalizada" value="personalizada" />
+                            </Picker>
+                        </View>
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Tipo de corcho:</Text>
+                            <Picker
+                                itemStyle={{ height: 120, fontSize: 14 }}
+                                style={styles.itemInPicker}
+                                selectedValue={producto.tipoCorcho}
+                                onValueChange={(itemValue) => handleChange('tipoCorcho', itemValue)}
+                            >
+                                <Picker.Item label="Natural" value="natural" />
+                                <Picker.Item label="Aglomerado" value="aglomerado" />
+                                <Picker.Item label="Sintético" value="sintetico" />
+                                <Picker.Item label="Corcho con tapa roscada" value="tapa-rosca" />
+                                <Picker.Item label="Corcho técnico" value="tecnico" />
+                                <Picker.Item label="Vidrio" value="vidrio" />
+                                <Picker.Item label="Zanconia" value="zanconia" />
+
+                            </Picker>
+                        </View>
+                        <View style={styles.TextAndInputForm}>
+                            <Text style={{ fontSize: 18 }}>Medida de etiqueta a boquete:</Text>
+                            <TextInput style={styles.input}
+                                value={producto.medidaEtiquetaBoquete}
+                                onChangeText={(text) => handleChange('medidaEtiquetaBoquete', text)}
+                            />
+                            <Text>cm.</Text>
+                        </View>
+
+                        <View style={styles.TextAndInputForm}>
+                            <Text style={{ fontSize: 18 }}>Medida de etiqueta a base:</Text>
+                            <TextInput style={styles.input}
+                                value={producto.medidaEtiquetaBase}
+                                onChangeText={(text) => handleChange('medidaEtiquetaBase', text)}
+                            />
+                            <Text>cm.</Text>
+                        </View>
+
+
+
+                        <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Informacion de la botella</Text>
+                        {agregarBotella ? <>
+
+
+
+                            <View style={styles.TextAndInputForm}>
+                                <Text style={{ fontSize: 18 }}>Nombre de Botella:</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={producto.nombreBotella}
+                                    onChangeText={(text) => handleChange('nombreBotella', text)}
+                                />
+                            </View>
+
+
+                            <View style={styles.TextAndInputForm}>
+                                <Text style={{ fontSize: 18 }}>Alto</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={producto.AltoBotella}
+                                    onChangeText={(text) => handleChange('AltoBotella', text)}
+
+                                />
+                                <Text style={{ fontSize: 18 }}>cm.</Text>
+                            </View>
+                            <View style={styles.TextAndInputForm}>
+                                <Text style={{ fontSize: 18 }}>Ancho</Text>
+                                <TextInput
+                                    style={styles.input}
+                                    value={producto.AnchoBotella}
+                                    onChangeText={(text) => handleChange('AnchoBotella', text)}
+
+                                />
+                                <Text style={{ fontSize: 18 }}>cm.</Text>
+                            </View>
+
+                            <TouchableOpacity onPress={() => {
+                                setAgregarBotella(false)
+                            }}>
+                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>X  No agregar nuevo registro</Text>
+                            </TouchableOpacity>
+
+                        </> :
+                            <>
+
+                                <View style={styles.TextAndPickerForm}>
+                                    <Text style={{ fontSize: 18 }}>Botella:</Text>
+                                    <Picker
+                                        itemStyle={{ height: 120, fontSize: 14 }}
+                                        style={styles.itemInPicker}
+                                        selectedValue={producto.idBotellaDetalle}
+                                        onValueChange={(itemValue) => handleChange('idBotellaDetalle', itemValue)}
+                                    >
+                                        <Picker.Item label="Selecciona una botella" value={0} />
+                                        {botellas.map((item) => (
+
+                                            <Picker.Item key={item.id} label={item.nombreBotella} value={item.id} />
+
+                                        ))}
+
+
+                                    </Picker>
+                                </View>
+
+
+                                <TouchableOpacity onPress={() => {
+                                    setAgregarBotella(true)
+                                }}>
+                                    <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>
+                                        + Agregar botella nueva
+                                    </Text>
+                                </TouchableOpacity>
+                            </>
+
+                        }
+
+
+
+
+
+
+
+
+
+
+
+
+                        <TouchableOpacity onPress={() => {
+                            setAgregarDetalles(false)
+                        }}>
+                            <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>x No agregar informcion en detalles.</Text>
+                        </TouchableOpacity>
+
+                    </> : <>
+
+                        <TouchableOpacity onPress={() => {
+                            setAgregarDetalles(true)
+                        }}>
+                            <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar detalles</Text>
+                        </TouchableOpacity>
+
+                    </>}
+
+
+
+
+
+
+                    <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Informacion Quimica de producto</Text>
+
+                    {/* Información Química */}
+                    {nuevaInfoQuimica ? (
+                        <>
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Cepa:</Text>
+                                <TextInput style={styles.input}
+                                    value={producto.cepa}
+                                    onChangeText={(text) => handleChange('cepa', text)}
+                                />
+
+                            </View>
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Azucar:</Text>
+                                <View style={styles.InfoQuimicaRangosBox}>
+                                    <Text>Min.</Text>
+                                    <TextInput style={styles.input}
+                                        value={producto.azucarMin}
+                                        onChangeText={(text) => handleChange('azucarMin', text)}
+                                    />
+                                    <Text>Max.</Text>
+                                    <TextInput style={styles.input}
+                                        value={producto.azucarMax}
+                                        onChangeText={(text) => handleChange('azucarMax', text)}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Sulfuroso:</Text>
+                                <View style={styles.InfoQuimicaRangosBox}>
+                                    <Text>Min.</Text>
+                                    <TextInput style={styles.input}
+                                        value={producto.sulfurosMin}
+                                        onChangeText={(text) => handleChange('sulfurosMin', text)}
+                                    />
+                                    <Text>Max.</Text>
+                                    <TextInput style={styles.input}
+                                        value={producto.sulfurosMax}
+                                        onChangeText={(text) => handleChange('sulfurosMax', text)}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Densidad:</Text>
+                                <View style={styles.InfoQuimicaRangosBox}>
+                                    <Text>Min.</Text>
+                                    <TextInput style={styles.input}
+                                        value={producto.densidadMin}
+                                        onChangeText={(text) => handleChange('densidadMin', text)}
+                                    />
+                                    <Text>Max.</Text>
+                                    <TextInput style={styles.input}
+                                        value={producto.densidadMax}
+                                        onChangeText={(text) => handleChange('densidadMax', text)}
+                                    />
+                                </View>
+                            </View>
+
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Grados de Alcohol:</Text>
+                                <View style={styles.InfoQuimicaRangosBox}>
+                                    <Text>Min.</Text>
+                                    <TextInput style={styles.input}
+                                        value={producto.gradoAlcoholicoMin}
+                                        onChangeText={(text) => handleChange('gradoAlcoholicoMin', text)}
+                                    />
+                                    <Text>Max.</Text>
+                                    <TextInput style={styles.input}
+                                        value={producto.gradoAlcoholicoMax}
+                                        onChangeText={(text) => handleChange('gradoAlcoholicoMax', text)}
+                                    />
+                                </View>
+
+
+                            </View>
+
+
+
+                            <TouchableOpacity onPress={() => setNuevaInfoQuimica(false)}>
+                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>X No agregar nuevo registro</Text>
+                            </TouchableOpacity>
+
+
+
+
+                        </>
+
+                    ) : (
+                        <>
+                            <Picker
+                                itemStyle={{ height: 120, fontSize: 14 }}
+                                style={styles.itemInPicker}
+                                selectedValue={producto.idInformacionQuimica}
+                                onValueChange={(itemValue) => handleChange('idInformacionQuimica', itemValue)}
+
+                            >
+                                <Picker.Item label="Selecciona cepa" value={0} />
+
+                                {infoQuimica.map((item) => (
+                                    <Picker.Item key={item.id} label={item.cepa} value={item.id} />
+
+                                ))}
+                            </Picker>
+                            <TouchableOpacity onPress={() => setNuevaInfoQuimica(true)}>
+                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar Información Química</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
+
+
+
+
+
+
+
+
+                    <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Historial del producto</Text>
+
+                    {agregarHistorial ?
+
+                        <>
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Fecha de Cosecha: {dateCosecha.toLocaleString()} </Text>
+
+                                {Platform.OS === 'ios' ? (
+                                    <DateTimePicker
+                                        testID="dateTimePicker"
+                                        value={dateCosecha}
+                                        mode="datetime"
+                                        is24Hour={true}
+                                        onChange={onChangeCosecha}
+                                        display="inline"
+                                    />
+                                ) : Platform.OS === 'android' ? (
+                                    <>
+                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                                            <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerCosecha}>
+                                                <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerCosecha}>
+                                                <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
+                                            </TouchableOpacity>
+                                        </View>
+
+                                        {showCosecha && (
+                                            <DateTimePicker
+                                                testID="dateTimePicker"
+                                                value={dateCosecha}
+                                                mode={mode}
+                                                is24Hour={true}
+                                                onChange={onChangeCosecha}
+                                            />
+                                        )}
+                                    </>
+                                ) : (
+                                    <Text>Plataforma desconocida</Text>
+                                )}
+                            </View>
+
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Fecha de Producción: {dateProduccion.toLocaleString()} </Text>
+
+                                {Platform.OS === 'ios' ? (
+                                    <DateTimePicker
+                                        testID="dateTimePicker"
+                                        value={dateProduccion}
+                                        mode="datetime"
+                                        is24Hour={true}
+                                        onChange={onChangeDateProduccion}
+                                        display="inline"
+                                    />
+                                ) : Platform.OS === 'android' ? (
+                                    <>
+                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                                            <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerProduccion}>
+                                                <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerProduccion}>
+                                                <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
+                                            </TouchableOpacity>
+                                        </View>
+
+                                        {showProduccion && (
+                                            <DateTimePicker
+                                                testID="dateTimePicker"
+                                                value={dateProduccion}
+                                                mode={mode}
+                                                is24Hour={true}
+                                                onChange={onChangeDateProduccion}
+                                            />
+                                        )}
+                                    </>
+                                ) : (
+                                    <Text>Plataforma desconocida</Text>
+                                )}
+                            </View>
+
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Fecha de Envasado: {dateEnvasado.toLocaleString()} </Text>
+
+                                {Platform.OS === 'ios' ? (
+                                    <DateTimePicker
+                                        testID="dateTimePicker"
+                                        value={dateEnvasado}
+                                        mode="datetime"
+                                        is24Hour={true}
+                                        onChange={onChangeDateEnvasado}
+                                        display="inline"
+                                    />
+                                ) : Platform.OS === 'android' ? (
+                                    <>
+                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                                            <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerEnvasado}>
+                                                <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerEnvasado}>
+                                                <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
+                                            </TouchableOpacity>
+                                        </View>
+
+                                        {showEnvasado && (
+                                            <DateTimePicker
+                                                testID="dateTimePicker"
+                                                value={dateEnvasado}
+                                                mode={mode}
+                                                is24Hour={true}
+                                                onChange={onChangeDateEnvasado}
+                                            />
+                                        )}
+                                    </>
+                                ) : (
+                                    <Text>Plataforma desconocida</Text>
+                                )}
+                            </View>
+
+
+                            <TouchableOpacity onPress={() => {
+                                setAgregarHistorial(false)
+                            }}>
+                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>X  No agregar nuevo registro</Text>
+                            </TouchableOpacity>
+                        </>
+                        :
+                        <TouchableOpacity onPress={() => {
+                            setAgregarHistorial(true)
+                        }}>
+                            <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar Historial</Text>
+                        </TouchableOpacity>
+                    }
 
                 </View>
 
-            </ScrollView>
+            </ScrollView >
 
             <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
                 <View style={styles.CirculoAtras}>
@@ -494,7 +974,7 @@ const CrearProducto = ({navigation}) => {
             </View>
 
 
-        </View>
+        </View >
 
 
     )
@@ -607,7 +1087,16 @@ const styles = StyleSheet.create({
         padding: 5,
         borderRadius: 3,
     }
-
+    , InfoQuimicaRangosBox: {
+        paddingLeft: 10,
+        flexDirection: 'row', gap: 5
+    },
+    botonNuevoRegistro: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#bf6565',
+        marginBottom: 10
+    }
 
 })
 
