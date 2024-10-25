@@ -375,6 +375,8 @@ const CrearProducto = ({ navigation }) => {
                             selectedValue={producto.paisDestino}
                             onValueChange={(itemValue) => handleChange('paisDestino', itemValue)}
                         >
+                            <Picker.Item label="Selecciona un pais." value="" />
+
                             <Picker.Item label="Chile" value="Chile" />
                             <Picker.Item label="Argentina" value="Argentina" />
                             <Picker.Item label="Francia" value="Francia" />
@@ -396,6 +398,8 @@ const CrearProducto = ({ navigation }) => {
                             selectedValue={producto.idioma}
                             onValueChange={(itemValue) => handleChange('idioma', itemValue)}
                         >
+                            <Picker.Item label="Selecciona un idioma." value="" />
+
                             <Picker.Item label="Inglés" value="Inglés" />
                             <Picker.Item label="Árabe" value="Árabe" />
                             <Picker.Item label="Español" value="Español" />
@@ -416,6 +420,8 @@ const CrearProducto = ({ navigation }) => {
                         onValueChange={(itemValue) => handleChange('unidadMedida', itemValue)}
 
                     >
+                        <Picker.Item label="Selecciona un unidad de medida." value="" />
+
                         <Picker.Item label="Onzas (oz)" value="oz" />
                         <Picker.Item label="Mililitros (ml)" value="ml" />
                         <Picker.Item label="Litros (L)" value="L" />
@@ -429,7 +435,7 @@ const CrearProducto = ({ navigation }) => {
                         <Text style={{ fontSize: 18 }}>Descripcion de capsula:</Text>
                         <TextInput
                             style={styles.input}
-                            multiline={true}
+
                             value={producto.descripcionCapsula}
                             onChangeText={(text) => handleChange('descripcionCapsula', text)}
                         />
@@ -460,6 +466,8 @@ const CrearProducto = ({ navigation }) => {
                                 selectedValue={producto.tipoCapsula}
                                 onValueChange={(itemValue) => handleChange('tipoCapsula', itemValue)}
                             >
+                                <Picker.Item label="Selecciona el tipo de capsula." value="" />
+
                                 <Picker.Item label="Estándar" value="estandar" />
                                 <Picker.Item label="Térmica" value="termica" />
                                 <Picker.Item label="Corcho" value="corcho" />
@@ -478,6 +486,8 @@ const CrearProducto = ({ navigation }) => {
                                 onValueChange={(itemValue) => handleChange('colorCapsula', itemValue)}
 
                             >
+                                <Picker.Item label="Selecciona un color." value="" />
+
                                 <Picker.Item label="Rojo" value="rojo" />
                                 <Picker.Item label="Negro" value="negro" />
                                 <Picker.Item label="Dorado" value="dorado" />
@@ -498,6 +508,8 @@ const CrearProducto = ({ navigation }) => {
                                 onValueChange={(itemValue) => handleChange('colorBotella', itemValue)}
 
                             >
+                                <Picker.Item label="Selecciona un color." value="" />
+
                                 <Picker.Item label="Rojo" value="rojo" />
                                 <Picker.Item label="Negro" value="negro" />
                                 <Picker.Item label="Dorado" value="dorado" />
@@ -518,6 +530,8 @@ const CrearProducto = ({ navigation }) => {
                                 selectedValue={producto.medalla}
                                 onValueChange={toggleSwitch}
                             >
+                                <Picker.Item label="Selecciona una opcion." value="" />
+
                                 <Picker.Item label="SI" value={true} />
                                 <Picker.Item label="NO" value={false} />
                             </Picker>
@@ -532,6 +546,8 @@ const CrearProducto = ({ navigation }) => {
                                 onValueChange={(itemValue) => handleChange('tipoEtiqueta', itemValue)}
 
                             >
+                                <Picker.Item label="Selecciona una opcion." value="" />
+
                                 <Picker.Item label="Clásica" value="clasica" />
                                 <Picker.Item label="Moderna" value="moderna" />
                                 <Picker.Item label="Minimalista" value="minimalista" />
@@ -550,6 +566,8 @@ const CrearProducto = ({ navigation }) => {
                                 selectedValue={producto.tipoCorcho}
                                 onValueChange={(itemValue) => handleChange('tipoCorcho', itemValue)}
                             >
+                                <Picker.Item label="Selecciona una opcion." value="" />
+
                                 <Picker.Item label="Natural" value="natural" />
                                 <Picker.Item label="Aglomerado" value="aglomerado" />
                                 <Picker.Item label="Sintético" value="sintetico" />
@@ -563,6 +581,8 @@ const CrearProducto = ({ navigation }) => {
                         <View style={styles.TextAndInputForm}>
                             <Text style={{ fontSize: 18 }}>Medida de etiqueta a boquete:</Text>
                             <TextInput style={styles.input}
+                                keyboardType="numeric"
+
                                 value={producto.medidaEtiquetaBoquete}
                                 onChangeText={(text) => handleChange('medidaEtiquetaBoquete', text)}
                             />
@@ -572,6 +592,8 @@ const CrearProducto = ({ navigation }) => {
                         <View style={styles.TextAndInputForm}>
                             <Text style={{ fontSize: 18 }}>Medida de etiqueta a base:</Text>
                             <TextInput style={styles.input}
+                                keyboardType="numeric"
+
                                 value={producto.medidaEtiquetaBase}
                                 onChangeText={(text) => handleChange('medidaEtiquetaBase', text)}
                             />
@@ -599,6 +621,8 @@ const CrearProducto = ({ navigation }) => {
                                 <Text style={{ fontSize: 18 }}>Alto</Text>
                                 <TextInput
                                     style={styles.input}
+                                    keyboardType="numeric"
+
                                     value={producto.AltoBotella}
                                     onChangeText={(text) => handleChange('AltoBotella', text)}
 
@@ -610,6 +634,8 @@ const CrearProducto = ({ navigation }) => {
                                 <TextInput
                                     style={styles.input}
                                     value={producto.AnchoBotella}
+                                    keyboardType="numeric"
+
                                     onChangeText={(text) => handleChange('AnchoBotella', text)}
 
                                 />
@@ -795,7 +821,7 @@ const CrearProducto = ({ navigation }) => {
                                 ))}
                             </Picker>
                             <TouchableOpacity onPress={() => setNuevaInfoQuimica(true)}>
-                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar Información Química</Text>
+                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar Nueva Información Química</Text>
                             </TouchableOpacity>
                         </>
                     )}
