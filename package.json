@@ -21,6 +21,7 @@
     "cache": "^3.0.0",
     "clean": "^4.0.2",
     "crypto-js": "^4.2.0",
+    "date-fns": "^4.1.0",
     "expo": "^51.0.34",
     "expo-barcode-scanner": "~13.0.1",
     "expo-camera": "^15.0.15",

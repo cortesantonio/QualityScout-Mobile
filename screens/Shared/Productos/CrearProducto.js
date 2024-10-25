@@ -10,6 +10,7 @@ import { Picker } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { URL_API_BACKEND } from '../../../config';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';  // Importa la librería para formatear fechas
 
 const CrearProducto = ({ navigation }) => {
 
@@ -202,11 +203,24 @@ const CrearProducto = ({ navigation }) => {
     }
 
 
+    const formatFecha = (date) => {
+        const dia = String(date.getDate()).padStart(2, '0');
+        const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+        const anio = date.getFullYear();
+        const horas = String(date.getHours()).padStart(2, '0');
+        const minutos = String(date.getMinutes()).padStart(2, '0');
+        const segundos = String(date.getSeconds()).padStart(2, '0');
+        return `${dia}-${mes}-${anio} ${horas}:${minutos}:${segundos}`;
+    };
+
 
     const enviarProducto = async () => {
-        handleChange('fechaCosecha', dateCosecha.toLocaleString())
-        handleChange('fechaProduccion', dateProduccion.toLocaleString())
-        handleChange('fechaEnvasado', dateEnvasado.toLocaleString())
+
+
+        if (producto.codigoBarra == '' || producto.codigoVE == '' || producto.nombreVino == '' || producto.paisDestino == ''
+            || producto.idioma == '' || producto.unidadMedida == '' || producto.descripcionCapsula == '') {
+            return alert('Por favor, complete todos los campos de información del producto.')
+        }
 
 
         if (agregarDetalles) {
@@ -255,16 +269,21 @@ const CrearProducto = ({ navigation }) => {
                     'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(producto)
+
             });
             const data = await response.json();
             if (response.ok) {
                 Alert.alert('Éxito', 'Producto creado correctamente');
+                navigation.navigate('VerProducto', { id: data.id });
             } else {
-                alert(data.message);
+                if (data === "El codigo de barra ya existe en base de datos") {
+                    Alert.alert('Error', 'El código de barras ya existe. Por favor, verifica la información.');
+                } else {
+                    Alert.alert('Error', 'Ocurrió un error al crear el producto.');
+                }
             }
         } catch (error) {
-            console.error('Error al enviar el producto:', error);
-            Alert.alert('Error', 'Error al enviar el producto');
+            Alert.alert('Error', 'Error al enviar el producto, asegurese de la integridad de sus datos y/o que el codigo de barra no este ingresado.');
         }
 
     };
@@ -288,21 +307,21 @@ const CrearProducto = ({ navigation }) => {
         const currentDate = selectedDate || dateCosecha;
         setShowCosecha(Platform.OS === 'ios');  // Mantener visible en iOS
         setDateCosecha(currentDate);  // Actualizar el estado del picker
-        handleChange('fechaCosecha', currentDate.toISOString());  // Actualizar el estado del producto
+        handleChange('fechaCosecha', formatFecha(currentDate));  // Actualizar el estado del producto
     };
 
     const onChangeDateProduccion = (event, selectedDate) => {
         const currentDate = selectedDate || dateProduccion;
         setShowProduccion(Platform.OS === 'ios');
         setDateProduccion(currentDate);
-        handleChange('fechaProduccion', currentDate.toISOString());
+        handleChange('fechaProduccion', formatFecha(currentDate));
     };
 
     const onChangeDateEnvasado = (event, selectedDate) => {
         const currentDate = selectedDate || dateEnvasado;
         setShowEnvasado(Platform.OS === 'ios');
         setDateEnvasado(currentDate);
-        handleChange('fechaEnvasado', currentDate.toISOString());
+        handleChange('fechaEnvasado', formatFecha(currentDate));
     };
 
     // Funciones para mostrar los pickers en Android
@@ -344,7 +363,7 @@ const CrearProducto = ({ navigation }) => {
                         <TextInput
                             style={styles.input}
                             keyboardType="numeric"
-                            value={producto.id}
+                            value={producto.codigoBarra}
                             onChangeText={(text) => handleChange('codigoBarra', text)}
                         />
                     </View>
@@ -593,7 +612,6 @@ const CrearProducto = ({ navigation }) => {
                             <Text style={{ fontSize: 18 }}>Medida de etiqueta a base:</Text>
                             <TextInput style={styles.input}
                                 keyboardType="numeric"
-
                                 value={producto.medidaEtiquetaBase}
                                 onChangeText={(text) => handleChange('medidaEtiquetaBase', text)}
                             />

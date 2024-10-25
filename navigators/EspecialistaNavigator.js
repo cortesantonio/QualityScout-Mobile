@@ -13,7 +13,7 @@ import VerUsuario from '../screens/Especialista/Usuarios/VerUsuario';
 import EditarUsuario from '../screens/Especialista/Usuarios/EditarUsuario';
 
 import CrearProducto from '../screens/Shared/Productos/CrearProducto';
-import EditarProducto from '../screens/Shared/Productos/CrearProducto';
+import EditarProducto from '../screens/Shared/Productos/EditarProducto';
 import Productos from '../screens/Shared/Productos/Productos';
 import VerProducto from '../screens/Shared/Productos/VerProducto';
 
@@ -38,14 +38,17 @@ export default function EspecialistaNavigator() {
       <Stack.Screen name="Home" component={HomeEspecialista} />
       <Stack.Screen name="Informes" component={Informes} />
       <Stack.Screen name="VerInforme" component={VerInforme} />
+      
       <Stack.Screen name="Usuarios" component={Usuarios} />
       <Stack.Screen name="VerUsuario" component={VerUsuario} />
       <Stack.Screen name="CrearUsuario" component={CrearUsuario} />
       <Stack.Screen name="EditarUsuario" component={EditarUsuario} />
+      
       <Stack.Screen name="Productos" component={Productos} />
       <Stack.Screen name="VerProducto" component={VerProducto} />
       <Stack.Screen name="CrearProducto" component={CrearProducto} />
       <Stack.Screen name="EditarProducto" component={EditarProducto} />
+
       <Stack.Screen name="Buscador" component={Buscador} />
       <Stack.Screen name="Controles" component={Controles} />
 

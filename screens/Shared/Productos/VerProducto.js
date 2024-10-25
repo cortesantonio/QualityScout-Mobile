@@ -37,12 +37,32 @@ const VerProducto = ({ navigation }) => {
             setJsonProducto(data); // Almacena los datos en el estado
             setIsLoading(false);
             obtenerBotella(data.productoDetalles[0]?.idBotellaDetalles)
+
         } catch (error) {
             console.error('Error obteniendo los datos:', error);
-            alert('Ocurrió un error al obtener los datos.');
+            alert('Ocurrió un error al obtener los datos restantes, verifica que existan los datos relacionados a producto.');
         }
     };
 
+    const [UserSession, setUserSession] = useState(null); // Estado para almacenar los datos del usuario
+
+    // Efecto para obtener la sesión de usuario desde AsyncStorage
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const sessionUser = await AsyncStorage.getItem('userJson');
+
+            if (sessionUser) {
+                try {
+                    const userLogData = JSON.parse(sessionUser); // Convertir de nuevo a objeto
+                    setUserSession(userLogData.Rol); // Actualiza el estado con los datos del usuario
+                } catch (error) {
+                    console.error("Error al parsear el JSON:", error);
+                }
+            }
+        };
+
+        fetchUserData(); // Llama a la función para recuperar los datos
+    }, []);
 
     const obtenerBotella = async (id) => {
 
@@ -67,8 +87,7 @@ const VerProducto = ({ navigation }) => {
             const data = await response.json();
             setJsonBotella(data); // Almacena los datos en el estado
         } catch (error) {
-            console.error('Error obteniendo los datos:', error);
-            alert('Ocurrió un error al obtener los datos.');
+            alert('No se encontraron datos relacionados a la botella');
         }
     }
 
@@ -164,16 +183,22 @@ const VerProducto = ({ navigation }) => {
                             <Text style={{ fontSize: 10 }}>COD. VE: {JsonProducto.codigoVE}</Text>
                             <Text style={{ fontSize: 10 }}>ENCARGADO: {JsonProducto.idUsuarios}</Text>
                         </View>
+
                         <View style={{ flexDirection: 'row', gap: 10 }}>
-                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}>
+                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
+                                onPress={() => { navigation.navigate("EditarProducto", { id: JsonProducto.id }) }}
+                            >
                                 <Image source={iconEditarProducto} style={{ width: 20, height: 20 }} />
                                 <Text style={{ fontSize: 8 }}>EDITAR</Text>
                             </TouchableOpacity>
+
                             <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => { actualizarEstadoActivo(JsonProducto.id) }}>
                                 <Image source={iconPausa} style={{ width: 20, height: 20 }} />
                                 <Text style={{ fontSize: 8 }}>DESACTIVAR</Text>
                             </TouchableOpacity>
                         </View>
+
+
                     </View>
 
                     <Text style={[styles.textInfo, { fontWeight: 'bold', marginBottom: 5 }]}>Informacion Producto.</Text>

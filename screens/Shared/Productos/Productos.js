@@ -162,11 +162,17 @@ const Productos = ({ navigation }) => {
                     <TouchableOpacity onPress={() => { actualizarEstadoActivo(item.id) }}>
                         {item.activo ? <Image source={iconPausaWhite} style={styles.iconAcciones} /> : <Image source={iconCheck} style={styles.iconAcciones} />}
                     </TouchableOpacity>
+
+
+
                 )}
 
-                {item.activo ? <TouchableOpacity onPress={() => navigation.navigate('VerProducto', { id: item.id })}>
-                    <Image source={iconGo} style={styles.iconAcciones}></Image>
-                </TouchableOpacity> : <></>}
+                {item.activo ?
+                    <TouchableOpacity onPress={() => navigation.navigate('VerProducto', { id: item.id })}>
+                        <Image source={iconGo} style={styles.iconAcciones}></Image>
+                    </TouchableOpacity> :
+
+                    <></>}
 
             </View>
         </View>
@@ -176,8 +182,8 @@ const Productos = ({ navigation }) => {
         <>
             <Nav />
             <View style={styles.container}>
-                <Text style={styles.TituloPantalla}>Gestión de productos. <TouchableOpacity style={{backgroundColor:'#4b0404' , padding: 5, borderRadius:10}} onPress={() => { obtenerDatos() }}>
-                    <Image source={iconReload} style={{width:10, height:10}}></Image>
+                <Text style={styles.TituloPantalla}>Gestión de productos. <TouchableOpacity style={{ backgroundColor: '#4b0404', padding: 5, borderRadius: 10 }} onPress={() => { obtenerDatos() }}>
+                    <Image source={iconReload} style={{ width: 10, height: 10 }}></Image>
                 </TouchableOpacity></Text>
 
 
@@ -208,7 +214,7 @@ const Productos = ({ navigation }) => {
                     {/* Encabezado de la lista */}
                     <View style={styles.encabezado}>
                         <Text style={{ fontSize: 18 }}>Registros</Text>
-                       
+
                     </View>
 
                     {/* Cuerpo de la lista */}
@@ -216,7 +222,7 @@ const Productos = ({ navigation }) => {
                         <FlatList
                             style={styles.flatList}
                             data={filteredData}
-                            keyExtractor={item => item.codigoBarra}
+                            keyExtractor={item => item.id}
                             renderItem={renderItem}
                         />
                     </View>
@@ -310,7 +316,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 10,
         marginTop: 10,
-        marginTop:10
+        marginTop: 10
     },
 
     containerProductos: {
