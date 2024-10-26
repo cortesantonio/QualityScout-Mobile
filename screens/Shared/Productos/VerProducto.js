@@ -44,6 +44,10 @@ const VerProducto = ({ navigation }) => {
         }
     };
 
+
+
+
+
     const [UserSession, setUserSession] = useState(null); // Estado para almacenar los datos del usuario
 
     // Efecto para obtener la sesión de usuario desde AsyncStorage
@@ -86,6 +90,7 @@ const VerProducto = ({ navigation }) => {
 
             const data = await response.json();
             setJsonBotella(data); // Almacena los datos en el estado
+            
         } catch (error) {
             alert('No se encontraron datos relacionados a la botella');
         }

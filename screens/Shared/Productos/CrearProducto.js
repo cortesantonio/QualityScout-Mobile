@@ -21,9 +21,9 @@ const CrearProducto = ({ navigation }) => {
 
 
     {/**Informacion quimioca */ }
-    const [infoQuimica, setInfoQuimica] = useState([]);
     const [agregarInfoQuimica, setAgregarInfoQuimica] = useState(false); // Cambié el nombre para evitar conflictos
     const [nuevaInfoQuimica, setNuevaInfoQuimicaX] = useState(false); // Manejo de nuevo registro
+    const [infoQuimica, setInfoQuimica] = useState([]);
 
 
 
@@ -203,15 +203,7 @@ const CrearProducto = ({ navigation }) => {
     }
 
 
-    const formatFecha = (date) => {
-        const dia = String(date.getDate()).padStart(2, '0');
-        const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
-        const anio = date.getFullYear();
-        const horas = String(date.getHours()).padStart(2, '0');
-        const minutos = String(date.getMinutes()).padStart(2, '0');
-        const segundos = String(date.getSeconds()).padStart(2, '0');
-        return `${dia}-${mes}-${anio} ${horas}:${minutos}:${segundos}`;
-    };
+    
 
 
     const enviarProducto = async () => {
@@ -288,7 +280,15 @@ const CrearProducto = ({ navigation }) => {
 
     };
 
-
+    const formatFecha = (date) => {
+        const dia = String(date.getDate()).padStart(2, '0');
+        const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan desde 0
+        const anio = date.getFullYear();
+        const horas = String(date.getHours()).padStart(2, '0');
+        const minutos = String(date.getMinutes()).padStart(2, '0');
+        const segundos = String(date.getSeconds()).padStart(2, '0');
+        return `${dia}-${mes}-${anio} ${horas}:${minutos}:${segundos}`;
+    };
 
     // Estado para manejar las fechas seleccionadas
     const [dateCosecha, setDateCosecha] = useState(new Date());
