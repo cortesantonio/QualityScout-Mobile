@@ -2,8 +2,6 @@ import {
     TouchableOpacity, StyleSheet, View, Text, Image, ScrollView,
     TextInput, Switch, Platform, Button, Alert
 } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
@@ -187,7 +185,6 @@ const CrearControl = ({ navigation }) => {
             <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
                 <View style={styles.CirculoAtras}>
                     <View style={{ flexDirection: 'row', marginTop: 25 }}>
-                        <FontAwesomeIcon icon={faArrowLeftLong} size={38} color="white" />
                         <Text style={{ color: 'white', fontSize: 34 }}>Atrás</Text>
                     </View>
                     <Text style={{ color: 'white', fontSize: 22 }}>Ver Producto</Text>

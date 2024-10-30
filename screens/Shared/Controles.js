@@ -1,7 +1,5 @@
 import { StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import React from 'react';
-import { PieChart } from 'react-native-svg-charts';
-import { Text as SvgText } from 'react-native-svg';
 import { Footer, Nav } from '../../components/shared';
 
 
@@ -157,44 +155,7 @@ const Controles = ({navigation}) => {
                         </TouchableOpacity>
                     </View >
 
-                    {/* Indicadores de rendimientos */}
-                    <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        {/* Pie Chart De porcentajes de estados de controles */}
-                        <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-
-                            <PieChart
-                                style={{ height: 150, width: 200 }}
-                                valueAccessor={({ item }) => item.amount}
-                                data={data}
-                                spacing={0}
-                                outerRadius={'80%'}
-                            >
-                                <Labels />
-                            </PieChart>
-                            <Text style={{ position: 'absolute', right: 5, top: 5, textAlign: 'center' }}>
-                                Porcentajes de{'\n'}estados de {'\n'}controles.
-                            </Text>
-
-                            <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
-                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    <View style={{ backgroundColor: '#f25757', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                                    <Text>Aprobado</Text>
-                                </View>
-                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    <View style={{ backgroundColor: '#ed8d8d', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                                    <Text>Reprocesos</Text>
-                                </View>
-                                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                    <View style={{ backgroundColor: '#260202', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                                    <Text>Rechazados</Text>
-                                </View>
-                            </View>
-
-                        </View>
-
-
-
-                    </View>
+                    
                 </View >
             </ScrollView >
 

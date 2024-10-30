@@ -5,8 +5,6 @@ import {
   TextInput, StyleSheet, Dimensions, Alert,
   ActivityIndicator, SafeAreaView
 } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import CryptoJS from 'crypto-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -162,7 +160,6 @@ const Login = ({ navigation }) => {
           <TouchableOpacity onPress={() => setIsFormVisible(!isFormVisible)} style={styles.ButtonCirculoAtras}>
             <View style={styles.CirculoAtras}>
               <View style={{ flexDirection: 'row', marginTop: 25 }}>
-                <FontAwesomeIcon icon={faArrowLeftLong} size={38} color="white" />
                 <Text style={{ color: 'white', fontSize: 34 }}>Atrás</Text>
               </View>
               <Text style={{ color: 'white', fontSize: 22 }}>Inicio</Text>

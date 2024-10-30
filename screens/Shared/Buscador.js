@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import { Footer } from "../../components/shared";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -69,7 +67,6 @@ export default function App({ navigation }) {
       <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
         <View style={styles.CirculoAtras}>
           <View style={{ flexDirection: 'row', marginTop: 25 }}>
-            <FontAwesomeIcon icon={faArrowLeftLong} size={38} color="white" />
             <Text style={{ color: 'white', fontSize: 34 }}>Atrás</Text>
           </View>
         </View>

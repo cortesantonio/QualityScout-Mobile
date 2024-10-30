@@ -5,7 +5,6 @@ import {
 import { Footer, Nav } from '../../../components/shared';
 import { URL_API_BACKEND } from '../../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { icon } from '@fortawesome/fontawesome-svg-core';
 
 // iconos propios
 const iconLupa = require('../../../assets/icons/iconLupa.png')

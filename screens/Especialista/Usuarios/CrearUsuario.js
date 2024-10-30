@@ -6,9 +6,7 @@ import {
 import { useState } from 'react';
 import { Footer, Nav } from '../../../components/shared';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { width } from '@fortawesome/free-solid-svg-icons/fa0';
 import { URL_API_BACKEND } from '../../../config';
-import { useEffect } from 'react';
 import { React } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

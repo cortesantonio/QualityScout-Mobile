@@ -1,8 +1,7 @@
-import { Dimensions, StyleSheet, Text, View, Image, Pressable, ScrollView,StatusBar } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable, ScrollView, StatusBar, Dimensions } from 'react-native';
 import React from 'react';
-import { PieChart } from 'react-native-svg-charts';
-import { Text as SvgText } from 'react-native-svg';
 import { Footer, Nav } from '../../components/shared';
+import { PieChart } from 'react-native-chart-kit';
 
 
 
@@ -17,10 +16,36 @@ const iconBuscador = require('../../assets/icons/iconBuscador.png')
 const iconFlechaSubida = require('../../assets/icons/flechaSubida.png')
 const iconBajada = require('../../assets/icons/flechaBajada.png')
 
+const screenWidth = Dimensions.get('window').width * 0.8;
+
+function MyPieChart() {
+    const data = [
+        { name: 'Aprobados', population: 124, color: '#f25757', legendFontSize: 11 },
+        { name: 'Reprocesos', population: 20, color: '#ed8d8d', legendFontSize: 11 },
+        { name: 'Rechazados', population: 81, color: '#260202', legendFontSize: 11 },
+    ];
+
+    return (
+        <View>
+            <PieChart
+                data={data}
+                width={screenWidth}
+                height={200}
+                chartConfig={{
+                    backgroundColor: '#ffffff',
+                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                }}
+                accessor="population"
+                backgroundColor="transparent"
+                paddingLeft="10"
+                absolute
+            />
+        </View>
+    );
+}
 
 
-
-const HomeEspecialista = ({navigation}) => {
+const HomeEspecialista = ({ navigation }) => {
     const calculatePercentages = (data) => {
         const total = data.reduce((sum, item) => sum + item.amount, 0);
         return data.map(item => ({
@@ -59,36 +84,12 @@ const HomeEspecialista = ({navigation}) => {
     },
     ]);
 
-    const Labels = ({ slices }) => {
-        return slices.map((slice, index) => {
-            const { pieCentroid, data } = slice;
-            const offsetX = pieCentroid[0];
-            const offsetY = pieCentroid[1];
-            return (
-                <SvgText
-                    key={index}
-                    x={offsetX}
-                    y={offsetY}
-                    fill={'white'}
-                    stroke={'black'}
-                    strokeWidth={0.5}
-                    strokeOpacity={0.5}
-                    fontWeight={'bold'}
-                    textAnchor={'middle'}
-                    alignmentBaseline={'middle'}
-                    fontSize={14}
 
-                >
-                    {`${data.percentage}% `}
-                </SvgText>
-            );
-        });
-    };
 
     return (
 
         <>
-            <StatusBar style="light" barStyle="light-content" translucent={true}  />
+            <StatusBar style="light" barStyle="light-content" translucent={true} />
             <Nav />
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.containerHomeAdmin}>
@@ -145,31 +146,10 @@ const HomeEspecialista = ({navigation}) => {
                     <Text style={{ fontSize: 18, }}>Indicadores de rendimientos actuales.</Text>
                     <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
-                        <PieChart
-                            style={{ height: 200, width: 300 }}
-                            valueAccessor={({ item }) => item.amount}
-                            data={data}
-                            spacing={0}
-                            outerRadius={'85%'}
+                        <MyPieChart />
 
 
-                        >
-                            <Labels />
-                        </PieChart>
-                        <View style={{ display: 'flex', flexDirection: 'row', gap: 20 }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                <View style={{ backgroundColor: '#f25757', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                                <Text>Aprobado</Text>
-                            </View>
-                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                <View style={{ backgroundColor: '#ed8d8d', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                                <Text>Reprocesos</Text>
-                            </View>
-                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                <View style={{ backgroundColor: '#260202', width: 10, height: 10, borderRadius: 50, marginRight: 5 }}></View>
-                                <Text>Rechazados</Text>
-                            </View>
-                        </View>
+
 
                         <View style={styles.containerCard}>
 

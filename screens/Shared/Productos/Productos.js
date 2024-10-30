@@ -2,14 +2,13 @@ import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInp
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Footer, Nav } from '../../../components/shared';
-
 import { useRoute } from '@react-navigation/native';
+
 import { useEffect } from 'react';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { URL_API_BACKEND } from '../../../config';
-import { icon } from '@fortawesome/fontawesome-svg-core';
 
 
 // iconos propios 
@@ -29,6 +28,17 @@ const iconCheck = require('../../../assets/icons/iconCheck.png')
 const iconReload = require('../../../assets/icons/iconReload.png')
 
 const Productos = ({ navigation }) => {
+    const route = useRoute();
+    const { codigo } = route.params || {};
+
+
+    useEffect(() => {
+        if (codigo) {
+            handleSearch(codigo);  // Ejecutar la búsqueda con el código una vez
+        }
+    }, [codigo])
+
+
 
     const [UserSession, setUserSession] = useState(null); // Estado para almacenar los datos del usuario
     const [DATA, setDATA] = useState([]); // Inicializa el estado de DATA como un array vacío
@@ -95,13 +105,16 @@ const Productos = ({ navigation }) => {
     const handleSearch = (text) => {
         setSearchText(text);
         const filtered = DATA.filter(item =>
-            item.cod.includes(text) || item.nombre.toLowerCase().includes(text.toLowerCase())
+            (item.cod && item.cod.includes(text)) || 
+            (item.nombre && item.nombre.toLowerCase().includes(text.toLowerCase())) ||
+            (item.codigoBarra && item.codigoBarra.includes(text)) 
         );
         setFilteredData(filtered);
     };
+    
+    
 
-
-
+   
 
 
     const actualizarEstadoActivo = async (id) => {

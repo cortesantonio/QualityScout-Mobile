@@ -1,5 +1,3 @@
-import { text } from '@fortawesome/fontawesome-svg-core';
-import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
 import React, { useState } from 'react';
 import {
     View, Text, TouchableOpacity, Image, TextInput, FlatList, Modal, StyleSheet, Dimensions

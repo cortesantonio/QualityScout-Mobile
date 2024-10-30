@@ -1,6 +1,4 @@
 import { TouchableOpacity, StyleSheet, View, Text, Image, ScrollView, } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faArrowLeftLong } from '@fortawesome/free-solid-svg-icons';
 import { useRoute } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -90,7 +88,7 @@ const VerProducto = ({ navigation }) => {
 
             const data = await response.json();
             setJsonBotella(data); // Almacena los datos en el estado
-            
+
         } catch (error) {
             alert('No se encontraron datos relacionados a la botella');
         }
@@ -189,20 +187,22 @@ const VerProducto = ({ navigation }) => {
                             <Text style={{ fontSize: 10 }}>ENCARGADO: {JsonProducto.idUsuarios}</Text>
                         </View>
 
-                        <View style={{ flexDirection: 'row', gap: 10 }}>
-                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
-                                onPress={() => { navigation.navigate("EditarProducto", { id: JsonProducto.id }) }}
-                            >
-                                <Image source={iconEditarProducto} style={{ width: 20, height: 20 }} />
-                                <Text style={{ fontSize: 8 }}>EDITAR</Text>
-                            </TouchableOpacity>
+                        {UserSession === "Especialista" && (
 
-                            <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => { actualizarEstadoActivo(JsonProducto.id) }}>
-                                <Image source={iconPausa} style={{ width: 20, height: 20 }} />
-                                <Text style={{ fontSize: 8 }}>DESACTIVAR</Text>
-                            </TouchableOpacity>
-                        </View>
+                            <View style={{ flexDirection: 'row', gap: 10 }}>
+                                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }}
+                                    onPress={() => { navigation.navigate("EditarProducto", { id: JsonProducto.id }) }}
+                                >
+                                    <Image source={iconEditarProducto} style={{ width: 20, height: 20 }} />
+                                    <Text style={{ fontSize: 8 }}>EDITAR</Text>
+                                </TouchableOpacity>
 
+                                <TouchableOpacity style={{ justifyContent: 'center', alignItems: 'center' }} onPress={() => { actualizarEstadoActivo(JsonProducto.id) }}>
+                                    <Image source={iconPausa} style={{ width: 20, height: 20 }} />
+                                    <Text style={{ fontSize: 8 }}>DESACTIVAR</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
 
                     </View>
 
@@ -253,7 +253,6 @@ const VerProducto = ({ navigation }) => {
             <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
                 <View style={styles.CirculoAtras}>
                     <View style={{ flexDirection: 'row', marginTop: 25 }}>
-                        <FontAwesomeIcon icon={faArrowLeftLong} size={38} color="white" />
                         <Text style={{ color: 'white', fontSize: 34 }}>Atrás</Text>
                     </View>
                     <Text style={{ color: 'white', fontSize: 22 }}>Registros</Text>
