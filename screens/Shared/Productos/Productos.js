@@ -32,11 +32,7 @@ const Productos = ({ navigation }) => {
     const { codigo } = route.params || {};
 
 
-    useEffect(() => {
-        if (codigo) {
-            handleSearch(codigo);  // Ejecutar la búsqueda con el código una vez
-        }
-    }, [codigo])
+
 
 
 
@@ -105,16 +101,16 @@ const Productos = ({ navigation }) => {
     const handleSearch = (text) => {
         setSearchText(text);
         const filtered = DATA.filter(item =>
-            (item.cod && item.cod.includes(text)) || 
+            (item.cod && item.cod.includes(text)) ||
             (item.nombre && item.nombre.toLowerCase().includes(text.toLowerCase())) ||
-            (item.codigoBarra && item.codigoBarra.includes(text)) 
+            (item.codigoBarra && item.codigoBarra.includes(text))
         );
         setFilteredData(filtered);
     };
-    
-    
 
-   
+
+
+
 
 
     const actualizarEstadoActivo = async (id) => {
@@ -190,6 +186,12 @@ const Productos = ({ navigation }) => {
             </View>
         </View>
     );
+
+    useEffect(() => {
+        if (codigo) {
+            handleSearch(codigo);  // Ejecutar la búsqueda con el código una vez
+        }
+    }, [codigo])
 
     return (
         <>
