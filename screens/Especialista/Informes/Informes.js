@@ -1,10 +1,11 @@
 import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Modal } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import { Nav, Footer } from '../../../components/shared';
 import { StatusBar } from 'react-native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { URL_API_BACKEND } from '../../../config';
 
 // iconos propios 
 
@@ -15,33 +16,72 @@ const iconInformes = require('../../../assets/icons/iconInformes.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
 const iconVarita = require('../../../assets/icons/iconVarita.png')
 
-const Informes = ({navigation}) => {
+const Informes = ({ navigation }) => {
+    //datos para generar informe
+    const [user, setUser] = useState({});
+    const [nuevoInforme, setNuevoInforme] = useState(
+        {
+            titulo: '',
+            descripcion: '',
+            encargado: '',
+            idUsuario: null,
+        }
+    )
+    const handleChange = (name, value) => {
+        setNuevoInforme({
+            ...nuevoInforme,
+            [name]: value
+        })
+    }
+
+
     const [busqueda, setBusqueda] = useState(''); // Estado para la búsqueda
 
-    const DATA = [
-        {
-            id: 1,
-            fecha: '2023-05-15',
-            hora: '10:30',
-            enfoque: 'General',
-            encargado: 'Juan Pérez',
-        },
-        {
-            id: 2,
-            fecha: '2023-05-16',
-            hora: '14:45',
-            enfoque: 'Especifico',
-            encargado: 'María González',
-        },
-        {
-            id: 3,
-            fecha: '2023-05-17',
-            hora: '09:15',
-            enfoque: 'General',
-            encargado: 'Pedro Sánchez',
-        },
+    // recupera el usuario logeado
+    const obtenerUsuario = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken');
+            const userJson = await AsyncStorage.getItem('userJson');
+            if (token == null) {
+                alert('Token de autorización no encontrado.');
+                return;
+            }
+            const user = JSON.parse(userJson);
+            setUser(user);
+        } catch (error) {
+            console.error('Error al obtener el usuario', error);
+        }
+    };
 
-    ]
+    useEffect(() => {
+        obtenerUsuario();
+    }, []); // Se ejecuta solo una vez al montar el componente
+
+
+    //recupera todos los informes de base de datos.
+    const [DATA, setDATA] = useState([])
+    const obtenerInformes = () => {
+        fetch(`${URL_API_BACKEND}/api/InformesApi`)
+            .then(response => response.json())
+            .then(data => {
+                setDATA(data);
+                setUsuariosFiltrados(data); // Asegúrate de actualizar también la lista filtrada
+            })
+            .catch(error => {
+                console.error('Error al obtener los informes:', error);
+            });
+    };
+
+    useEffect(() => {
+        obtenerInformes();
+    }, []);
+
+
+    const enviarInforme = () => {
+        console.log(nuevoInforme)
+    }
+
+
     const [usuariosFiltrados, setUsuariosFiltrados] = useState(DATA); // Estado para la lista filtrada
 
     const handleBuscar = (text) => {
@@ -64,62 +104,19 @@ const Informes = ({navigation}) => {
             </View>
 
             <View style={styles.infoCard} >
-                <Text style={styles.titleInfo}>FECHA{item.fecha} HORA {item.hora}</Text>
-                <Text style={styles.subtitleInfo}>Titulo: {item.enfoque} Encargado: {item.encargado}</Text>
+                <Text style={styles.titleInfo}>Fecha: {item.fecha}</Text>
+                <Text style={styles.subtitleInfo}>Titulo: {item.titulo} - Encargado: {item.usuario.nombre}</Text>
 
             </View>
 
             <View style={{ display: 'flex', backgroundColor: '#bf6565', padding: 3, borderRadius: 3 }}>
 
-                <TouchableOpacity onPress={() => navigation.navigate('VerInforme', { id: item.id})}>
+                <TouchableOpacity onPress={() => navigation.navigate('VerInforme', { item: item })}>
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
                 </TouchableOpacity>
             </View>
         </View>
     );
-
-    const [modalVisible, setModalVisible] = useState(false);
-
-    const abrirModal = () => {
-        setModalVisible(true);
-    };
-
-    const cerrarModal = () => {
-        setModalVisible(false);
-    };
-
-    const ModalCrearInforme = () => (
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={cerrarModal}
-        >
-            <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>
-                    <Text style={styles.modalTitle}>Generar informe con IA</Text>
-
-                    <View>
-                        <Text style={styles.labels}>Título de informe</Text>
-                        <TextInput style={styles.inputModal}></TextInput>
-                        <Text style={styles.labels}>Características a destacar</Text>
-                        <TextInput style={styles.inputModal}></TextInput>
-                        <Text style={{ fontSize: 10, color: 'gray', marginBottom: 15, marginTop: 5 }}>Podrás encontrar los informes generados en registros.</Text>
-                    </View>
-
-                    <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'space-around' }}>
-                        <TouchableOpacity onPress={cerrarModal} >
-                            <Text style={{ fontSize: 14, color: '#260202', textTransform: 'uppercase' }}>CANCELAR</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity >
-                            <Text style={{ fontSize: 14, color: '#bf6565', textTransform: 'uppercase' }}>GENERAR</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-        </Modal>
-    );
-
 
 
 
@@ -135,7 +132,7 @@ const Informes = ({navigation}) => {
 
                     <TextInput
                         style={styles.inputBuscador}
-                        placeholder="Ingresa RUT o Nombre del Usuario"
+                        placeholder="Ingresa Nombre del Usuario"
                         value={busqueda}
                         onChangeText={handleBuscar}
                     />
@@ -143,7 +140,7 @@ const Informes = ({navigation}) => {
                 <View style={styles.contenedorBotones}>
 
 
-                    <TouchableOpacity style={styles.TouchableBoton} onPress={abrirModal}>
+                    <TouchableOpacity style={styles.TouchableBoton} onPress={() => {navigation.navigate('CrearInforme')}}>
                         <Image source={iconVarita} style={styles.iconsBotones} ></Image>
                         <Text style={styles.botonText}>Generar Informe con IA</Text>
                     </TouchableOpacity>
@@ -167,7 +164,7 @@ const Informes = ({navigation}) => {
                     </View>
                 </View>
 
-                {modalVisible && <ModalCrearInforme />}
+
             </View>
             <Footer />
         </>
@@ -327,8 +324,8 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         padding: 2,
         marginBottom: 10,
-        color: 'gray'
-
+        color: 'gray',
+        height: 30
     }, labels: {
         fontSize: 14,
         color: 'gray'

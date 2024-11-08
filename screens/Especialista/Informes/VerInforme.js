@@ -1,69 +1,86 @@
-import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Modal } from 'react-native';
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { useState } from 'react';
-import { Footer, Nav } from '../../../components/shared';
+import { Alert, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { useRoute } from '@react-navigation/native';
+import { Nav, Footer } from '../../../components/shared';
 
-
-
-const DATA = {
-    id: 1,
-    titulo: "Analisis de errores por tipos de errores en tipos de botellas",
-    descricion: "ESTA ES LA DESCRICION DEL INFORME GENERADO pOR LA INTELIGENCIA ARTIFICIAL DE OpENIA3.5 ",
-    fecha: "2024-04-12",
-    hora: "15:22:00",
-    autor: "Antonio C."
-}
-
-const VerInforme = () => {
-
-
+const VerInforme = ({ navigation }) => {
     const route = useRoute();
-    const { id } = route.params;
+    const { item } = route.params;
+
+    const eliminarInforme = async (id) => {
+        // Mostrar confirmación antes de eliminar
+        Alert.alert(
+            "Confirmación de Eliminación",
+            "¿Estás seguro de que deseas eliminar este informe?",
+            [
+                {
+                    text: "Cancelar",
+                    onPress: () => console.log("Eliminación cancelada"),
+                    style: "cancel"
+                },
+                {
+                    text: "Eliminar",
+                    onPress: async () => {
+                        // Proceder con la eliminación
+                        try {
+                            const response = await fetch(`http://192.168.1.108:5216/api/InformesApi/${id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            if (!response.ok) {
+                                throw new Error('Error al eliminar el informe');
+                            } else {
+                                alert('Informe eliminado con éxito');
+                                navigation.navigate('Informes');
+                            }
+                        } catch (error) {
+                            console.error(error);
+                            alert('Ocurrió un error al intentar eliminar el informe.');
+                        }
+                    },
+                    style: "destructive" // Estilo rojo para el botón de eliminación
+                }
+            ],
+            { cancelable: false }
+        );
+    };
+
     return (
-
-
-
         <>
             <Nav />
 
-
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.Titulo}>Informe Nº {id}</Text>
+                    <Text style={styles.Titulo}>Informe Nº {item.id}</Text>
                     <View style={styles.row}>
-                        <Text style={styles.datetime}>FECHA: {DATA.fecha}</Text>
-                        <Text style={styles.datetime}>HORA: {DATA.hora}</Text>
+                        <Text style={styles.datetime}>FECHA: {item.fecha}</Text>
                     </View>
                     <Text style={styles.TituloH2}>Enfoque</Text>
-                    <Text >{DATA.titulo}</Text>
+                    <Text>{item.titulo}</Text>
                 </View>
                 <View style={styles.containerInformacion}>
-                    <View >
-                        <Text style={styles.TituloH2}>Descripcion de informe</Text>
-                        <Text>{DATA.descricion}</Text>
+                    <View>
+                        <Text style={styles.TituloH2}>Descripción de informe</Text>
+                        <Text>{item.descripcion}</Text>
                     </View>
                     <View>
-                        <Text style={styles.encargadoTex} >
-                            Generado por {DATA.autor} con IA
+                        <Text style={styles.encargadoTex}>
+                            Generado por {item.usuario.nombre} con IA
                         </Text>
-
                     </View>
                 </View>
-                <TouchableOpacity style={styles.botonEliminar}>
+                <TouchableOpacity style={styles.botonEliminar} onPress={() => eliminarInforme(item.id)}>
                     <Text style={styles.TextoBotonEliminar}>ELIMINAR INFORME</Text>
                 </TouchableOpacity>
-
             </View>
             <Footer />
-
         </>
-
     );
+};
 
-
-}
 
 const styles = StyleSheet.create({
     container: {

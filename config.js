@@ -1,1 +1,2 @@
 export const URL_API_BACKEND = "https://www.dev-ac.site";
+export const API_KEY_OPENIA = "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"

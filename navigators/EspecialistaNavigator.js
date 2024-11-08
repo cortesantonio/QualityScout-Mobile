@@ -6,6 +6,8 @@ import HomeEspecialista from '../screens/Especialista/HomeEspecialista';
 
 import Informes from '../screens/Especialista/Informes/Informes';
 import VerInforme from "../screens/Especialista/Informes/VerInforme"
+import CrearInforme from '../screens/Especialista/Informes/CrearInforme';
+
 
 import Usuarios from '../screens/Especialista/Usuarios/Usuarios';
 import CrearUsuario from '../screens/Especialista/Usuarios/CrearUsuario';
@@ -38,6 +40,7 @@ export default function EspecialistaNavigator() {
       <Stack.Screen name="Home" component={HomeEspecialista} />
       <Stack.Screen name="Informes" component={Informes} />
       <Stack.Screen name="VerInforme" component={VerInforme} />
+      <Stack.Screen name="CrearInforme" component={CrearInforme} />
       
       <Stack.Screen name="Usuarios" component={Usuarios} />
       <Stack.Screen name="VerUsuario" component={VerUsuario} />
