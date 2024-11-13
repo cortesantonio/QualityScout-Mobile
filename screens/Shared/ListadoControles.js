@@ -1,5 +1,5 @@
-import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Modal, Button } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Modal, Animated, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Footer, Nav } from '../../components/shared';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,11 +13,11 @@ const iconOrdenArriba = require('../../assets/icons/iconOrdenArriba.png')
 
 const iconGo = require('../../assets/icons/iconGo.png')
 const iconControlCheck = require('../../assets/icons/iconControlCheck.png')
-
+const iconReload = require('../../assets/icons/iconReload.png')
 
 const ListadoControles = ({ navigation }) => {
     const [DATA, setDATA] = useState([]); // Inicializa el estado de DATA como un array vacío
-
+    const [loading, setLoading] = useState(false)
 
     const [filteredData, setFilteredData] = useState(DATA);
     const [isAscending, setIsAscending] = useState(true);
@@ -26,6 +26,7 @@ const ListadoControles = ({ navigation }) => {
 
 
     const obtenerDatos = async () => {
+        setLoading(true)
         try {
             const token = await AsyncStorage.getItem('userToken');
             if (token == null) {
@@ -50,6 +51,8 @@ const ListadoControles = ({ navigation }) => {
             console.error('Error obteniendo los datos:', error);
             alert('Ocurrió un error al obtener los datos.');
         }
+        setLoading(false)
+
     };
     // Efecto para obtener los datos al montar el componente
     useEffect(() => {
@@ -87,12 +90,12 @@ const ListadoControles = ({ navigation }) => {
         if (estadoFinal) {
             return 'rgba(255, 255, 255, 0)'; // Sin color de fondo
         }
-    
+
         // Solo aplica color si el estado es "reproceso"
         if (estado.toLowerCase() === 'reproceso') {
             return 'rgba(0, 0, 255, 0.1)'; // Color para reproceso
         }
-    
+
         // Aplica colores según el estado inicial
         switch (estado.toLowerCase()) {
             case 'aprobado':
@@ -103,7 +106,7 @@ const ListadoControles = ({ navigation }) => {
                 return 'rgba(255, 255, 255, 0)'; // Sin color de fondo por defecto
         }
     };
-    
+
     const getStateColor = (estado) => {
         switch (estado.toLowerCase()) {
             case 'aprobado':
@@ -116,50 +119,50 @@ const ListadoControles = ({ navigation }) => {
                 return '#bf6565';
         }
     };
-    
+
     const sortDataByDate = () => {
         const sortedData = [...filteredData].sort((a, b) => {
             // Convertimos las fechas ISO a objetos Date
             const dateA = new Date(a.fechaHoraPrimerControl);
             const dateB = new Date(b.fechaHoraPrimerControl);
-    
+
             // Ordenamos por fecha
             return isAscending ? dateA - dateB : dateB - dateA;
         });
-    
+
         setFilteredData(sortedData);
         setIsAscending(!isAscending);
     };
-    
+
     const resetFilter = () => {
         setFilteredData(DATA); // Restablecer a los datos originales
         setModalVisible(false); // Cerrar el modal después de seleccionar un filtro
     };
-    
+
     const filterDataByState = (estado) => {
         const filtered = DATA.filter(item => item.estado.toLowerCase() === estado.toLowerCase());
         setFilteredData(filtered);
         setModalVisible(false); // Cerrar el modal después de seleccionar un filtro
     };
-    
+
     const renderItem = ({ item }) => (
         <View style={[styles.item, { backgroundColor: getBackgroundColor(item.estado, item.estadoFinal) }]}>
             <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7 }}>
                 <Image style={{ width: '100%', height: '100%', resizeMode: 'contain' }} source={iconControlCheck} />
             </View>
-    
+
             <View style={styles.infoCard}>
                 <Text style={styles.titleInfo}>{item.productos.nombre}</Text>
                 <Text style={styles.subtitleInfo}>
                     Fecha: {formatearFecha(item.fechaHoraPrimerControl)} | <Text>Estado: </Text>
-                    {item.estadoFinal == null ? 
-                        <Text style={{ color: getStateColor(item.estado), textTransform: 'uppercase' }}>{item.estado}</Text> 
-                        : 
+                    {item.estadoFinal == null ?
+                        <Text style={{ color: getStateColor(item.estado), textTransform: 'uppercase' }}>{item.estado}</Text>
+                        :
                         <Text style={{ color: getStateColor(item.estadoFinal), textTransform: 'uppercase' }}>{item.estadoFinal}</Text>
                     }
                 </Text>
             </View>
-    
+
             <View style={{ display: 'flex', flexDirection: 'row', backgroundColor: '#bf6565', borderRadius: 3, width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
                 <TouchableOpacity onPress={() => navigation.navigate('VerControl', { ControlJson: item })}>
                     <Image source={iconGo} style={styles.iconAcciones}></Image>
@@ -169,18 +172,42 @@ const ListadoControles = ({ navigation }) => {
     );
 
 
+
+    // Estado animado para controlar el desplazamiento de la FlatList
+    const translateY = useRef(new Animated.Value(0)).current;
+
+    // Efecto para controlar el desplazamiento según el estado de loading
+    useEffect(() => {
+        Animated.timing(translateY, {
+            toValue: loading ? 50 : 0,  // Desplazamiento de 50 hacia abajo si loading está activo
+            duration: 300,              // Duración de la animación
+            useNativeDriver: true       // Mejora el rendimiento usando animaciones nativas
+        }).start();
+    }, [loading]);
+
+
+
     return (
 
         <>
             <Nav />
 
             <View style={styles.container}>
-                <Text style={styles.TituloPantalla}>Registro de Controles.</Text>
+                <Text style={styles.TituloPantalla}>Registro de Controles.
+
+                    <TouchableOpacity style={{ backgroundColor: '#4b0404', padding: 5, borderRadius: 10 }} onPress={() => { obtenerDatos() }}>
+                        <Image source={iconReload} style={{ width: 10, height: 10 }}></Image>
+                    </TouchableOpacity>
+                </Text>
 
                 <View>
                     {/* Encabezado de la lista */}
                     <View style={styles.encabezado}>
-                        <Text style={{ fontSize: 18 }}>Registros</Text>
+                        <Text style={{ fontSize: 18 }}>Registros
+
+
+
+                        </Text>
                         <View style={styles.filtros}>
                             {/* Botón para abrir el modal de filtros */}
                             <TouchableOpacity style={styles.TouchableBotonLista} onPress={() => setModalVisible(true)}>
@@ -238,14 +265,34 @@ const ListadoControles = ({ navigation }) => {
 
                     {/* Cuerpo de la lista */}
                     <View style={styles.containerProductos}>
-                        <FlatList
-                            style={styles.flatList}
-                            data={filteredData}
-                            keyExtractor={item => item.id}
-                            renderItem={renderItem}
-                        />
+                        {loading && (
+                            <View style={styles.loadingContainer}>
+                                <ActivityIndicator size="large" color="#260202" />
+                                <Text style={styles.loadingText}>Cargando...</Text>
+                            </View>
+                        )}
+
+                        {/* FlatList envuelta en un Animated.View */}
+                        <Animated.View style={{ transform: [{ translateY }] }}>
+                            <FlatList
+                                style={styles.flatList}
+                                data={filteredData}
+                                keyExtractor={item => item.id}
+                                renderItem={renderItem}
+                            />
+                        </Animated.View>
                     </View>
                 </View>
+
+
+
+
+
+
+
+
+
+
             </View >
             <Footer />
 
@@ -401,6 +448,11 @@ const styles = StyleSheet.create({
 
     },
     buttonCloseModal: {
+    }, loadingContainer: {
+        marginTop: 50,
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });
 

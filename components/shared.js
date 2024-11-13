@@ -1,8 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { Dimensions, StyleSheet, Text, View, Image, ImageBackground, Button, Pressable, SafeAreaView } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Image, ImageBackground, Button, Pressable, SafeAreaView, Platform } from 'react-native';
 import { height, width } from '@fortawesome/free-solid-svg-icons/fa0';
 import { useNavigation } from '@react-navigation/native';  // Importa el hook de navegación
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+import * as NavigationBar from 'expo-navigation-bar';
+
 
 const UserP = require('../assets/icons/iconUsuario.png')
 // iconos propios 
@@ -61,9 +65,11 @@ const Nav = ({ navigate }) => {
 
     return (
         <View style={styles.Nav}>
+            <StatusBar style="light" backgroundColor="#260202" />
+
             <View style={styles.containerNav}>
                 <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <Image source={UserP} style={{ width: 40, height: 40, borderRadius: 50, marginRight: 10 , resizeMode:"contain"}} />
+                    <Image source={UserP} style={{ width: 40, height: 40, borderRadius: 50, marginRight: 10, resizeMode: "contain" }} />
                     <View>
                         <Text style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}>Bienvenido!</Text>
                         {/* Usa el nombre del usuario recuperado */}
@@ -101,6 +107,13 @@ const Footer = () => {
         fetchUserData(); // Llama a la función para recuperar los datos
     }, []); // El efecto se ejecutará solo una vez al montar el componente    
 
+    if (Platform.OS === 'android') {
+        useEffect(() => {
+            // Cambia el color de la barra de navegación
+            NavigationBar.setBackgroundColorAsync("#260202"); // Reemplaza con el color deseado en formato hexadecimal
+        }, []);
+    }
+
     return (
         <View style={styles.Footer}>
             <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Buscador')} >
@@ -114,7 +127,6 @@ const Footer = () => {
                 </Pressable>
 
             )}
-
             <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('Productos')}>
                 <Image source={iconProductos} style={styles.iconPressable}></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Productos</Text>
@@ -136,7 +148,7 @@ const Footer = () => {
                 <Text style={{ color: 'white', fontSize: 8 }}>Inicio</Text>
             </Pressable>
             <Pressable style={styles.PressableFooter} onPress={() => navigation.navigate('VerUsuario', { RUT: user.Rut, Nombre: user.Nombre, Rol: user.Rol, Correo: user.Email })} >
-                <Image source={UserP} style={[styles.iconPressable, { resizeMode:'contain'}]}  ></Image>
+                <Image source={UserP} style={[styles.iconPressable, { resizeMode: 'contain' }]}  ></Image>
                 <Text style={{ color: 'white', fontSize: 8 }}>Perfil</Text>
             </Pressable>
         </View>
@@ -182,15 +194,15 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingLeft: 25,
-        paddingRight: 25,
+        paddingLeft: 20,
+        paddingRight: 20,
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        gap: 5,
+        gap: 4,
     },
     PressableFooter: {
         height: 50,
-        width: 40,
+        width: 41,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

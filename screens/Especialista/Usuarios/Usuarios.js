@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-    View, Text, TouchableOpacity, Image, TextInput, FlatList, Modal, StyleSheet, Dimensions
+    View, Text, TouchableOpacity, Image, TextInput, FlatList, Modal, StyleSheet, Dimensions, ActivityIndicator, Animated
 } from 'react-native';
 import { Footer, Nav } from '../../../components/shared';
 import { URL_API_BACKEND } from '../../../config';
@@ -13,6 +13,8 @@ const iconUsuario = require('../../../assets/icons/iconUsuario.png')
 const iconPausa = require('../../../assets/icons/iconPausaWhite.png')
 const iconGo = require('../../../assets/icons/iconGo.png')
 const iconActivarUser = require('../../../assets/icons/iconActivarUser.png')
+const iconReload = require('../../../assets/icons/iconReload.png')
+
 
 
 const Usuarios = ({ navigation }) => {
@@ -32,7 +34,9 @@ const Usuarios = ({ navigation }) => {
 
 
     const obtenerDatos = async () => {
+        setLoading(true); // Cambia el estado de carga al inicio
         try {
+
             const token = await AsyncStorage.getItem('userToken');
             if (token == null) {
                 alert('Token de autorización no encontrado.');
@@ -54,10 +58,11 @@ const Usuarios = ({ navigation }) => {
 
         } catch (error) {
             console.error('Error obteniendo los datos:', error);
-            alert( 'Ocurrió un error al obtener los datos.');
+            alert('Ocurrió un error al obtener los datos.');
         } finally {
             setLoading(false); // Cambia el estado de carga al final
         }
+        setLoading(false)
     };
 
 
@@ -72,7 +77,7 @@ const Usuarios = ({ navigation }) => {
 
         const token = await AsyncStorage.getItem('userToken');
 
-        if (token == null){
+        if (token == null) {
             alert('No se encontro token, no se pudo crear el usuario.')
             return;
         }
@@ -182,19 +187,34 @@ const Usuarios = ({ navigation }) => {
             </View>
         </View>
     );
-    if (loading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, color: 'gray' }}>Cargando...</Text>
-            </View>
-        );
-    }
+
+
+
+    // Estado animado para controlar el desplazamiento de la FlatList
+    const translateY = useRef(new Animated.Value(0)).current;
+
+    // Efecto para controlar el desplazamiento según el estado de loading
+    useEffect(() => {
+        Animated.timing(translateY, {
+            toValue: loading ? 50 : 0,  // Desplazamiento de 50 hacia abajo si loading está activo
+            duration: 300,              // Duración de la animación
+            useNativeDriver: true       // Mejora el rendimiento usando animaciones nativas
+        }).start();
+    }, [loading]);
+
 
     return (
         <>
             <Nav />
             <View style={styles.container}>
-                <Text style={styles.TituloPantalla}>Gestión de Usuarios.</Text>
+                <Text style={styles.TituloPantalla}>Gestión de Usuarios.
+
+                    <TouchableOpacity style={{ backgroundColor: '#4b0404', padding: 5, borderRadius: 10 }} onPress={() => { obtenerDatos() }}>
+                        <Image source={iconReload} style={{ width: 10, height: 10 }}></Image>
+                    </TouchableOpacity>
+
+
+                </Text>
 
                 <View style={styles.buscador}>
                     <Image source={iconLupa} style={styles.iconLupa} />
@@ -219,12 +239,22 @@ const Usuarios = ({ navigation }) => {
                     </View>
 
                     <View style={styles.containerProductos}>
-                        <FlatList
-                            style={styles.flatList}
-                            data={usuariosFiltrados}  // Cambia de DATA a usuariosFiltrados
-                            keyExtractor={item => item.id.toString()}  // Asegúrate de que el ID sea una cadena si es necesario
-                            renderItem={renderItem}
-                        />
+                        {loading && (
+                            <View style={styles.loadingContainer}>
+                                <ActivityIndicator size="large" color="#260202" />
+                                <Text style={styles.loadingText}>Cargando...</Text>
+                            </View>
+                        )}
+
+                        {/* FlatList envuelta en un Animated.View */}
+                        <Animated.View style={{ transform: [{ translateY }] }}>
+                            <FlatList
+                                style={styles.flatList}
+                                data={usuariosFiltrados}  // Cambia de DATA a usuariosFiltrados
+                                keyExtractor={item => item.id.toString()}  // Asegúrate de que el ID sea una cadena
+                                renderItem={renderItem}
+                            />
+                        </Animated.View>
                     </View>
                 </View>
 
@@ -241,7 +271,8 @@ const styles = StyleSheet.create({
 
     container: {
         width: '100%',
-        padding: 25
+        padding: 25,
+
     },
     inputBuscador: {
         width: '90%'
@@ -410,6 +441,12 @@ const styles = StyleSheet.create({
         marginLeft: 10,
 
     },
+    loadingContainer: {
+        marginTop: 50,
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 
 
 

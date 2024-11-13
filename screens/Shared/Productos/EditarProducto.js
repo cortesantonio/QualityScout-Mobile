@@ -210,7 +210,7 @@ const EditarProducto = ({ navigation }) => {
 
         if (agregarDetalles) {
             if (producto.capacidad == 0 || producto.tipoCapsula == '' || producto.colorCapsula == '' || producto.tipoEtiqueta == ''
-                || producto.tipoCorcho == '' || producto.medidaEtiquetaBoquete == 0 || producto.medidaEtiquetaBase == 0 || producto.idBotellaDetalle == null || producto.idBotellaDetalle ==0) {
+                || producto.tipoCorcho == '' || producto.medidaEtiquetaBoquete == 0 || producto.medidaEtiquetaBase == 0 || producto.idBotellaDetalle == null || producto.idBotellaDetalle == 0) {
                 return alert('Por favor, complete todos los campos de detalles.')
             }
             if (agregarBotella) {
@@ -224,7 +224,7 @@ const EditarProducto = ({ navigation }) => {
 
         }
 
-        
+
 
 
         console.log(producto)
@@ -303,17 +303,34 @@ const EditarProducto = ({ navigation }) => {
 
     // Funciones para mostrar los pickers en Android
     const showDatepickerCosecha = () => {
+        setMode('date')
+
         setShowCosecha(true);
     };
+    const showTimepickerCosecha = () => {
+        setMode('time');
+        setShowCosecha(true);
+    }
 
     const showDatepickerProduccion = () => {
+        setMode('date')
         setShowProduccion(true);
     };
+    const showTimepickerProduccion = () => {
+        setMode('time');
+        setShowProduccion(true);
+    }
 
     const showDatepickerEnvasado = () => {
+        setMode('date')
+
         setShowEnvasado(true);
     };
 
+    const showTimepickerEnvasado = () => {
+        setMode('time');
+        setShowEnvasado(true);
+    }
 
     return (
 
@@ -427,13 +444,14 @@ const EditarProducto = ({ navigation }) => {
                         <Picker.Item label="Galones (gal)" value="gal" />
                     </Picker>
 
-                    <View style={styles.TextAndInputForm}>
+                    <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Descripcion de capsula:</Text>
                         <TextInput
                             style={styles.input}
 
                             value={producto.descripcionCapsula}
                             onChangeText={(text) => handleChange('descripcionCapsula', text)}
+                            multiline={true}
                         />
 
                     </View>
@@ -674,7 +692,7 @@ const EditarProducto = ({ navigation }) => {
 
                         ))}
                     </Picker>
-                   
+
 
 
                     <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Historial del producto</Text>
@@ -833,7 +851,7 @@ const EditarProducto = ({ navigation }) => {
                     </Text>
 
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.BotonesFinales}  >
+                <TouchableOpacity style={styles.BotonesFinales}  onPress={() => navigation.goBack()} >
                     <Text style={{ color: 'white', }}>
                         Cancelar Cambios
 
@@ -942,6 +960,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignContent: 'center',
     },
+   
     dropdown: {
         width: 50,
     },

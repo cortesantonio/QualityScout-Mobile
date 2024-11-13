@@ -3,7 +3,7 @@ import {
   View, Text, Image, ImageBackground,
   Pressable, Animated, TouchableOpacity,
   TextInput, StyleSheet, Dimensions, Alert,
-  ActivityIndicator, SafeAreaView
+  ActivityIndicator, SafeAreaView, StatusBar,
 } from 'react-native';
 import CryptoJS from 'crypto-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -70,7 +70,7 @@ const Login = ({ navigation }) => {
 
   useEffect(() => {
     Animated.timing(containerHeight, {
-      toValue: isFormVisible ? 600 : 350, // Altura final según el estado
+      toValue: isFormVisible ? 500 : 350, // Altura final según el estado
       duration: 500, // Duración de la animación en milisegundos
       useNativeDriver: false,
     }).start();
@@ -133,6 +133,8 @@ const Login = ({ navigation }) => {
 
   return (
     <SafeAreaView style={[styles.LoginStyle, { backgroundColor: '#260202' }]}>
+      <StatusBar style="light" />
+
       <ImageBackground style={styles.img} source={Uvas} resizeMode="contain" />
 
       {!isFormVisible ? (
@@ -146,7 +148,6 @@ const Login = ({ navigation }) => {
           </View>
 
           <Animated.View style={[styles.contenedorLogin, { height: containerHeight }]}>
-            <Text style={[styles.TextComentario, { textTransform: 'uppercase' }]}>Opciones</Text>
             <Pressable style={styles.ButtonAcceso} onPress={handleAccessPress}>
               <Text style={styles.ButtonAccesoText}>Acceso</Text>
             </Pressable>
@@ -325,7 +326,25 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     position: 'absolute',
-    bottom: 100,
+    bottom: Dimensions.get('window').height / 2 - 50,
+    left: Dimensions.get('window').width / 2 - 50,
+    backgroundColor: '#ffffff',
+    width: 100,
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 4,
+  }, loadingText: {
+    fontSize: 16
   }
 });
 

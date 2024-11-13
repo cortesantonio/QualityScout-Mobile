@@ -12,8 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const EditarControl = ({ navigation }) => {
-    const [value, setValue] = React.useState('first');
-    const [value2, setValue2] = React.useState('first');
+   
 
     const route = useRoute();
     const { ControlJson } = route.params;
@@ -81,6 +80,7 @@ const EditarControl = ({ navigation }) => {
     
             // Si la respuesta es exitosa, puedes manejar la lógica aquí
             alert('Control actualizado con éxito.');
+            navigation.navigate('Controles');
             
         } catch (error) {
             console.error('Error al actualizar los datos:', error);
@@ -162,6 +162,8 @@ const EditarControl = ({ navigation }) => {
                             keyboardType="text"
                             multiline={true}
                             value={control.comentario}
+                            onChangeText={(value) => setControl({ ...control, comentario: value })}
+
 
                         />
                         <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>

@@ -10,7 +10,7 @@ import { TouchableOpacity } from 'react-native';
 import { icon } from '@fortawesome/fontawesome-svg-core';
 
 
-export default function CrearInforme() {
+export default function CrearInforme({ navigation }) {
     const iconVarita = require('../../../assets/icons/iconVarita.png')
 
     const [loading, setLoading] = useState(false)
@@ -73,9 +73,12 @@ export default function CrearInforme() {
         })
             .then(response => response.json())
             .then(data => {
+                navigation.navigate('Informes')
+
                 alert('Informe guardado correctamente');
             })
             .catch((error) => {
+                console.error('Error:', error);
                 alert('Error al guardar el informe');
             });
 
@@ -204,7 +207,9 @@ export default function CrearInforme() {
 
                     <Text style={{ color: '#bf6565', fontSize: 18, marginBottom: 10, marginTop: 10 }}>Informe Generado:</Text>
 
-                    <ScrollView style={{ height: 300 }}>
+                    <ScrollView style={{ height: 150 }}>
+
+
                         <Text style={styles.response}>{responseText}</Text>
                     </ScrollView >
 

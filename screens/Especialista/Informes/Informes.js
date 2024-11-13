@@ -1,9 +1,8 @@
-import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Modal } from 'react-native';
-import React, { useEffect } from 'react';
+import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Animated, ActivityIndicator } from 'react-native';
+import React, { useEffect, useRef } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useState } from 'react';
 import { Nav, Footer } from '../../../components/shared';
-import { StatusBar } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { URL_API_BACKEND } from '../../../config';
 
@@ -15,8 +14,11 @@ const iconInformes = require('../../../assets/icons/iconInformes.png')
 
 const iconGo = require('../../../assets/icons/iconGo.png')
 const iconVarita = require('../../../assets/icons/iconVarita.png')
+const iconReload = require('../../../assets/icons/iconReload.png')
 
 const Informes = ({ navigation }) => {
+    const [loading, setLoading] = useState(false)
+
     //datos para generar informe
     const [user, setUser] = useState({});
     const [nuevoInforme, setNuevoInforme] = useState(
@@ -60,8 +62,11 @@ const Informes = ({ navigation }) => {
 
     //recupera todos los informes de base de datos.
     const [DATA, setDATA] = useState([])
-    const obtenerInformes = () => {
-        fetch(`${URL_API_BACKEND}/api/InformesApi`)
+
+
+    const obtenerInformes =async () => {
+        setLoading(true)
+        await fetch(`${URL_API_BACKEND}/api/InformesApi`)
             .then(response => response.json())
             .then(data => {
                 setDATA(data);
@@ -70,6 +75,7 @@ const Informes = ({ navigation }) => {
             .catch(error => {
                 console.error('Error al obtener los informes:', error);
             });
+            setLoading(false)
     };
 
     useEffect(() => {
@@ -77,9 +83,7 @@ const Informes = ({ navigation }) => {
     }, []);
 
 
-    const enviarInforme = () => {
-        console.log(nuevoInforme)
-    }
+
 
 
     const [usuariosFiltrados, setUsuariosFiltrados] = useState(DATA); // Estado para la lista filtrada
@@ -96,7 +100,22 @@ const Informes = ({ navigation }) => {
             setUsuariosFiltrados(DATA);
         }
     };
+    function formatearFecha(fechaISO) {
+        // Convertir la cadena ISO 8601 a un objeto Date
+        const fecha = new Date(fechaISO);
 
+        // Formatear la fecha como "dd/MM/yyyy HH:mm:ss"
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Día
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Mes (getMonth() devuelve 0 para enero)
+        const anio = fecha.getFullYear(); // Año
+
+        const horas = fecha.getHours().toString().padStart(2, '0'); // Horas
+        const minutos = fecha.getMinutes().toString().padStart(2, '0'); // Minutos
+        const segundos = fecha.getSeconds().toString().padStart(2, '0'); // Segundos
+
+        // Devolver la fecha formateada
+        return `${dia}.${mes}.${anio} ${horas}:${minutos}Hrs.`;
+    }
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <View style={{ backgroundColor: '#4b0404', width: 40, height: 40, padding: 5, borderRadius: 7, justifyContent: 'center', alignItems: 'center' }}>
@@ -104,7 +123,7 @@ const Informes = ({ navigation }) => {
             </View>
 
             <View style={styles.infoCard} >
-                <Text style={styles.titleInfo}>Fecha: {item.fecha}</Text>
+                <Text style={styles.titleInfo}>Fecha: {formatearFecha(item.fecha)}</Text>
                 <Text style={styles.subtitleInfo}>Titulo: {item.titulo} - Encargado: {item.usuario.nombre}</Text>
 
             </View>
@@ -117,15 +136,31 @@ const Informes = ({ navigation }) => {
             </View>
         </View>
     );
+    // Estado animado para controlar el desplazamiento de la FlatList
+    const translateY = useRef(new Animated.Value(0)).current;
 
+    // Efecto para controlar el desplazamiento según el estado de loading
+    useEffect(() => {
+        Animated.timing(translateY, {
+            toValue: loading ? 50 : 0,  // Desplazamiento de 50 hacia abajo si loading está activo
+            duration: 300,              // Duración de la animación
+            useNativeDriver: true       // Mejora el rendimiento usando animaciones nativas
+        }).start();
+    }, [loading]);
 
+    
 
     return (
 
         <>
             <Nav />
             <View style={styles.container}>
-                <Text style={styles.TituloPantalla}>Gestión de Registro.</Text>
+                <Text style={styles.TituloPantalla}>Gestión de Registro.
+
+                    <TouchableOpacity style={{ backgroundColor: '#4b0404', padding: 5, borderRadius: 10 }} onPress={() => { obtenerInformes() }}>
+                        <Image source={iconReload} style={{ width: 10, height: 10 }}></Image>
+                    </TouchableOpacity>
+                </Text>
 
                 <View style={styles.buscador}>
                     <Image source={iconLupa} style={styles.iconLupa} ></Image>
@@ -140,7 +175,7 @@ const Informes = ({ navigation }) => {
                 <View style={styles.contenedorBotones}>
 
 
-                    <TouchableOpacity style={styles.TouchableBoton} onPress={() => {navigation.navigate('CrearInforme')}}>
+                    <TouchableOpacity style={styles.TouchableBoton} onPress={() => { navigation.navigate('CrearInforme') }}>
                         <Image source={iconVarita} style={styles.iconsBotones} ></Image>
                         <Text style={styles.botonText}>Generar Informe con IA</Text>
                     </TouchableOpacity>
@@ -155,12 +190,24 @@ const Informes = ({ navigation }) => {
 
                     {/* cuerpo de la lista*/}
                     <View style={styles.containerProductos}>
-                        <FlatList
-                            style={styles.flatList}
-                            data={usuariosFiltrados}
-                            keyExtractor={item => item.id}
-                            renderItem={renderItem}
-                        />
+
+                        {loading && (
+                            <View style={styles.loadingContainer}>
+                                <ActivityIndicator size="large" color="#260202" />
+                                <Text style={styles.loadingText}>Cargando...</Text>
+                            </View>
+                        )}
+
+
+                        <Animated.View style={{ transform: [{ translateY }] }}>
+                            <FlatList
+                                style={styles.flatList}
+                                data={usuariosFiltrados}
+                                keyExtractor={item => item.id}
+                                renderItem={renderItem}
+                            />
+                        </Animated.View>
+
                     </View>
                 </View>
 
@@ -291,7 +338,7 @@ const styles = StyleSheet.create({
         height: 25,
         resizeMode: 'contain',
     }, flatList: {
-        height: Dimensions.get('window').height,
+        height: Dimensions.get('window').height/2.5,
         flexGrow: 0,
     },
 
@@ -330,6 +377,11 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: 'gray'
 
+    }, loadingContainer: {
+        marginTop: 50,
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });
 

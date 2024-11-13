@@ -1,12 +1,27 @@
 import React from 'react';
-import { Alert, Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { Alert, Text, TouchableOpacity, View, StyleSheet, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Nav, Footer } from '../../../components/shared';
 
 const VerInforme = ({ navigation }) => {
     const route = useRoute();
     const { item } = route.params;
+    function formatearFecha(fechaISO) {
+        // Convertir la cadena ISO 8601 a un objeto Date
+        const fecha = new Date(fechaISO);
 
+        // Formatear la fecha como "dd/MM/yyyy HH:mm:ss"
+        const dia = fecha.getDate().toString().padStart(2, '0'); // Día
+        const mes = (fecha.getMonth() + 1).toString().padStart(2, '0'); // Mes (getMonth() devuelve 0 para enero)
+        const anio = fecha.getFullYear(); // Año
+
+        const horas = fecha.getHours().toString().padStart(2, '0'); // Horas
+        const minutos = fecha.getMinutes().toString().padStart(2, '0'); // Minutos
+        const segundos = fecha.getSeconds().toString().padStart(2, '0'); // Segundos
+
+        // Devolver la fecha formateada
+        return `${dia}.${mes}.${anio} ${horas}:${minutos}`;
+    }
     const eliminarInforme = async (id) => {
         // Mostrar confirmación antes de eliminar
         Alert.alert(
@@ -53,28 +68,35 @@ const VerInforme = ({ navigation }) => {
             <Nav />
 
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <Text style={styles.Titulo}>Informe Nº {item.id}</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.datetime}>FECHA: {item.fecha}</Text>
+
+                <ScrollView style={{ height: '80%' }} >
+                    <View style={styles.header}>
+                        <Text style={styles.Titulo}>Informe Nº {item.id}</Text>
+                        <View style={styles.row}>
+                            <Text style={styles.datetime}>FECHA: {formatearFecha(item.fecha)}</Text>
+                        </View>
+                        <Text style={styles.TituloH2}>Enfoque</Text>
+                        <Text>{item.titulo}</Text>
                     </View>
-                    <Text style={styles.TituloH2}>Enfoque</Text>
-                    <Text>{item.titulo}</Text>
-                </View>
-                <View style={styles.containerInformacion}>
-                    <View>
-                        <Text style={styles.TituloH2}>Descripción de informe</Text>
-                        <Text>{item.descripcion}</Text>
+                    <View style={styles.containerInformacion}>
+                        <View>
+                            <Text style={styles.TituloH2}>Descripción de informe</Text>
+                            <Text>{item.descripcion}</Text>
+                            
+                        </View>
+                        <View>
+                            <Text style={styles.encargadoTex}>
+                                Generado por {item.usuario.nombre} con IA
+                            </Text>
+                        </View>
                     </View>
-                    <View>
-                        <Text style={styles.encargadoTex}>
-                            Generado por {item.usuario.nombre} con IA
-                        </Text>
-                    </View>
-                </View>
-                <TouchableOpacity style={styles.botonEliminar} onPress={() => eliminarInforme(item.id)}>
-                    <Text style={styles.TextoBotonEliminar}>ELIMINAR INFORME</Text>
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.botonEliminar} onPress={() => eliminarInforme(item.id)}>
+                        <Text style={styles.TextoBotonEliminar}>ELIMINAR INFORME</Text>
+                    </TouchableOpacity>
+                </ScrollView>
+
+
+
             </View>
             <Footer />
         </>

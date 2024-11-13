@@ -158,6 +158,7 @@ const CrearProducto = ({ navigation }) => {
 
     const setAgregarBotella = (bool) => {
         if (bool) {
+            handleChange('idBotellaDetalle', 0)
             handleChange('nombreBotella', '')
             handleChange('AltoBotella', 0)
             handleChange('AnchoBotella', 0)
@@ -199,7 +200,7 @@ const CrearProducto = ({ navigation }) => {
     }
 
 
-    
+
 
 
     const enviarProducto = async () => {
@@ -322,16 +323,34 @@ const CrearProducto = ({ navigation }) => {
 
     // Funciones para mostrar los pickers en Android
     const showDatepickerCosecha = () => {
+        setMode('date')
+
         setShowCosecha(true);
     };
+    const showTimepickerCosecha = () => {
+        setMode('time');
+        setShowCosecha(true);
+    }
 
     const showDatepickerProduccion = () => {
+        setMode('date')
         setShowProduccion(true);
     };
+    const showTimepickerProduccion = () => {
+        setMode('time');
+        setShowProduccion(true);
+    }
 
     const showDatepickerEnvasado = () => {
+        setMode('date')
+
         setShowEnvasado(true);
     };
+
+    const showTimepickerEnvasado = () => {
+        setMode('time');
+        setShowEnvasado(true);
+    }
 
 
     return (
@@ -446,13 +465,15 @@ const CrearProducto = ({ navigation }) => {
                         <Picker.Item label="Galones (gal)" value="gal" />
                     </Picker>
 
-                    <View style={styles.TextAndInputForm}>
+                    <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Descripcion de capsula:</Text>
                         <TextInput
                             style={styles.input}
 
                             value={producto.descripcionCapsula}
                             onChangeText={(text) => handleChange('descripcionCapsula', text)}
+                            multiline={true}
+
                         />
 
                     </View>
@@ -884,10 +905,12 @@ const CrearProducto = ({ navigation }) => {
                                                 onChange={onChangeCosecha}
                                             />
                                         )}
+
                                     </>
                                 ) : (
                                     <Text>Plataforma desconocida</Text>
                                 )}
+
                             </View>
 
                             <View style={styles.TextAndPickerForm}>
@@ -964,6 +987,8 @@ const CrearProducto = ({ navigation }) => {
                                 ) : (
                                     <Text>Plataforma desconocida</Text>
                                 )}
+                                <Text style={{ color: 'red', fontSize: 12, marginBottom: 20, marginTop: 20 }}>*Complete todos los campos, fecha y hora.</Text>
+
                             </View>
 
 
@@ -1003,7 +1028,7 @@ const CrearProducto = ({ navigation }) => {
                     </Text>
 
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.BotonesFinales}  >
+                <TouchableOpacity style={styles.BotonesFinales} onPress={() => navigation.goBack()} >
                     <Text style={{ color: 'white', }}>
                         Cancelar
 
