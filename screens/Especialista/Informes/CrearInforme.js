@@ -84,16 +84,20 @@ export default function CrearInforme({ navigation }) {
 
     }
 
-
     const prompt = (json, enfoque) => {
-
-        return `Voy a proporcionarte los datos de control de calidad de un vino en formato JSON. 
-        Quiero que generes un informe técnico enfocado en "${enfoque}" y basado en los datos suministrados. 
-        El informe debe incluir un análisis detallado de los hallazgos y conclusiones técnicas. Utiliza el 
-        siguiente JSON como fuente de datos para el informe: ${json}. Proporciona detalles y conclusiones 
-        técnicas completas. Ademas, el informe no puede superar las 200 palabras, no cites controles del json, hazlo mas general.`;
-
-    }
+        return `Voy a proporcionarte los datos de control de calidad de una botella de vino en formato JSON. 
+        Quiero que generes un informe técnico enfocado en "${enfoque}" basado en los datos suministrados. 
+        El informe debe incluir un análisis exhaustivo de los hallazgos, indicando claramente las métricas clave, 
+        incluyendo porcentajes de error, cantidades y comparativas de desempeño de los diferentes productos.
+        Además, se deben proporcionar conclusiones técnicas específicas basadas en los datos numéricos, 
+        destacando cualquier valor significativo en el análisis. 
+        No incluyas recomendaciones generales de mantenimiento; concéntrate en detalles cuantitativos para el informe. 
+        El informe debe ser útil para informes de calidad o auditorías, ser conciso, no exceder las 200 palabras y 
+        evitar citas textuales de los datos JSON. Utiliza términos generales pero incluye porcentajes y cantidades de ser necesario.
+    
+        JSON para el análisis: ${json}.`;
+    };
+    
 
 
     const handleSend = async () => {

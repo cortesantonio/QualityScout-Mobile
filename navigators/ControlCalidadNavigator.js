@@ -17,7 +17,7 @@ import ListadoControles from '../screens/Shared/ListadoControles';
 import CrearControl from '../screens/Shared/CrearControl';
 import EditarControl from '../screens/Shared/EditarControl';
 import VerControl from '../screens/Shared/VerControl';
-
+import Reconocimiento from '../screens/Shared/Reconocimiento';
 const Stack = createNativeStackNavigator();
 
 export default function EspecialistaNavigator() {
@@ -43,6 +43,7 @@ export default function EspecialistaNavigator() {
       <Stack.Screen name="CrearControl" component={CrearControl} />
       <Stack.Screen name="EditarControl" component={EditarControl} />
       <Stack.Screen name="VerControl" component={VerControl} /> 
+      <Stack.Screen name="Reconocimiento" component={Reconocimiento} />
 
     </Stack.Navigator>
   );

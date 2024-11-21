@@ -59,7 +59,7 @@ const CrearControl = ({ navigation }) => {
 
     const enviarControl = async () => {
 
-        if(control.linea == '' || control.comentario == '' || control.tipodecontrol == '' || control.estado == ''){
+        if (control.linea == '' || control.comentario == '' || control.tipodecontrol == '' || control.estado == '') {
             alert('Por favor, complete todos los campos.');
             return;
         }
@@ -173,7 +173,7 @@ const CrearControl = ({ navigation }) => {
                             value={control.comentario}
                             onChangeText={(value) => setControl({ ...control, comentario: value })}
                         />
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.navigate('Reconocimiento') }} >
                             <Image source={iconRA} style={styles.iconRA} />
                             <Text style={{ marginTop: 10 }}>Completar con inteligencia artificial.</Text>
                         </TouchableOpacity>
