@@ -1,2 +1,0 @@
-export const URL_API_BACKEND = "http://192.168.1.97:5216";
-export const API_KEY_OPENIA = "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"
