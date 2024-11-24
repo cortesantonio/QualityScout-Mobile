@@ -173,7 +173,7 @@ const CrearControl = ({ navigation }) => {
                             value={control.comentario}
                             onChangeText={(value) => setControl({ ...control, comentario: value })}
                         />
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.navigate('Reconocimiento') }} >
+                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.navigate('Reconocimiento' , {producto: productoRecibido} ) }} >
                             <Image source={iconRA} style={styles.iconRA} />
                             <Text style={{ marginTop: 10 }}>Completar con inteligencia artificial.</Text>
                         </TouchableOpacity>

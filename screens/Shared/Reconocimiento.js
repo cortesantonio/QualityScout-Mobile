@@ -2,15 +2,21 @@ import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from "react-native";
 import { Camera, CameraView } from "expo-camera";
 import * as FileSystem from "expo-file-system";
+import { DrawerActions, useRoute } from "@react-navigation/native";
 
 export default function Reconocimiento({ navigation }) {
+    const route = useRoute()
+    const { producto } = route.params
+
     const [hasPermission, setHasPermission] = useState(null);
     const [responseRoboflow, setResponseRoboflow] = useState(false);
     const [errores, setErrores] = useState([]);
+    const [faltantes, setFaltantes] = useState([]); // NUEVO: Almacena objetos faltantes
     const cameraRef = useRef(null);
+    const [fotoUri, setFotoUri] = useState(null);
 
-    const [fotoUri, setFotoUri] = useState(null); // Para almacenar la URI de la foto capturada
-
+    // Lista de objetos esperados
+    const objetosEsperados = ["RiesgoParaTuBebe", "NoBeberMenores", "NoBeberAlConducir"];
 
     useEffect(() => {
         const getCameraPermissions = async () => {
@@ -26,21 +32,20 @@ export default function Reconocimiento({ navigation }) {
             try {
                 const photo = await cameraRef.current.takePictureAsync();
                 console.log("Foto tomada:", photo.uri);
-                setFotoUri(photo.uri); // Guardar la URI de la foto para mostrarla en pantalla
-
+                setFotoUri(photo.uri);
 
                 // Convertir la foto a base64
                 const base64Image = await FileSystem.readAsStringAsync(photo.uri, {
                     encoding: FileSystem.EncodingType.Base64,
                 });
 
-                // Realizar la petición a la API de Roboflow usando fetch
+                // Realizar la petición a la API de Roboflow
                 fetch("https://detect.roboflow.com/tesis-zvslj/2?api_key=g8xauDaGODbjfODnMRML", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
                     },
-                    body: base64Image, // Suponiendo que `formData` ya está definido
+                    body: base64Image,
                 })
                     .then(response => {
                         if (!response.ok) {
@@ -49,18 +54,44 @@ export default function Reconocimiento({ navigation }) {
                         return response.json();
                     })
                     .then(data => {
+                        const predicciones = data.predictions.map(prediction => prediction.class);
 
-                        setErrores(data.predictions.map(prediction => prediction.class))
+
+
+                        if (producto.paisDestino == 'Chile') {
+                            // Identificar objetos faltantes / ADAPTAR SI SE AGREAGAN NUEVOS ERRORES.
+                            const noDetectados = objetosEsperados.filter(
+                                objeto => !predicciones.includes(objeto)
+                            );
+                            setFaltantes(noDetectados);
+
+                            console.log("Detectados:", predicciones);
+                            console.log("Faltantes:", noDetectados);
+
+                            setErrores(`El o los sellos no estan presente: ${noDetectados}`)
+
+                        } else {
+
+                            const errores = objetosEsperados.filter(
+                                objeto => predicciones.includes(objeto)
+                            );
+
+                            setErrores(`Los sellos nacionales entan presentes en este productos: ${errores}`)
+
+                            console.log("Detectados:", predicciones);
+                            console.log("ERRORES, NO PERTENECE AL PAIN:", errores);
+
+                        }
+
+
+
 
                     })
                     .catch(error => {
                         console.error("Error al realizar la petición:", error);
                     });
 
-
                 setResponseRoboflow(true);
-
-                // Actualizar errores encontrados
             } catch (error) {
                 console.error("Error al tomar foto o enviar a la API:", error);
             }
@@ -79,49 +110,42 @@ export default function Reconocimiento({ navigation }) {
         return <Text>Acceso a la cámara denegado.</Text>;
     }
 
+
     return (
         <View style={styles.container}>
             {fotoUri ? (
-                // Mostrar la foto tomada
                 <Image source={{ uri: fotoUri }} style={StyleSheet.absoluteFillObject} />
             ) : (
-                // Mostrar la cámara si no se ha tomado una foto
-                <CameraView
-                    style={StyleSheet.absoluteFillObject}
-                    ref={cameraRef}
-                />
+                <CameraView style={StyleSheet.absoluteFillObject} ref={cameraRef} />
             )}
 
             {responseRoboflow ? (
                 <>
-
-
-                    {errores.map((prediction, index) => (
-                        <View key={index} style={{
-                            width: prediction.width, height: prediction.height, left: prediction.x,
-                            top: prediction.y, position: "absolute", borderWidth: 3, borderColor: "red", borderRadius: 10, justifyContent: "center", alignItems: "center"
-                        }}>
-                            {prediction.class}
-                        </View>
-                    ))}
-
-
                     <View style={styles.containerResultados}>
                         <Text style={{ fontSize: 18, fontWeight: "bold", color: "#270403", marginBottom: 10 }}>
                             Reconocimiento de errores
                         </Text>
                         <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                            <View>
+                            <View style={{ maxWidth: '50%' }}>
                                 <Text style={{ fontSize: 14, marginBottom: 10 }}>Errores detectados:</Text>
+                                {errores ? (
+                                    <Text style={{ fontSize: 12, color: "red" }}>
+                                        {errores} </Text>
+                                ) : (
+                                    <Text style={{ fontSize: 12, color: "gray" }}>No se encontraron errores.</Text>
+                                )}
 
-                                {errores.length > 0 ? (
-                                    errores.map((error, index) => (
-                                        <Text key={index} style={{ fontSize: 12, color: "red" }}>
-                                            {error}
+                                <Text style={{ fontSize: 14, marginTop: 10 }}>Objetos faltantes:</Text>
+                                {faltantes.length > 0 ? (
+                                    faltantes.map((falta, index) => (
+                                        <Text key={index} style={{ fontSize: 12, color: "blue" }}>
+                                            {falta}
                                         </Text>
                                     ))
                                 ) : (
-                                    <Text style={{ fontSize: 12, color: "gray" }}>No se encontraron errores.</Text>
+                                    <Text style={{ fontSize: 12, color: "green" }}>
+                                        Todos los objetos están presentes.
+                                    </Text>
                                 )}
                             </View>
 
@@ -142,7 +166,6 @@ export default function Reconocimiento({ navigation }) {
                         </View>
                     </View>
                 </>
-
             ) : (
                 <TouchableOpacity style={styles.tomarFoto} onPress={TomarFoto}>
                     <Image
@@ -150,7 +173,11 @@ export default function Reconocimiento({ navigation }) {
                         style={{ width: 50, height: 50, resizeMode: "contain" }}
                     />
                 </TouchableOpacity>
-            )}
+
+            )
+            }
+
+
 
             <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
                 <View style={styles.CirculoAtras}>
@@ -160,7 +187,28 @@ export default function Reconocimiento({ navigation }) {
                     <Text style={{ color: "white", fontSize: 22 }}>Ver Control</Text>
                 </View>
             </TouchableOpacity>
-        </View>
+
+            <View style={{ position: 'absolute', top: 60, right: 0, backgroundColor: 'white', width: '40%', minHeight: 50, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, padding: 5 }}>
+
+                <Text style={{ fontSize: 12, color: 'gray' }}>Escaneado</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#270403', textTransform: 'capitalize' }} >
+                    {producto.nombre}
+                </Text>
+                <Text style={{ fontSize: 11, color: 'gray' }}>
+                    GTIN: {producto.codigoBarra}
+                </Text>
+                <Text style={{ fontSize: 11, color: 'gray' }} >
+                    Pais: {producto.paisDestino}
+                </Text>
+
+                <Text style={{ textTransform: 'capitalize', fontSize: 11, color: 'gray' }}>
+                    Reserva: {producto.informacionQuimica.cepa}
+                </Text>
+
+
+            </View>
+
+        </View >
     );
 }
 

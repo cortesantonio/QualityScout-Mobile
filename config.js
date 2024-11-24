@@ -1,2 +1,2 @@
-export const URL_API_BACKEND = "http://192.168.1.101:5216";
-export const API_KEY_OPENIA = "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"
+export const URL_API_BACKEND = "http://192.168.1.104:5216";
+export const API_KEY_OPENIA = "sadad"
