@@ -50,14 +50,17 @@ const VerUsuario = ({ navigation }) => {
                     <Text style={styles.label}>Correo</Text>
                     <Text style={styles.dataInfo}>{Correo}</Text>
 
-                    <View display={{}}>
-                        <TouchableOpacity style={styles.buttonEditarContrasena} onPress={() => navigation.navigate('EditarUsuario', { RUT: RUT, Nombre: Nombre, Rol: Rol, Correo: Correo })}>
-                            <Image source={iconContrasena} style={{ width: 20, height: 20, resizeMode: 'contain' }} />
-                            <Text style={{ color: '#4b0404', textAlign: 'center', color: 'white' }}>Editar Contraseña</Text>
-                        </TouchableOpacity>
-                    </View>
 
                 </View>
+
+                <View style={{ display: 'flex', width: '100%', alignItems: 'flex-end' }}>
+                    <TouchableOpacity style={styles.buttonEditarContrasena} onPress={() => navigation.navigate('EditarUsuario', { RUT: RUT, Nombre: Nombre, Rol: Rol, Correo: Correo })}>
+                        <Image source={iconContrasena} style={{ width: 20, height: 20, resizeMode: 'contain' }} />
+                        <Text style={{ color: '#4b0404', textAlign: 'center', color: 'white' }}>Editar Contraseña</Text>
+                    </TouchableOpacity>
+
+                </View>
+
 
             </View>
 
@@ -72,7 +75,6 @@ const VerUsuario = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: '#fff',
         padding: 25
     },
@@ -98,15 +100,16 @@ const styles = StyleSheet.create({
         color: 'gray'
 
     }, buttonEditarContrasena: {
-        marginTop: 20,
         backgroundColor: '#bf6565',
         display: 'flex',
         flexDirection: 'row',
         gap: 5,
         alignItems: 'center',
+        justifyContent: 'center',
         padding: 5,
         borderRadius: 5,
-        width: 150
+        width: '60%'
+
     }
 
 });

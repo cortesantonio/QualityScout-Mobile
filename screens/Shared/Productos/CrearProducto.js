@@ -409,18 +409,23 @@ const CrearProducto = ({ navigation }) => {
                             selectedValue={producto.paisDestino}
                             onValueChange={(itemValue) => handleChange('paisDestino', itemValue)}
                         >
-                            <Picker.Item label="Selecciona un pais." value="" />
+                            <Picker.Item label="Selecciona un país." value="" />
 
                             <Picker.Item label="Chile" value="Chile" />
-                            <Picker.Item label="Argentina" value="Argentina" />
-                            <Picker.Item label="Francia" value="Francia" />
-                            <Picker.Item label="Italia" value="Italia" />
-                            <Picker.Item label="España" value="España" />
+                            <Picker.Item label="Japón" value="Japón" />
+                            <Picker.Item label="Turquía" value="Turquía" />
+                            <Picker.Item label="Rusia" value="Rusia" />
+                            <Picker.Item label="Colombia" value="Colombia" />
                             <Picker.Item label="Estados Unidos" value="Estados Unidos" />
-                            <Picker.Item label="Australia" value="Australia" />
-                            <Picker.Item label="Sudáfrica" value="Sudáfrica" />
-                            <Picker.Item label="Portugal" value="Portugal" />
-                            <Picker.Item label="Nueva Zelanda" value="Nueva Zelanda" />
+                            <Picker.Item label="Ucrania" value="Ucrania" />
+                            <Picker.Item label="Venezuela" value="Venezuela" />
+                            <Picker.Item label="República Checa" value="República Checa" />
+                            <Picker.Item label="Brasil" value="Brasil" />
+                            <Picker.Item label="Perú" value="Perú" />
+                            <Picker.Item label="Canadá" value="Canadá" />
+                            <Picker.Item label="México" value="México" />
+                            <Picker.Item label="España" value="España" />
+
                         </Picker>
 
                     </View>
@@ -434,16 +439,11 @@ const CrearProducto = ({ navigation }) => {
                         >
                             <Picker.Item label="Selecciona un idioma." value="" />
 
-                            <Picker.Item label="Inglés" value="Inglés" />
-                            <Picker.Item label="Árabe" value="Árabe" />
                             <Picker.Item label="Español" value="Español" />
-                            <Picker.Item label="Francés" value="Francés" />
-                            <Picker.Item label="Italiano" value="Italiano" />
-                            <Picker.Item label="Alemán" value="Alemán" />
-                            <Picker.Item label="Portugués" value="Portugués" />
-                            <Picker.Item label="Chino" value="Chino" />
-                            <Picker.Item label="Japonés" value="Japonés" />
+                            <Picker.Item label="Inglés" value="Inglés" />
                             <Picker.Item label="Ruso" value="Ruso" />
+                            <Picker.Item label="Japonés" value="Japonés" />
+                            <Picker.Item label="Chino" value="Chino" />
                         </Picker>
                     </View>
                     <Text style={{ fontSize: 18 }}>Unidad Medida</Text>
@@ -456,13 +456,8 @@ const CrearProducto = ({ navigation }) => {
                     >
                         <Picker.Item label="Selecciona un unidad de medida." value="" />
 
-                        <Picker.Item label="Onzas (oz)" value="oz" />
+                        <Picker.Item label="Centímetro Cúbico (cc)" value="cc" />
                         <Picker.Item label="Mililitros (ml)" value="ml" />
-                        <Picker.Item label="Litros (L)" value="L" />
-                        <Picker.Item label="Centilitros (cl)" value="cl" />
-                        <Picker.Item label="Gramos (g)" value="g" />
-                        <Picker.Item label="Kilogramos (kg)" value="kg" />
-                        <Picker.Item label="Galones (gal)" value="gal" />
                     </Picker>
 
                     <View style={styles.TextAndPickerForm}>
@@ -502,15 +497,11 @@ const CrearProducto = ({ navigation }) => {
                                 selectedValue={producto.tipoCapsula}
                                 onValueChange={(itemValue) => handleChange('tipoCapsula', itemValue)}
                             >
-                                <Picker.Item label="Selecciona el tipo de capsula." value="" />
+                                <Picker.Item label="Selecciona un tipo de cápsula." value="" />
 
-                                <Picker.Item label="Estándar" value="estandar" />
-                                <Picker.Item label="Térmica" value="termica" />
-                                <Picker.Item label="Corcho" value="corcho" />
-                                <Picker.Item label="Twist-off" value="twist-off" />
-                                <Picker.Item label="Cápsula de aluminio" value="aluminio" />
-                                <Picker.Item label="Cápsula de estaño" value="estano" />
-                                <Picker.Item label="Cápsula retráctil" value="retráctil" />
+                                <Picker.Item label="PVC" value="PVC" />
+                                <Picker.Item label="Complex" value="Complex" />
+                                <Picker.Item label="Alutín" value="Alutín" />
                             </Picker>
                         </View>
                         <View style={styles.TextAndPickerForm}>
@@ -522,17 +513,18 @@ const CrearProducto = ({ navigation }) => {
                                 onValueChange={(itemValue) => handleChange('colorCapsula', itemValue)}
 
                             >
-                                <Picker.Item label="Selecciona un color." value="" />
+                                <Picker.Item label="Seleccione un color de cápsula." value="" />
 
-                                <Picker.Item label="Rojo" value="rojo" />
-                                <Picker.Item label="Negro" value="negro" />
-                                <Picker.Item label="Dorado" value="dorado" />
-                                <Picker.Item label="Plata" value="plata" />
-                                <Picker.Item label="Verde" value="verde" />
-                                <Picker.Item label="Azul" value="azul" />
-                                <Picker.Item label="Blanco" value="blanco" />
-                                <Picker.Item label="Marrón" value="marron" />
-                                <Picker.Item label="Violeta" value="violeta" />
+                                <Picker.Item label="Azul" value="Azul" />
+                                <Picker.Item label="Blanco" value="Blanco" />
+                                <Picker.Item label="Dorado" value="Dorado" />
+                                <Picker.Item label="Marrón" value="Marrón" />
+                                <Picker.Item label="Negro" value="Negro" />
+                                <Picker.Item label="Plata" value="Plata" />
+                                <Picker.Item label="Rojo" value="Rojo" />
+                                <Picker.Item label="Verde" value="Verde" />
+                                <Picker.Item label="Violeta" value="Violeta" />
+
                             </Picker>
                         </View>
                         <View style={styles.TextAndPickerForm}>
@@ -544,17 +536,12 @@ const CrearProducto = ({ navigation }) => {
                                 onValueChange={(itemValue) => handleChange('colorBotella', itemValue)}
 
                             >
-                                <Picker.Item label="Selecciona un color." value="" />
+                                <Picker.Item label="Selecciona un color de botella." value="" />
 
-                                <Picker.Item label="Rojo" value="rojo" />
-                                <Picker.Item label="Negro" value="negro" />
-                                <Picker.Item label="Dorado" value="dorado" />
-                                <Picker.Item label="Plata" value="plata" />
-                                <Picker.Item label="Verde" value="verde" />
-                                <Picker.Item label="Azul" value="azul" />
-                                <Picker.Item label="Blanco" value="blanco" />
-                                <Picker.Item label="Marrón" value="marron" />
-                                <Picker.Item label="Violeta" value="violeta" />
+                                <Picker.Item label="Verde" value="Verde" />
+                                <Picker.Item label="Blanco" value="Blanco" />
+                                <Picker.Item label="Ámbar" value="Ámbar" />
+
                             </Picker>
                         </View>
 
@@ -582,16 +569,11 @@ const CrearProducto = ({ navigation }) => {
                                 onValueChange={(itemValue) => handleChange('tipoEtiqueta', itemValue)}
 
                             >
-                                <Picker.Item label="Selecciona una opcion." value="" />
+                                <Picker.Item label="Selecciona un tipo de etiqueta." value="" />
 
-                                <Picker.Item label="Clásica" value="clasica" />
-                                <Picker.Item label="Moderna" value="moderna" />
-                                <Picker.Item label="Minimalista" value="minimalista" />
-                                <Picker.Item label="Elegante" value="elegante" />
-                                <Picker.Item label="Vintage" value="vintage" />
-                                <Picker.Item label="Ecológica" value="ecologica" />
-                                <Picker.Item label="Edición limitada" value="edicion-limitada" />
-                                <Picker.Item label="Personalizada" value="personalizada" />
+                                <Picker.Item label="Auto-adhesiva" value="Auto-adhesiva" />
+                                <Picker.Item label="Engomada" value="Engomada" />
+
                             </Picker>
                         </View>
                         <View style={styles.TextAndPickerForm}>
@@ -602,15 +584,12 @@ const CrearProducto = ({ navigation }) => {
                                 selectedValue={producto.tipoCorcho}
                                 onValueChange={(itemValue) => handleChange('tipoCorcho', itemValue)}
                             >
-                                <Picker.Item label="Selecciona una opcion." value="" />
+                                <Picker.Item label="Selecciona un tipo de corcho." value="" />
 
-                                <Picker.Item label="Natural" value="natural" />
-                                <Picker.Item label="Aglomerado" value="aglomerado" />
-                                <Picker.Item label="Sintético" value="sintetico" />
-                                <Picker.Item label="Corcho con tapa roscada" value="tapa-rosca" />
-                                <Picker.Item label="Corcho técnico" value="tecnico" />
-                                <Picker.Item label="Vidrio" value="vidrio" />
-                                <Picker.Item label="Zanconia" value="zanconia" />
+                                <Picker.Item label="Microaglomerado" value="Microaglomerado" />
+                                <Picker.Item label="Perfect" value="Perfect" />
+                                <Picker.Item label="Natural" value="Natural" />
+
 
                             </Picker>
                         </View>

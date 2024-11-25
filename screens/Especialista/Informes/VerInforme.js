@@ -2,7 +2,7 @@ import React from 'react';
 import { Alert, Text, TouchableOpacity, View, StyleSheet, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { Nav, Footer } from '../../../components/shared';
-
+import { URL_API_BACKEND } from '../../../config';
 const VerInforme = ({ navigation }) => {
     const route = useRoute();
     const { item } = route.params;
@@ -38,7 +38,7 @@ const VerInforme = ({ navigation }) => {
                     onPress: async () => {
                         // Proceder con la eliminación
                         try {
-                            const response = await fetch(`http://192.168.1.108:5216/api/InformesApi/${id}`, {
+                            const response = await fetch(`${URL_API_BACKEND}/api/InformesApi/${id}`, {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json'
