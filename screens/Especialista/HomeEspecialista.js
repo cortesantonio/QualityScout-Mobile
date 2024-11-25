@@ -98,7 +98,7 @@ const HomeEspecialista = ({ navigation }) => {
 
                     <Text style={{ fontSize: 18, }}>Accesos Rapidos.</Text>
                     <View style={styles.ContainerAccesosRapidos} >
-                        <Pressable style={styles.PressableCard} >
+                        <Pressable style={styles.PressableCard} onPress={() => navigation.navigate('Dashboard')}>
                             <View style={styles.IconBackground}>
                                 <Image source={iconDashboard} style={{ width: 50, height: 50 }} resizeMode='contain' />
                             </View>

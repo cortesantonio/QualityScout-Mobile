@@ -50,10 +50,13 @@ const VerUsuario = ({ navigation }) => {
                     <Text style={styles.label}>Correo</Text>
                     <Text style={styles.dataInfo}>{Correo}</Text>
 
-                    <TouchableOpacity style={styles.buttonEditarContrasena} onPress={() => navigation.navigate('EditarUsuario', { RUT: RUT, Nombre: Nombre, Rol: Rol, Correo: Correo })}>
-                        <Image source={iconContrasena} style={{ width: 20, height: 20, resizeMode: 'contain' }} />
-                        <Text style={{ color: '#4b0404', textAlign: 'center', color: 'white' }}>Editar Contraseña</Text>
-                    </TouchableOpacity>
+                    <View display={{}}>
+                        <TouchableOpacity style={styles.buttonEditarContrasena} onPress={() => navigation.navigate('EditarUsuario', { RUT: RUT, Nombre: Nombre, Rol: Rol, Correo: Correo })}>
+                            <Image source={iconContrasena} style={{ width: 20, height: 20, resizeMode: 'contain' }} />
+                            <Text style={{ color: '#4b0404', textAlign: 'center', color: 'white' }}>Editar Contraseña</Text>
+                        </TouchableOpacity>
+                    </View>
+
                 </View>
 
             </View>
@@ -97,13 +100,13 @@ const styles = StyleSheet.create({
     }, buttonEditarContrasena: {
         marginTop: 20,
         backgroundColor: '#bf6565',
-        height: 30,
-        width: 150,
         display: 'flex',
         flexDirection: 'row',
         gap: 5,
         alignItems: 'center',
-        padding: 5
+        padding: 5,
+        borderRadius: 5,
+        width: 150
     }
 
 });
