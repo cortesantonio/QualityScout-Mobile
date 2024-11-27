@@ -28,7 +28,10 @@ function ControlesEstados() {
     const [data, setData] = useState([]);
 
     const obtenerData = async () => {
+
         try {
+            const token = await AsyncStorage.getItem('userToken');
+
             const response = await fetch(`${URL_API_BACKEND}/api/ApiDashboard/CantidadPorEstado`, {
                 method: 'POST',
                 headers: {
@@ -91,9 +94,41 @@ function ControlesEstados() {
     );
 }
 
-const HomeControlCalidad = ({ navigation }) => {
-    
+function HomeControlCalidad({ navigation }) {
+    const [resumen, setResumen] = useState([]);
+    const [loadingResumen, setLoadingResumen] = useState(true);
 
+    const obtenerResumen = async () => {
+        try {
+            const token = await AsyncStorage.getItem('userToken'); // Obtener token dentro de la función
+            if (!token) {
+                throw new Error('Token de autorización no encontrado');
+            }
+
+            const response = await fetch(`${URL_API_BACKEND}/api/ApiDashboard/ComparacionControles`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            setResumen(result);
+            setLoadingResumen(false);
+
+        } catch (error) {
+            console.error('Error al obtener datos:', error);
+        }
+    };
+
+    useEffect(() => {
+        obtenerResumen();
+    }, []);
     return (
         <>
             <Nav />
@@ -131,67 +166,73 @@ const HomeControlCalidad = ({ navigation }) => {
 
                     <ControlesEstados />
 
+                    {loadingResumen ? (
+                    <Text>Cargando...</Text>
+                    ) : (
                     <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
                         <View style={styles.containerCard}>
                             <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
                                 <Text style={[styles.tituloCard, { color: '#260202' }]}> Controles Aprobados </Text>
-                                <Text style={styles.numeroCard}>16</Text>
+                                <Text style={styles.numeroCard}>{resumen.aprobados.variacionPorcentual}</Text>
                                 <Text style={styles.porcentajeCard} >%</Text>
-                                <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
-                                <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
+
+                                {resumen.aprobados.variacionPorcentual >= 0 ?
+                                    <>
+
+                                        <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
+                                    </>
+                                    :
+                                    <>
+                                        <Image source={iconFlechaSubida} style={[styles.IconFlechaEstadistica, { transform: [{ scaleY: -1 }] }]} resizeMode='contain' />
+                                    </>
+                                }
+
+
                             </View>
 
                             <View style={[styles.CardEstadisticas, { backgroundColor: '#260202' }]}>
-                                <Text style={[styles.tituloCard, { color: 'white' }]}> Controles Rechazados </Text>
-                                <Text style={styles.numeroCard}>5</Text>
+                                <Text style={[styles.tituloCard, { color: 'white', textShadowColor: '#000000', textShadowOffset: { width: 0, height: 0 }, textShadowRadius: 1, }]}> Controles Rechazados </Text>
+                                <Text style={styles.numeroCard}>{resumen.rechazados.variacionPorcentual}</Text>
                                 <Text style={styles.porcentajeCard} >%</Text>
-                                <Image source={iconBajada} style={styles.IconFlechaEstadistica} resizeMode='contain' />
-                                <Text style={[styles.indicadorCard, { color: 'red', }]}> -</Text>
+
+                                {resumen.rechazados.variacionPorcentual >= 0 ?
+                                    <>
+
+                                        <Image source={iconBajada} style={[styles.IconFlechaEstadistica, { transform: [{ scaleY: -1 }] }]} resizeMode='contain' />
+                                    </>
+                                    :
+                                    <>
+                                        <Image source={iconBajada} style={styles.IconFlechaEstadistica} resizeMode='contain' />
+                                    </>
+                                }
+
                             </View>
 
                             <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
                                 <Text style={[styles.tituloCard, { color: '#260202' }]}> Reprocesos </Text>
-                                <Text style={styles.numeroCard}>8</Text>
+                                <Text style={styles.numeroCard}>{resumen.reprocesos.variacionPorcentual}</Text>
                                 <Text style={styles.porcentajeCard} >%</Text>
-                                <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
-                                <Text style={[styles.indicadorCard, { color: '#39ff14', }]}> +</Text>
+
+                                {resumen.reprocesos.variacionPorcentual >= 0 ?
+                                    <>
+
+                                        <Image source={iconFlechaSubida} style={styles.IconFlechaEstadistica} resizeMode='contain' />
+                                    </>
+                                    :
+                                    <>
+                                        <Image source={iconFlechaSubida} style={[styles.IconFlechaEstadistica, { transform: [{ scaleY: -1 }] }]} resizeMode='contain' />
+                                    </>
+                                }
                             </View>
 
                         </View>
-                        <View style={styles.SubcontainerCard}>
-                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
-                                <Text style={[styles.SubtituloCard, { color: 'white' }]}> Nuevos Productos </Text>
-                                <Text style={styles.SubnumeroCard}>8</Text>
-                            </View>
-                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
-                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Actualizaciones de prod. </Text>
-                                <Text style={styles.SubnumeroCard}>12</Text>
-                            </View>
-
-                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#260202' }]}>
-                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Prod. Eliminados </Text>
-                                <Text style={styles.SubnumeroCard}>0</Text>
-                            </View>
-                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#260202' }]}>
-                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Rechazos de Control </Text>
-                                <Text style={styles.SubnumeroCard}>16</Text>
-                            </View>
-
-                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
-                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Nuevos Reprocesos </Text>
-                                <Text style={styles.SubnumeroCard}>8</Text>
-                            </View>
-                            <View style={[styles.SubCardEstadisticas, { backgroundColor: '#f25757' }]}>
-                                <Text style={[styles.SubtituloCard, { color: 'white' }]}>Nuevos Controles </Text>
-                                <Text style={styles.SubnumeroCard}>12</Text>
-                            </View>
-
-                        </View>
-
-
+                        <Text style={{ fontWeight: 'bold', color: 'gray', marginTop: 5, fontSize: 12, width: '100%', textAlign: 'left' }}>Datos con respecto al mes anterior. </Text>
 
                     </View>
+                    )}
+
+
                 </View >
             </ScrollView >
             <Footer />
@@ -256,34 +297,32 @@ const styles = StyleSheet.create({
     },
     IconFlechaEstadistica: {
         width: 50,
-        height: 90,
+        height: '100%',
         position: 'absolute',
-        bottom: 0,
-        right: 0
+        bottom: -5,
+        left: 0
     },
     numeroCard: {
         position: 'absolute',
         width: '100%',
         textAlign: 'left',
-        marginLeft: 5,
-        bottom: -25,
-        fontSize: 78,
+        bottom: -15,
+        fontSize: 64,
         fontWeight: '700',
-        letterSpacing: -5,
+        letterSpacing: -6,
         color: 'white',
         zIndex: 5,
     },
     porcentajeCard: {
         position: 'absolute',
-        bottom: 20,
+        bottom: 40,
         right: 0,
         fontSize: 28,
         fontWeight: '900',
         color: 'white',
         opacity: 1,
         zIndex: 1000,
-        opacity: 0.5,
-
+        opacity: 0.7,
     },
     indicadorCard: {
         position: 'absolute',
