@@ -259,14 +259,18 @@ const VerProducto = ({ navigation }) => {
                 </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.botonRealizarControl} onPress={() => navigation.navigate('CrearControl', { productoRecibido: JsonProducto })}>
-                <Text style={{ color: 'white' }}>REALIZAR CONTROL</Text>
-            </TouchableOpacity>
 
-            <TouchableOpacity style={styles.botonBuscadorFlotante} onPress={() => navigation.navigate('Buscador')}>
+            {UserSession != "Especialista" && (
+
+                <TouchableOpacity style={styles.botonRealizarControl} onPress={() => navigation.navigate('CrearControl', { productoRecibido: JsonProducto })}>
+                    <Text style={{ color: 'white' }}>REALIZAR CONTROL</Text>
+                </TouchableOpacity>
+            )}
+
+            < TouchableOpacity style={styles.botonBuscadorFlotante} onPress={() => navigation.navigate('Buscador')}>
                 <Image source={iconBuscador} style={{ width: 30, height: 30 }} resizeMode="contain" />
             </TouchableOpacity>
-        </View>
+        </View >
     );
 };
 

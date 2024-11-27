@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from "rea
 import { Camera, CameraView } from "expo-camera";
 import * as FileSystem from "expo-file-system";
 import { DrawerActions, useRoute } from "@react-navigation/native";
+import * as Clipboard from "expo-clipboard";
 
 export default function Reconocimiento({ navigation }) {
     const route = useRoute()
@@ -101,6 +102,9 @@ export default function Reconocimiento({ navigation }) {
     const GuardarPrediccion = () => {
         setResponseRoboflow(false);
         setFotoUri(null);
+        Clipboard.setStringAsync(errores);
+
+
     };
 
     if (hasPermission === null) {
@@ -160,7 +164,7 @@ export default function Reconocimiento({ navigation }) {
                                         alignItems: "center",
                                     }}
                                 >
-                                    <Text style={{ color: "white", fontSize: 16 }}>Guardar</Text>
+                                    <Text style={{ color: "white", fontSize: 16, textAlign:'center' }}>Copiar Hallazgos</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

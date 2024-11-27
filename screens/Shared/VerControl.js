@@ -1,16 +1,17 @@
 import {
     TouchableOpacity, StyleSheet, View, Text, Image, ScrollView,
-    TextInput, Switch, Platform, Button, Alert
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { RadioButton } from 'react-native-paper';
-import { jsx } from 'react/jsx-runtime';
+
 
 const VerControl = ({ navigation }) => {
     const route = useRoute();
     const { ControlJson } = route.params;
+
 
     function formatearFecha(fechaISO) {
         // Convertir la cadena ISO 8601 a un objeto Date
@@ -38,6 +39,32 @@ const VerControl = ({ navigation }) => {
     } else {
         VinoEjemplo = { uri: ControlJson.productos.urlImagen }
     }
+
+
+
+
+
+
+
+    const [UserSession, setUserSession] = useState(null); // Estado para almacenar los datos del usuario
+
+    // Efecto para obtener la sesión de usuario desde AsyncStorage
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const sessionUser = await AsyncStorage.getItem('userJson');
+
+            if (sessionUser) {
+                try {
+                    const userLogData = JSON.parse(sessionUser); // Convertir de nuevo a objeto
+                    setUserSession(userLogData.Rol); // Actualiza el estado con los datos del usuario
+                } catch (error) {
+                    console.error("Error al parsear el JSON:", error);
+                }
+            }
+        };
+
+        fetchUserData(); // Llama a la función para recuperar los datos
+    }, []);
 
     return (
 
@@ -121,7 +148,7 @@ const VerControl = ({ navigation }) => {
             </TouchableOpacity>
 
 
-            {ControlJson.estado == 'Reproceso' && ControlJson.estadoFinal == null ?
+            {ControlJson.estado == 'Reproceso' && ControlJson.estadoFinal == null  &&  UserSession != "Especialista" ?
                 <View style={styles.botonRealizarControl} >
 
                     <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} onPress={() => navigation.navigate('EditarControl', { ControlJson: ControlJson })}>
