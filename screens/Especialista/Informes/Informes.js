@@ -65,17 +65,14 @@ const Informes = ({ navigation }) => {
 
 
     const obtenerInformes =async () => {
-        setLoading(true)
-        await fetch(`${URL_API_BACKEND}/api/InformesApi`)
+        await fetch(`${URL_API_BACKEND}/api/ApiDashboard/ResumenControles`)
             .then(response => response.json())
             .then(data => {
-                setDATA(data);
-                setUsuariosFiltrados(data); // Asegúrate de actualizar también la lista filtrada
+                console.log(data)
             })
             .catch(error => {
                 console.error('Error al obtener los informes:', error);
             });
-            setLoading(false)
     };
 
     useEffect(() => {

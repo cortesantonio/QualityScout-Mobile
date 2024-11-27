@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Image, Alert } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import { Footer } from "../../components/shared";
-
-
+import { URL_API_BACKEND } from "../../config";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Clipboard from "expo-clipboard";
 
 const iconScanner = require('../../assets/icons/scanner.png')
-
 
 export default function App({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -21,10 +21,30 @@ export default function App({ navigation }) {
     getCameraPermissions();
   }, []);
 
-  const handleBarcodeScanned = ({ type, data }) => {
+  const handleBarcodeScanned = async ({ type, data }) => {
+    if (scanned) { return; }
     setScanned(true);
 
-    navigation.navigate('Productos', { codigo: data })
+    const token = await AsyncStorage.getItem('userToken');
+
+    const response = await fetch(`${URL_API_BACKEND}/api/productosapi/EstaRegistrado?codigo=${data}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    })
+
+    if (response.status == 200) {
+      const json = await response.json();
+      navigation.navigate('VerProducto', { id: json.id });
+
+    } else {
+      navigation.navigate('Productos', { codigo: data, copiado: true});
+      Clipboard.setStringAsync(data);
+      
+    }
+    
   };
 
   if (hasPermission === null) {
@@ -123,9 +143,9 @@ const styles = StyleSheet.create({
     top: -40,
     left: -25,
     zIndex: 1
-},
+  },
 
-CirculoAtras: {
+  CirculoAtras: {
     width: 225,
     height: 225,
     borderRadius: 125,
@@ -135,6 +155,6 @@ CirculoAtras: {
     justifyContent: 'center',
     alignItems: 'center',
 
-}
+  }
 
 });

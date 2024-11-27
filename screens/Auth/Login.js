@@ -70,7 +70,7 @@ const Login = ({ navigation }) => {
 
   useEffect(() => {
     Animated.timing(containerHeight, {
-      toValue: isFormVisible ? 500 : 350, // Altura final según el estado
+      toValue: isFormVisible ? 600 : 300, // Altura final según el estado
       duration: 500, // Duración de la animación en milisegundos
       useNativeDriver: false,
     }).start();
@@ -121,14 +121,39 @@ const Login = ({ navigation }) => {
 
       } else {
         const error = await response.text();
-        Alert.alert('Login Failed', error);
+        Alert.alert('Error al iniciar sesion', error);
       }
     } catch (error) {
-      console.error('Error during login:', error);
-      Alert.alert('Login Error', 'An error occurred during login.');
+      console.error('Error durante el iniciar sesion:', error);
+      Alert.alert('Error', `Revise su conexion a internet.`);
     } finally {
       setLoading(false); // Terminar el estado de carga
     }
+  };
+
+
+
+
+  const formatRut = (input) => {
+    // Eliminar caracteres no numéricos excepto la "k" (para el dígito verificador)
+    const cleanInput = input.replace(/[^0-9kK]/g, "").toUpperCase();
+
+    if (cleanInput.length === 0) return "";
+
+    // Extraer cuerpo y dígito verificador
+    const cuerpo = cleanInput.slice(0, -1);
+    const dv = cleanInput.slice(-1);
+
+    // Insertar puntos cada tres dígitos
+    let formattedBody = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    // Agregar guion antes del dígito verificador
+    return cuerpo.length > 0 ? `${formattedBody}-${dv}` : cleanInput;
+  };
+
+  const handleChange = (text) => {
+    const formattedRut = formatRut(text);
+    setRut(formattedRut);
   };
 
   return (
@@ -175,7 +200,8 @@ const Login = ({ navigation }) => {
             <TextInput
               style={styles.inputLogin}
               value={rut}
-              onChangeText={setRut}
+              onChangeText={handleChange}
+
               placeholder="12.345.678-9"
             />
 

@@ -23,13 +23,9 @@ import Buscador from '../screens/Shared/Buscador'
 
 import Controles from '../screens/Shared/Controles';
 import ListadoControles from '../screens/Shared/ListadoControles';
-import CrearControl from '../screens/Shared/CrearControl';
-import EditarControl from '../screens/Shared/EditarControl';
 import VerControl from '../screens/Shared/VerControl';
-import Reconocimiento from '../screens/Shared/Reconocimiento';
 
-import Dashboard from '../screens/Shared/Dashboard';
-
+import Dashboard from '../screens/Especialista/Dashboard';
 
 
 const Stack = createNativeStackNavigator();
@@ -62,10 +58,7 @@ export default function EspecialistaNavigator() {
       <Stack.Screen name="Controles" component={Controles} />
 
       <Stack.Screen name="ListadoControles" component={ListadoControles} />
-      <Stack.Screen name="CrearControl" component={CrearControl} />
-      <Stack.Screen name="EditarControl" component={EditarControl} />
       <Stack.Screen name="VerControl" component={VerControl} /> 
-      <Stack.Screen name="Reconocimiento" component={Reconocimiento} />
 
       <Stack.Screen name="Dashboard" component={Dashboard} />
     </Stack.Navigator>

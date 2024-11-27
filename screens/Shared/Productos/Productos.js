@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Alert } from 'react-native';
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Footer, Nav } from '../../../components/shared';
@@ -29,12 +29,9 @@ const iconReload = require('../../../assets/icons/iconReload.png')
 
 const Productos = ({ navigation }) => {
     const route = useRoute();
-    const { codigo } = route.params || {};
+    const { codigo, copiado } = route.params || {};
 
-
-
-
-
+    
 
     const [UserSession, setUserSession] = useState(null); // Estado para almacenar los datos del usuario
     const [DATA, setDATA] = useState([]); // Inicializa el estado de DATA como un array vacío
@@ -84,6 +81,10 @@ const Productos = ({ navigation }) => {
         } catch (error) {
             console.error('Error obteniendo los datos:', error);
             alert('Ocurrió un error al obtener los datos.');
+        }
+
+        if(copiado){
+            Alert.alert('Producto no registrado', 'El codigo escaneado se ha copiado a tu portapapeles')
         }
     };
 

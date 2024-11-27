@@ -18,6 +18,7 @@ import CrearControl from '../screens/Shared/CrearControl';
 import EditarControl from '../screens/Shared/EditarControl';
 import VerControl from '../screens/Shared/VerControl';
 import Reconocimiento from '../screens/Shared/Reconocimiento';
+
 const Stack = createNativeStackNavigator();
 
 export default function EspecialistaNavigator() {

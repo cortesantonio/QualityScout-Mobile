@@ -38,6 +38,8 @@ const CrearUsuario = ({ navigation }) => {
     };
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
+    const [error, setError] = useState("");
+    const MIN_LENGTH = 6; // Mínimo de caracteres para la contraseña
 
 
     const [Usuario, setUsuario] = useState({
@@ -56,10 +58,15 @@ const CrearUsuario = ({ navigation }) => {
         const UserToSend = { ...Usuario, RolId: value };
         if (UserToSend.Rut == '' || UserToSend.Nombre == '' || UserToSend.Email == '' || UserToSend.Password == '' || UserToSend.RolId == null) {
             Alert.alert('Campos incompletos', 'Por favor complete todos los campos')
-        } if (token == null){
+        } if (token == null) {
             alert('No se encontro token, no se pudo crear el usuario.')
             return;
         }
+
+        if(UserToSend.Password.length <8){
+            return Alert.alert('Error', 'La contraseña debe tener al menos 8 caracteres.');
+        }
+
         try {
             const response = await fetch(`${URL_API_BACKEND}/api/authapi/CreateUsuario`, {
                 method: 'POST',
@@ -95,6 +102,28 @@ const CrearUsuario = ({ navigation }) => {
 
 
 
+    const formatRut = (input) => {
+        // Eliminar caracteres no numéricos excepto la "k" (para el dígito verificador)
+        const cleanInput = input.replace(/[^0-9kK]/g, "").toUpperCase();
+
+        if (cleanInput.length === 0) return "";
+
+        // Extraer cuerpo y dígito verificador
+        const cuerpo = cleanInput.slice(0, -1);
+        const dv = cleanInput.slice(-1);
+
+        // Insertar puntos cada tres dígitos
+        let formattedBody = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+        // Agregar guion antes del dígito verificador
+        return cuerpo.length > 0 ? `${formattedBody}-${dv}` : cleanInput;
+    };
+
+    const handleChangeRut = (text) => {
+        const formattedRut = formatRut(text);
+        handleChange('Rut', formattedRut);
+    };
+
     return (
         <>
             <Nav />
@@ -114,7 +143,7 @@ const CrearUsuario = ({ navigation }) => {
                         <Text style={styles.label}>RUT</Text>
                         <TextInput style={styles.input}
                             value={Usuario.Rut}
-                            onChangeText={(value) => handleChange('Rut', value)} />
+                            onChangeText={handleChangeRut} />
 
 
                         <Text style={styles.label}>Nombre Completo</Text>

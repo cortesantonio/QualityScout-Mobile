@@ -2,8 +2,9 @@ import { StyleSheet, Text, View, Image, Pressable, ScrollView, StatusBar, Dimens
 import React from 'react';
 import { Footer, Nav } from '../../components/shared';
 import { PieChart } from 'react-native-chart-kit';
-
-
+import { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { URL_API_BACKEND } from '../../config';
 
 // iconos propios 
 const iconDashboard = require('../../assets/icons/iconDashboard.png')
@@ -17,13 +18,55 @@ const iconFlechaSubida = require('../../assets/icons/flechaSubida.png')
 const iconBajada = require('../../assets/icons/flechaBajada.png')
 
 const screenWidth = Dimensions.get('window').width * 0.8;
+const token = AsyncStorage.getItem('userToken');
 
-function MyPieChart() {
-    const data = [
-        { name: 'Aprobados', population: 124, color: '#f25757', legendFontSize: 11 },
-        { name: 'Reprocesos', population: 20, color: '#ed8d8d', legendFontSize: 11 },
-        { name: 'Rechazados', population: 81, color: '#260202', legendFontSize: 11 },
-    ];
+
+
+function ControlesEstados() {
+    const [data, setData] = useState([]);
+
+    const obtenerData = async () => {
+        try {
+            const response = await fetch(`${URL_API_BACKEND}/api/ApiDashboard/CantidadPorEstado`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            // Transformar los datos para el PieChart
+            const formattedData = result.map((item, index) => ({
+                name: item.estado,
+                population: item.cantidad,
+                color: getColor(index), // Generar colores dinámicos
+                legendFontColor: "#7F7F7F",
+                legendFontSize: 12,
+            }));
+
+            setData(formattedData);
+        } catch (error) {
+            console.error('Error al obtener datos:', error);
+        }
+    };
+
+    // Función para asignar colores únicos
+    const getColor = (index) => {
+        const colors = ['#f25757', '#260202', '#bf6565'];
+        return colors[index];
+    };
+
+    useEffect(() => {
+        obtenerData();
+    }, []);
+
+
 
     return (
         <View>
@@ -40,6 +83,8 @@ function MyPieChart() {
                 paddingLeft="10"
                 absolute
             />
+            <Text style={{ fontWeight: 'bold', color: 'gray' }}>Cantidad de controles por estados (Mes actual). </Text>
+
         </View>
     );
 }
@@ -146,7 +191,7 @@ const HomeEspecialista = ({ navigation }) => {
                     <Text style={{ fontSize: 18, }}>Indicadores de rendimientos actuales.</Text>
                     <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
-                        <MyPieChart />
+                        <ControlesEstados />
 
 
 
