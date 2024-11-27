@@ -40,11 +40,12 @@ export default function App({ navigation }) {
       navigation.navigate('VerProducto', { id: json.id });
 
     } else {
-      navigation.navigate('Productos', { codigo: data, copiado: true});
+      navigation.navigate('Productos', { codigo: data, copiado: true });
       Clipboard.setStringAsync(data);
       
+
     }
-    
+
   };
 
   if (hasPermission === null) {

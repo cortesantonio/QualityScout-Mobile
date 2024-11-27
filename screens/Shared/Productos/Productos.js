@@ -32,6 +32,12 @@ const Productos = ({ navigation }) => {
     const { codigo, copiado } = route.params || {};
 
     
+    useEffect(() => {
+        if (copiado) {
+            Alert.alert('Producto no registrado', 'El código ha sido copiado al portapapeles.');
+        }
+    }, [copiado])
+
 
     const [UserSession, setUserSession] = useState(null); // Estado para almacenar los datos del usuario
     const [DATA, setDATA] = useState([]); // Inicializa el estado de DATA como un array vacío
@@ -83,9 +89,7 @@ const Productos = ({ navigation }) => {
             alert('Ocurrió un error al obtener los datos.');
         }
 
-        if(copiado){
-            Alert.alert('Producto no registrado', 'El codigo escaneado se ha copiado a tu portapapeles')
-        }
+        
     };
 
     // Efecto para obtener los datos al montar el componente
