@@ -1,13 +1,12 @@
-import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Alert } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Image, Pressable, FlatList, TextInput, Alert, ActivityIndicator, Animated } from 'react-native';
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Footer, Nav } from '../../../components/shared';
 import { useRoute } from '@react-navigation/native';
 
 import { useEffect } from 'react';
-
+import { useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import { URL_API_BACKEND } from '../../../config';
 
 
@@ -31,7 +30,10 @@ const Productos = ({ navigation }) => {
     const route = useRoute();
     const { codigo, copiado } = route.params || {};
 
-    
+    const [loading, setLoading] = useState(true);
+    const translateY = useRef(new Animated.Value(0)).current;
+
+
     useEffect(() => {
         if (copiado) {
             Alert.alert('Producto no registrado', 'El código ha sido copiado al portapapeles.');
@@ -84,12 +86,13 @@ const Productos = ({ navigation }) => {
 
             const data = await response.json();
             setDATA(data); // Almacena los datos en el estado DATA
+            setLoading(false)
         } catch (error) {
             console.error('Error obteniendo los datos:', error);
             alert('Ocurrió un error al obtener los datos.');
         }
 
-        
+
     };
 
     // Efecto para obtener los datos al montar el componente
@@ -239,12 +242,26 @@ const Productos = ({ navigation }) => {
 
                     {/* Cuerpo de la lista */}
                     <View style={styles.containerProductos}>
-                        <FlatList
-                            style={styles.flatList}
-                            data={filteredData}
-                            keyExtractor={item => item.id}
-                            renderItem={renderItem}
-                        />
+                        <Animated.View style={{ transform: [{ translateY }] }}>
+
+                            {loading ? (
+                                <View style={styles.loadingContainer}>
+                                    <ActivityIndicator size="large" color="#260202" />
+                                    <Text style={styles.loadingText}>Cargando...</Text>
+                                </View>
+                            ) :
+
+                                <FlatList
+                                    style={styles.flatList}
+                                    data={filteredData}
+                                    keyExtractor={item => item.id}
+                                    renderItem={renderItem}
+                                />
+
+                            }
+
+                        </Animated.View>
+
                     </View>
                 </View>
             </View>
@@ -374,6 +391,12 @@ const styles = StyleSheet.create({
     }, flatList: {
         height: Dimensions.get('window').height,
         flexGrow: 0,
+    },
+    loadingContainer: {
+        marginTop: 50,
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });
 

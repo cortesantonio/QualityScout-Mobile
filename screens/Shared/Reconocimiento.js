@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, ActivityIndicator } from "react-native";
 import { Camera, CameraView } from "expo-camera";
 import * as FileSystem from "expo-file-system";
 import { DrawerActions, useRoute } from "@react-navigation/native";
@@ -15,6 +15,8 @@ export default function Reconocimiento({ navigation }) {
     const [faltantes, setFaltantes] = useState([]); // NUEVO: Almacena objetos faltantes
     const cameraRef = useRef(null);
     const [fotoUri, setFotoUri] = useState(null);
+
+    const [loading, setLoading] = useState(true);
 
     // Lista de objetos esperados
     const objetosEsperados = ["RiesgoParaTuBebe", "NoBeberMenores", "NoBeberAlConducir"];
@@ -56,8 +58,7 @@ export default function Reconocimiento({ navigation }) {
                     })
                     .then(data => {
                         const predicciones = data.predictions.map(prediction => prediction.class);
-
-
+                        setLoading(false)
 
                         if (producto.paisDestino == 'Chile') {
                             // Identificar objetos faltantes / ADAPTAR SI SE AGREAGAN NUEVOS ERRORES.
@@ -79,8 +80,6 @@ export default function Reconocimiento({ navigation }) {
 
                             setErrores(`Los sellos nacionales entan presentes en este productos: ${errores}`)
 
-                            console.log("Detectados:", predicciones);
-                            console.log("ERRORES, NO PERTENECE AL PAIN:", errores);
 
                         }
 
@@ -125,50 +124,62 @@ export default function Reconocimiento({ navigation }) {
 
             {responseRoboflow ? (
                 <>
+
+
                     <View style={styles.containerResultados}>
                         <Text style={{ fontSize: 18, fontWeight: "bold", color: "#270403", marginBottom: 10 }}>
                             Reconocimiento de errores
                         </Text>
-                        <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                            <View style={{ maxWidth: '50%' }}>
-                                <Text style={{ fontSize: 14, marginBottom: 10 }}>Errores detectados:</Text>
-                                {errores ? (
-                                    <Text style={{ fontSize: 12, color: "red" }}>
-                                        {errores} </Text>
-                                ) : (
-                                    <Text style={{ fontSize: 12, color: "gray" }}>No se encontraron errores.</Text>
-                                )}
 
-                                <Text style={{ fontSize: 14, marginTop: 10 }}>Objetos faltantes:</Text>
-                                {faltantes.length > 0 ? (
-                                    faltantes.map((falta, index) => (
-                                        <Text key={index} style={{ fontSize: 12, color: "blue" }}>
-                                            {falta}
+                        {loading ? (
+                            <View style={styles.loadingContainer}>
+                                <ActivityIndicator size="large" color="#260202" />
+                                <Text style={styles.loadingText}>Procesando Imagen...</Text>
+                            </View>
+                        ) :
+
+                            <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                                <View style={{ maxWidth: '50%' }}>
+                                    <Text style={{ fontSize: 14, marginBottom: 10 }}>Errores detectados:</Text>
+                                    {errores ? (
+                                        <Text style={{ fontSize: 12, color: "red" }}>
+                                            {errores} </Text>
+                                    ) : (
+                                        <Text style={{ fontSize: 12, color: "gray" }}>No se encontraron errores.</Text>
+                                    )}
+
+                                    <Text style={{ fontSize: 14, marginTop: 10 }}>Objetos faltantes:</Text>
+                                    {faltantes.length > 0 ? (
+                                        faltantes.map((falta, index) => (
+                                            <Text key={index} style={{ fontSize: 12, color: "blue" }}>
+                                                {falta}
+                                            </Text>
+                                        ))
+                                    ) : (
+                                        <Text style={{ fontSize: 12, color: "green" }}>
+                                            Todos los objetos están presentes.
                                         </Text>
-                                    ))
-                                ) : (
-                                    <Text style={{ fontSize: 12, color: "green" }}>
-                                        Todos los objetos están presentes.
-                                    </Text>
-                                )}
-                            </View>
+                                    )}
+                                </View>
 
-                            <View style={{ display: "flex", justifyContent: "flex-end" }}>
-                                <TouchableOpacity
-                                    onPress={GuardarPrediccion}
-                                    style={{
-                                        backgroundColor: "#bf6565",
-                                        padding: 10,
-                                        borderRadius: 10,
-                                        width: 120,
-                                        alignItems: "center",
-                                    }}
-                                >
-                                    <Text style={{ color: "white", fontSize: 16, textAlign:'center' }}>Copiar Hallazgos</Text>
-                                </TouchableOpacity>
+                                <View style={{ display: "flex", justifyContent: "flex-end" }}>
+                                    <TouchableOpacity
+                                        onPress={GuardarPrediccion}
+                                        style={{
+                                            backgroundColor: "#bf6565",
+                                            padding: 10,
+                                            borderRadius: 10,
+                                            width: 120,
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        <Text style={{ color: "white", fontSize: 16, textAlign: 'center' }}>Copiar Hallazgos</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
-                        </View>
+                        }
                     </View>
+
                 </>
             ) : (
                 <TouchableOpacity style={styles.tomarFoto} onPress={TomarFoto}>
@@ -270,6 +281,13 @@ const styles = StyleSheet.create({
         borderRadius: 50,
 
         marginLeft: Dimensions.get('window').width / 2 - 50
+    },
+    loadingContainer:{
+        width:'100%',
+        textAlign:'center',
+        justifyContent:'center',
+        alignItems:'center',
+        gap:10
     }
 
 });

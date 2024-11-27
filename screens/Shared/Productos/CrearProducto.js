@@ -89,6 +89,7 @@ const CrearProducto = ({ navigation }) => {
         idioma: '',
         unidadMedida: '',
         descripcionCapsula: '',
+        urlImagen:'',
 
         capacidad: 0,
         tipoCapsula: '',
@@ -459,6 +460,20 @@ const CrearProducto = ({ navigation }) => {
                         <Picker.Item label="Centímetro Cúbico (cc)" value="cc" />
                         <Picker.Item label="Mililitros (ml)" value="ml" />
                     </Picker>
+
+                    <View style={styles.TextAndPickerForm}>
+                        <Text style={{ fontSize: 18 }}>Link de Imagen (.jpge .png)</Text>
+                        <TextInput
+                            style={styles.input}
+
+                            value={producto.urlImagen}
+                            onChangeText={(text) => handleChange('urlImagen', text)}
+
+                        />
+
+                    </View>
+
+
 
                     <View style={styles.TextAndPickerForm}>
                         <Text style={{ fontSize: 18 }}>Descripcion de capsula:</Text>

@@ -265,22 +265,25 @@ const ListadoControles = ({ navigation }) => {
 
                     {/* Cuerpo de la lista */}
                     <View style={styles.containerProductos}>
-                        {loading && (
-                            <View style={styles.loadingContainer}>
-                                <ActivityIndicator size="large" color="#260202" />
-                                <Text style={styles.loadingText}>Cargando...</Text>
-                            </View>
-                        )}
-
-                        {/* FlatList envuelta en un Animated.View */}
                         <Animated.View style={{ transform: [{ translateY }] }}>
-                            <FlatList
-                                style={styles.flatList}
-                                data={filteredData}
-                                keyExtractor={item => item.id}
-                                renderItem={renderItem}
-                            />
+
+                            {loading ? (
+                                <View style={styles.loadingContainer}>
+                                    <ActivityIndicator size="large" color="#260202" />
+                                    <Text style={styles.loadingText}>Cargando...</Text>
+                                </View>
+                            ) : (
+                                <FlatList
+                                    style={styles.flatList}
+                                    data={filteredData}
+                                    keyExtractor={item => item.id}
+                                    renderItem={renderItem}
+                                />
+
+                            )}
+
                         </Animated.View>
+
                     </View>
                 </View>
 

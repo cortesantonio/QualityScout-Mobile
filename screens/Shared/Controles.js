@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, Pressable, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { Footer, Nav } from '../../components/shared';
 import { URL_API_BACKEND } from '../../config';
@@ -124,7 +124,10 @@ const Controles = ({ navigation }) => {
 
                             </>
                         ) : (
-                            <Text>Cargando...</Text>
+                            <View style={styles.loadingContainer}>
+                                    <ActivityIndicator size="large" color="#260202" />
+                                    <Text style={styles.loadingText}>Obteniendo datos...</Text>
+                                </View>
                         )}
 
 
@@ -187,6 +190,13 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
     },
+    loadingContainer: {
+        marginTop: 30,
+        marginBottom: 30,
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 
 
 
