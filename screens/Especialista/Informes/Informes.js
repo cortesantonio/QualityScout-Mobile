@@ -21,24 +21,10 @@ const Informes = ({ navigation }) => {
 
     //datos para generar informe
     const [user, setUser] = useState({});
-    const [nuevoInforme, setNuevoInforme] = useState(
-        {
-            titulo: '',
-            descripcion: '',
-            encargado: '',
-            idUsuario: null,
-        }
-    )
-    const handleChange = (name, value) => {
-        setNuevoInforme({
-            ...nuevoInforme,
-            [name]: value
-        })
-    }
 
 
     const [busqueda, setBusqueda] = useState(''); // Estado para la búsqueda
-
+    const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
     // recupera el usuario logeado
     const obtenerUsuario = async () => {
         try {
@@ -64,11 +50,13 @@ const Informes = ({ navigation }) => {
     const [DATA, setDATA] = useState([])
 
 
-    const obtenerInformes =async () => {
-        await fetch(`${URL_API_BACKEND}/api/ApiDashboard/ResumenControles`)
+    const obtenerInformes = async () => {
+        setLoading(true)
+        await fetch(`${URL_API_BACKEND}/api/InformesApi`)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                setDATA(data)
+                setLoading(false)
             })
             .catch(error => {
                 console.error('Error al obtener los informes:', error);
@@ -80,23 +68,26 @@ const Informes = ({ navigation }) => {
     }, []);
 
 
-
-
-
-    const [usuariosFiltrados, setUsuariosFiltrados] = useState(DATA); // Estado para la lista filtrada
+    useEffect(() => {
+        // Inicializa la lista filtrada con los datos completos al obtenerlos
+        setUsuariosFiltrados(DATA);
+    }, [DATA]);
 
     const handleBuscar = (text) => {
         setBusqueda(text);
-        if (text) {
+        if (text.trim() !== '') {
+            // Filtrar por el nombre del usuario
             const filtrados = DATA.filter(item =>
-                item.encargado.toLowerCase().includes(text.toLowerCase()) ||
-                item.encargado.includes(text)
+                item.usuario.nombre.toLowerCase().includes(text.toLowerCase()) || item.titulo.toLowerCase().includes(text.toLowerCase())
             );
             setUsuariosFiltrados(filtrados);
         } else {
+            // Mostrar todos los datos si no hay texto en el buscador
             setUsuariosFiltrados(DATA);
         }
     };
+
+
     function formatearFecha(fechaISO) {
         // Convertir la cadena ISO 8601 a un objeto Date
         const fecha = new Date(fechaISO);
@@ -111,7 +102,7 @@ const Informes = ({ navigation }) => {
         const segundos = fecha.getSeconds().toString().padStart(2, '0'); // Segundos
 
         // Devolver la fecha formateada
-        return `${dia}.${mes}.${anio} ${horas}:${minutos}Hrs.`;
+        return `${dia}.${mes}.${anio} - ${horas}:${minutos} Horas`;
     }
     const renderItem = ({ item }) => (
         <View style={styles.item}>
@@ -145,7 +136,7 @@ const Informes = ({ navigation }) => {
         }).start();
     }, [loading]);
 
-    
+
 
     return (
 
@@ -335,7 +326,7 @@ const styles = StyleSheet.create({
         height: 25,
         resizeMode: 'contain',
     }, flatList: {
-        height: Dimensions.get('window').height/2.5,
+        height: Dimensions.get('window').height / 2.5,
         flexGrow: 0,
     },
 

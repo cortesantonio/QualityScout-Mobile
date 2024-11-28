@@ -79,7 +79,7 @@ const ListadoControles = ({ navigation }) => {
         const segundos = fecha.getSeconds().toString().padStart(2, '0'); // Segundos
 
         // Devolver la fecha formateada
-        return `${dia}/${mes}/${anio} ${horas}`;
+        return `${dia}/${mes}/${anio} ${horas}:${minutos}`;
     }
 
 
@@ -422,8 +422,8 @@ const styles = StyleSheet.create({
         height: 25,
         resizeMode: 'contain',
     }, flatList: {
-        height: Dimensions.get('window').height,
         flexGrow: 0,
+        height: Dimensions.get('window').height - 400
     },
     modalContainer: {
         flex: 1,
@@ -451,8 +451,8 @@ const styles = StyleSheet.create({
 
     },
     buttonCloseModal: {
-    }, loadingContainer: {
-        marginTop: 50,
+    },
+     loadingContainer: {
         textAlign: 'center',
         justifyContent: 'center',
         alignItems: 'center',

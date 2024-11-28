@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
         height: 25,
         resizeMode: 'contain',
     }, flatList: {
-        height: Dimensions.get('window').height,
+        height: Dimensions.get('window').height- 450,
         flexGrow: 0,
     },
     loadingContainer: {

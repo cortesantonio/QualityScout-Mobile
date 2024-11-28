@@ -26,6 +26,7 @@
     "expo": "^52.0.11",
     "expo-barcode-scanner": "~13.0.1",
     "expo-camera": "^16.0.7",
+    "expo-clipboard": "~7.0.0",
     "expo-file-system": "^18.0.4",
     "expo-navigation-bar": "^4.0.4",
     "expo-status-bar": "~2.0.0",
@@ -47,8 +48,7 @@
     "react-native-svg": "15.8.0",
     "react-native-vector-icons": "^10.1.0",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "^13.12.2",
-    "expo-clipboard": "~7.0.0"
+    "react-native-webview": "^13.12.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

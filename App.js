@@ -8,36 +8,39 @@ import Login from './screens/Auth/Login'
 import EspecialistaNavigator from './navigators/EspecialistaNavigator';
 import ControlCalidadNavigator from './navigators/ControlCalidadNavigator';
 import FooterNavigator from './navigators/FooterNavigator';
+import ChatScreen from './components/chatbot';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+    <>
+    <ChatScreen />
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{
+            headerShown: false,
 
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"  
-        screenOptions={{
-          headerShown: false,
+          }}
+        >
+          {/* LOGIN */}
+          <Stack.Screen name="Login" component={Login} />
 
-        }}
-      >
-        {/* LOGIN */}
-        <Stack.Screen name="Login" component={Login} />
-        
-        {/* Especialista */}
-        <Stack.Screen name='Especialista' component={EspecialistaNavigator}/>
+          {/* Especialista */}
+          <Stack.Screen name='Especialista' component={EspecialistaNavigator} />
 
-        {/* Control de Calidad */}
-        
-        <Stack.Screen name="ControlCalidad" component={ControlCalidadNavigator} />
+          {/* Control de Calidad */}
 
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen name="ControlCalidad" component={ControlCalidadNavigator} />
 
- 
+        </Stack.Navigator>
+      </NavigationContainer>
 
-    
+    </>
+
+
+
 
   );
 }

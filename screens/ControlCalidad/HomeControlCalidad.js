@@ -131,6 +131,7 @@ function HomeControlCalidad({ navigation }) {
     }, []);
     return (
         <>
+
             <Nav />
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <View style={styles.containerHomeAdmin}>
@@ -161,6 +162,7 @@ function HomeControlCalidad({ navigation }) {
 
                     </View >
 
+
                     {/* Indicadores de rendimientos */}
                     <Text style={{ fontSize: 18, }}>Estado Actual.</Text>
 
@@ -176,7 +178,7 @@ function HomeControlCalidad({ navigation }) {
 
                             <ControlesEstados />
 
-                            <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <View style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', paddingBottom: 100 }}>
 
                                 <View style={styles.containerCard}>
                                     <View style={[styles.CardEstadisticas, { backgroundColor: '#f25757' }]}>
@@ -245,7 +247,9 @@ function HomeControlCalidad({ navigation }) {
 
                 </View >
             </ScrollView >
+
             <Footer />
+
         </>
 
 
@@ -378,9 +382,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         zIndex: 5,
     },
-    
+
     loadingContainer: {
-        width:'100%',
+        width: '100%',
         marginTop: 50,
         textAlign: 'center',
         justifyContent: 'center',

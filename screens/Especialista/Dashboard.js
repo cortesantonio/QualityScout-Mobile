@@ -4,7 +4,6 @@ import { Footer, Nav } from '../../components/shared';
 import { PieChart, BarChart, LineChart } from 'react-native-chart-kit';
 import { URL_API_BACKEND } from '../../config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
 
 // iconos propios 
 
