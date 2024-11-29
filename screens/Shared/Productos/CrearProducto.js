@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
     TouchableOpacity, StyleSheet, View, Text, Image, ScrollView,
-    TextInput, Switch, Platform, Button, Alert
+    TextInput, Switch, Platform, Button, Alert, KeyboardAvoidingView
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Picker } from '@react-native-picker/picker';
@@ -17,7 +17,6 @@ const CrearProducto = ({ navigation }) => {
 
 
     {/**Informacion quimioca */ }
-    const [agregarInfoQuimica, setAgregarInfoQuimica] = useState(false); // Cambié el nombre para evitar conflictos
     const [nuevaInfoQuimica, setNuevaInfoQuimicaX] = useState(false); // Manejo de nuevo registro
     const [infoQuimica, setInfoQuimica] = useState([]);
 
@@ -89,7 +88,7 @@ const CrearProducto = ({ navigation }) => {
         idioma: '',
         unidadMedida: '',
         descripcionCapsula: '',
-        urlImagen:'',
+        urlImagen: '',
 
         capacidad: 0,
         tipoCapsula: '',
@@ -361,647 +360,666 @@ const CrearProducto = ({ navigation }) => {
 
 
             <ScrollView style={styles.scroll}>
-                <Image source={VinoEjemplo} style={styles.image} />
+                <KeyboardAvoidingView
+                    style={styles.container}
+                    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                >
+                    <Image source={VinoEjemplo} style={styles.image} />
 
-                <View style={styles.containerInfo} >
-                    <View style={{ marginBottom: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
-                        <View style={{ width: '90%' }}>
-                            <Text style={{ fontSize: 26, fontWeight: 'bold' }}>Registrar Producto</Text>
+                    <View style={styles.containerInfo} >
+                        <View style={{ marginBottom: 10, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
+                            <View style={{ width: '90%' }}>
+                                <Text style={{ fontSize: 26, fontWeight: 'bold' }}>Registrar Producto</Text>
+
+                            </View>
 
                         </View>
 
-                    </View>
+                        <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22 }]}>Informacion de Producto</Text>
 
-                    <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22 }]}>Informacion de Producto</Text>
+                        <View style={styles.TextAndInputForm}>
+                            <Text style={{ fontSize: 18 }}>Código Barra:</Text>
+                            <TextInput
+                                style={styles.input}
+                                keyboardType="numeric"
+                                value={producto.codigoBarra}
+                                onChangeText={(text) => handleChange('codigoBarra', text)}
+                            />
+                        </View>
 
-                    <View style={styles.TextAndInputForm}>
-                        <Text style={{ fontSize: 18 }}>Código Barra:</Text>
-                        <TextInput
-                            style={styles.input}
-                            keyboardType="numeric"
-                            value={producto.codigoBarra}
-                            onChangeText={(text) => handleChange('codigoBarra', text)}
-                        />
-                    </View>
+                        <View style={styles.TextAndInputForm}>
+                            <Text style={{ fontSize: 18 }}>Código VE:</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={producto.codigoVE}
+                                keyboardType="numeric"
+                                onChangeText={(text) => handleChange('codigoVE', text)} />
+                        </View>
 
-                    <View style={styles.TextAndInputForm}>
-                        <Text style={{ fontSize: 18 }}>Código VE:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={producto.codigoVE}
-                            keyboardType="numeric"
-                            onChangeText={(text) => handleChange('codigoVE', text)} />
-                    </View>
+                        <View style={styles.TextAndInputForm}>
+                            <Text style={{ fontSize: 18 }}>Nombre:</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={producto.nombreVino}
+                                onChangeText={(text) => handleChange('nombreVino', text)}
+                            />
+                        </View>
 
-                    <View style={styles.TextAndInputForm}>
-                        <Text style={{ fontSize: 18 }}>Nombre:</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={producto.nombreVino}
-                            onChangeText={(text) => handleChange('nombreVino', text)}
-                        />
-                    </View>
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>País de Destino:</Text>
+                            <Picker
+                                itemStyle={{ height: 120, fontSize: 14 }}
+                                style={styles.itemInPicker}
+                                selectedValue={producto.paisDestino}
+                                onValueChange={(itemValue) => handleChange('paisDestino', itemValue)}
+                            >
+                                <Picker.Item label="Selecciona un país." value="" />
 
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>País de Destino:</Text>
+                                <Picker.Item label="Chile" value="Chile" />
+                                <Picker.Item label="Japón" value="Japón" />
+                                <Picker.Item label="Turquía" value="Turquía" />
+                                <Picker.Item label="Rusia" value="Rusia" />
+                                <Picker.Item label="Colombia" value="Colombia" />
+                                <Picker.Item label="Estados Unidos" value="Estados Unidos" />
+                                <Picker.Item label="Ucrania" value="Ucrania" />
+                                <Picker.Item label="Venezuela" value="Venezuela" />
+                                <Picker.Item label="República Checa" value="República Checa" />
+                                <Picker.Item label="Brasil" value="Brasil" />
+                                <Picker.Item label="Perú" value="Perú" />
+                                <Picker.Item label="Canadá" value="Canadá" />
+                                <Picker.Item label="México" value="México" />
+                                <Picker.Item label="España" value="España" />
+
+                            </Picker>
+
+                        </View>
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Idioma:</Text>
+                            <Picker
+                                itemStyle={{ height: 120, fontSize: 14 }}
+                                style={styles.itemInPicker}
+                                selectedValue={producto.idioma}
+                                onValueChange={(itemValue) => handleChange('idioma', itemValue)}
+                            >
+                                <Picker.Item label="Selecciona un idioma." value="" />
+
+                                <Picker.Item label="Español" value="Español" />
+                                <Picker.Item label="Inglés" value="Inglés" />
+                                <Picker.Item label="Ruso" value="Ruso" />
+                                <Picker.Item label="Japonés" value="Japonés" />
+                                <Picker.Item label="Chino" value="Chino" />
+                            </Picker>
+                        </View>
+                        <Text style={{ fontSize: 18 }}>Unidad Medida</Text>
                         <Picker
                             itemStyle={{ height: 120, fontSize: 14 }}
                             style={styles.itemInPicker}
-                            selectedValue={producto.paisDestino}
-                            onValueChange={(itemValue) => handleChange('paisDestino', itemValue)}
+                            selectedValue={producto.unidadMedida}
+                            onValueChange={(itemValue) => handleChange('unidadMedida', itemValue)}
+
                         >
-                            <Picker.Item label="Selecciona un país." value="" />
+                            <Picker.Item label="Selecciona un unidad de medida." value="" />
 
-                            <Picker.Item label="Chile" value="Chile" />
-                            <Picker.Item label="Japón" value="Japón" />
-                            <Picker.Item label="Turquía" value="Turquía" />
-                            <Picker.Item label="Rusia" value="Rusia" />
-                            <Picker.Item label="Colombia" value="Colombia" />
-                            <Picker.Item label="Estados Unidos" value="Estados Unidos" />
-                            <Picker.Item label="Ucrania" value="Ucrania" />
-                            <Picker.Item label="Venezuela" value="Venezuela" />
-                            <Picker.Item label="República Checa" value="República Checa" />
-                            <Picker.Item label="Brasil" value="Brasil" />
-                            <Picker.Item label="Perú" value="Perú" />
-                            <Picker.Item label="Canadá" value="Canadá" />
-                            <Picker.Item label="México" value="México" />
-                            <Picker.Item label="España" value="España" />
-
+                            <Picker.Item label="Centímetro Cúbico (cc)" value="cc" />
+                            <Picker.Item label="Mililitros (ml)" value="ml" />
                         </Picker>
 
-                    </View>
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Idioma:</Text>
-                        <Picker
-                            itemStyle={{ height: 120, fontSize: 14 }}
-                            style={styles.itemInPicker}
-                            selectedValue={producto.idioma}
-                            onValueChange={(itemValue) => handleChange('idioma', itemValue)}
-                        >
-                            <Picker.Item label="Selecciona un idioma." value="" />
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Link de Imagen (.jpge .png)</Text>
+                            <TextInput
+                                style={styles.input}
 
-                            <Picker.Item label="Español" value="Español" />
-                            <Picker.Item label="Inglés" value="Inglés" />
-                            <Picker.Item label="Ruso" value="Ruso" />
-                            <Picker.Item label="Japonés" value="Japonés" />
-                            <Picker.Item label="Chino" value="Chino" />
-                        </Picker>
-                    </View>
-                    <Text style={{ fontSize: 18 }}>Unidad Medida</Text>
-                    <Picker
-                        itemStyle={{ height: 120, fontSize: 14 }}
-                        style={styles.itemInPicker}
-                        selectedValue={producto.unidadMedida}
-                        onValueChange={(itemValue) => handleChange('unidadMedida', itemValue)}
+                                value={producto.urlImagen}
+                                onChangeText={(text) => handleChange('urlImagen', text)}
 
-                    >
-                        <Picker.Item label="Selecciona un unidad de medida." value="" />
-
-                        <Picker.Item label="Centímetro Cúbico (cc)" value="cc" />
-                        <Picker.Item label="Mililitros (ml)" value="ml" />
-                    </Picker>
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Link de Imagen (.jpge .png)</Text>
-                        <TextInput
-                            style={styles.input}
-
-                            value={producto.urlImagen}
-                            onChangeText={(text) => handleChange('urlImagen', text)}
-
-                        />
-
-                    </View>
-
-
-
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Descripcion de capsula:</Text>
-                        <TextInput
-                            style={styles.input}
-
-                            value={producto.descripcionCapsula}
-                            onChangeText={(text) => handleChange('descripcionCapsula', text)}
-                            multiline={true}
-
-                        />
-
-                    </View>
-
-
-                    <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Detalles de producto</Text>
-
-                    {agregarDetalles ? <>
-
-                        <View style={styles.TextAndInputForm}>
-                            <Text style={{ fontSize: 18 }}>Capacidad:</Text>
-                            <TextInput style={styles.input}
-                                value={producto.capacidad}
-                                keyboardType="numeric"
-                                onChangeText={(text) => handleChange('capacidad', text)}
                             />
-                            <Text>ml.</Text>
+
                         </View>
+
 
 
                         <View style={styles.TextAndPickerForm}>
-                            <Text style={{ fontSize: 18 }}>Tipo de capsula:</Text>
-                            <Picker
-                                itemStyle={{ height: 120, fontSize: 14 }}
-                                style={styles.itemInPicker}
-                                selectedValue={producto.tipoCapsula}
-                                onValueChange={(itemValue) => handleChange('tipoCapsula', itemValue)}
-                            >
-                                <Picker.Item label="Selecciona un tipo de cápsula." value="" />
+                            <Text style={{ fontSize: 18 }}>Descripcion de capsula:</Text>
+                            <TextInput
+                                style={styles.input}
 
-                                <Picker.Item label="PVC" value="PVC" />
-                                <Picker.Item label="Complex" value="Complex" />
-                                <Picker.Item label="Alutín" value="Alutín" />
-                            </Picker>
-                        </View>
-                        <View style={styles.TextAndPickerForm}>
-                            <Text style={{ fontSize: 18 }}>Color de capsula:</Text>
-                            <Picker
-                                itemStyle={{ height: 120, fontSize: 14 }}
-                                style={styles.itemInPicker}
-                                selectedValue={producto.colorCapsula}
-                                onValueChange={(itemValue) => handleChange('colorCapsula', itemValue)}
+                                value={producto.descripcionCapsula}
+                                onChangeText={(text) => handleChange('descripcionCapsula', text)}
+                                multiline={true}
 
-                            >
-                                <Picker.Item label="Seleccione un color de cápsula." value="" />
-
-                                <Picker.Item label="Azul" value="Azul" />
-                                <Picker.Item label="Blanco" value="Blanco" />
-                                <Picker.Item label="Dorado" value="Dorado" />
-                                <Picker.Item label="Marrón" value="Marrón" />
-                                <Picker.Item label="Negro" value="Negro" />
-                                <Picker.Item label="Plata" value="Plata" />
-                                <Picker.Item label="Rojo" value="Rojo" />
-                                <Picker.Item label="Verde" value="Verde" />
-                                <Picker.Item label="Violeta" value="Violeta" />
-
-                            </Picker>
-                        </View>
-                        <View style={styles.TextAndPickerForm}>
-                            <Text style={{ fontSize: 18 }}>Color de botella:</Text>
-                            <Picker
-                                itemStyle={{ height: 120, fontSize: 14 }}
-                                style={styles.itemInPicker}
-                                selectedValue={producto.colorBotella}
-                                onValueChange={(itemValue) => handleChange('colorBotella', itemValue)}
-
-                            >
-                                <Picker.Item label="Selecciona un color de botella." value="" />
-
-                                <Picker.Item label="Verde" value="Verde" />
-                                <Picker.Item label="Blanco" value="Blanco" />
-                                <Picker.Item label="Ámbar" value="Ámbar" />
-
-                            </Picker>
-                        </View>
-
-                        <View style={styles.TextAndPickerForm}>
-                            <Text style={{ fontSize: 18 }}>Medalla:</Text>
-                            <Picker
-                                itemStyle={{ height: 120, fontSize: 14 }}
-                                style={styles.itemInPicker}
-                                selectedValue={producto.medalla}
-                                onValueChange={toggleSwitch}
-                            >
-                                <Picker.Item label="Selecciona una opcion." value="" />
-
-                                <Picker.Item label="SI" value={true} />
-                                <Picker.Item label="NO" value={false} />
-                            </Picker>
-                        </View>
-
-                        <View style={styles.TextAndPickerForm}>
-                            <Text style={{ fontSize: 18 }}>Tipo de etiqueta:</Text>
-                            <Picker
-                                itemStyle={{ height: 120, fontSize: 14 }}
-                                style={styles.itemInPicker}
-                                selectedValue={producto.tipoEtiqueta}
-                                onValueChange={(itemValue) => handleChange('tipoEtiqueta', itemValue)}
-
-                            >
-                                <Picker.Item label="Selecciona un tipo de etiqueta." value="" />
-
-                                <Picker.Item label="Auto-adhesiva" value="Auto-adhesiva" />
-                                <Picker.Item label="Engomada" value="Engomada" />
-
-                            </Picker>
-                        </View>
-                        <View style={styles.TextAndPickerForm}>
-                            <Text style={{ fontSize: 18 }}>Tipo de corcho:</Text>
-                            <Picker
-                                itemStyle={{ height: 120, fontSize: 14 }}
-                                style={styles.itemInPicker}
-                                selectedValue={producto.tipoCorcho}
-                                onValueChange={(itemValue) => handleChange('tipoCorcho', itemValue)}
-                            >
-                                <Picker.Item label="Selecciona un tipo de corcho." value="" />
-
-                                <Picker.Item label="Microaglomerado" value="Microaglomerado" />
-                                <Picker.Item label="Perfect" value="Perfect" />
-                                <Picker.Item label="Natural" value="Natural" />
-
-
-                            </Picker>
-                        </View>
-                        <View style={styles.TextAndInputForm}>
-                            <Text style={{ fontSize: 18 }}>Medida de etiqueta a boquete:</Text>
-                            <TextInput style={styles.input}
-                                keyboardType="numeric"
-
-                                value={producto.medidaEtiquetaBoquete}
-                                onChangeText={(text) => handleChange('medidaEtiquetaBoquete', text)}
                             />
-                            <Text>cm.</Text>
-                        </View>
 
-                        <View style={styles.TextAndInputForm}>
-                            <Text style={{ fontSize: 18 }}>Medida de etiqueta a base:</Text>
-                            <TextInput style={styles.input}
-                                keyboardType="numeric"
-                                value={producto.medidaEtiquetaBase}
-                                onChangeText={(text) => handleChange('medidaEtiquetaBase', text)}
-                            />
-                            <Text>cm.</Text>
                         </View>
 
 
+                        <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Detalles de producto</Text>
 
-                        <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Informacion de la botella</Text>
-                        {agregarBotella ? <>
-
-
+                        {agregarDetalles ? <>
 
                             <View style={styles.TextAndInputForm}>
-                                <Text style={{ fontSize: 18 }}>Nombre de Botella:</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={producto.nombreBotella}
-                                    onChangeText={(text) => handleChange('nombreBotella', text)}
+                                <Text style={{ fontSize: 18 }}>Capacidad:</Text>
+                                <TextInput style={styles.input}
+                                    value={producto.capacidad}
+                                    keyboardType="numeric"
+                                    onChangeText={(text) => handleChange('capacidad', text)}
                                 />
+                                <Text>ml.</Text>
                             </View>
 
 
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Tipo de capsula:</Text>
+                                <Picker
+                                    itemStyle={{ height: 120, fontSize: 14 }}
+                                    style={styles.itemInPicker}
+                                    selectedValue={producto.tipoCapsula}
+                                    onValueChange={(itemValue) => handleChange('tipoCapsula', itemValue)}
+                                >
+                                    <Picker.Item label="Selecciona un tipo de cápsula." value="" />
+
+                                    <Picker.Item label="PVC" value="PVC" />
+                                    <Picker.Item label="Complex" value="Complex" />
+                                    <Picker.Item label="Alutín" value="Alutín" />
+                                </Picker>
+                            </View>
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Color de capsula:</Text>
+                                <Picker
+                                    itemStyle={{ height: 120, fontSize: 14 }}
+                                    style={styles.itemInPicker}
+                                    selectedValue={producto.colorCapsula}
+                                    onValueChange={(itemValue) => handleChange('colorCapsula', itemValue)}
+
+                                >
+                                    <Picker.Item label="Seleccione un color de cápsula." value="" />
+
+                                    <Picker.Item label="Azul" value="Azul" />
+                                    <Picker.Item label="Blanco" value="Blanco" />
+                                    <Picker.Item label="Dorado" value="Dorado" />
+                                    <Picker.Item label="Marrón" value="Marrón" />
+                                    <Picker.Item label="Negro" value="Negro" />
+                                    <Picker.Item label="Plata" value="Plata" />
+                                    <Picker.Item label="Rojo" value="Rojo" />
+                                    <Picker.Item label="Verde" value="Verde" />
+                                    <Picker.Item label="Violeta" value="Violeta" />
+
+                                </Picker>
+                            </View>
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Color de botella:</Text>
+                                <Picker
+                                    itemStyle={{ height: 120, fontSize: 14 }}
+                                    style={styles.itemInPicker}
+                                    selectedValue={producto.colorBotella}
+                                    onValueChange={(itemValue) => handleChange('colorBotella', itemValue)}
+
+                                >
+                                    <Picker.Item label="Selecciona un color de botella." value="" />
+
+                                    <Picker.Item label="Verde" value="Verde" />
+                                    <Picker.Item label="Blanco" value="Blanco" />
+                                    <Picker.Item label="Ámbar" value="Ámbar" />
+
+                                </Picker>
+                            </View>
+
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Medalla:</Text>
+                                <Picker
+                                    itemStyle={{ height: 120, fontSize: 14 }}
+                                    style={styles.itemInPicker}
+                                    selectedValue={producto.medalla}
+                                    onValueChange={toggleSwitch}
+                                >
+                                    <Picker.Item label="Selecciona una opcion." value="" />
+
+                                    <Picker.Item label="SI" value={true} />
+                                    <Picker.Item label="NO" value={false} />
+                                </Picker>
+                            </View>
+
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Tipo de etiqueta:</Text>
+                                <Picker
+                                    itemStyle={{ height: 120, fontSize: 14 }}
+                                    style={styles.itemInPicker}
+                                    selectedValue={producto.tipoEtiqueta}
+                                    onValueChange={(itemValue) => handleChange('tipoEtiqueta', itemValue)}
+
+                                >
+                                    <Picker.Item label="Selecciona un tipo de etiqueta." value="" />
+
+                                    <Picker.Item label="Auto-adhesiva" value="Auto-adhesiva" />
+                                    <Picker.Item label="Engomada" value="Engomada" />
+
+                                </Picker>
+                            </View>
+                            <View style={styles.TextAndPickerForm}>
+                                <Text style={{ fontSize: 18 }}>Tipo de corcho:</Text>
+                                <Picker
+                                    itemStyle={{ height: 120, fontSize: 14 }}
+                                    style={styles.itemInPicker}
+                                    selectedValue={producto.tipoCorcho}
+                                    onValueChange={(itemValue) => handleChange('tipoCorcho', itemValue)}
+                                >
+                                    <Picker.Item label="Selecciona un tipo de corcho." value="" />
+
+                                    <Picker.Item label="Microaglomerado" value="Microaglomerado" />
+                                    <Picker.Item label="Perfect" value="Perfect" />
+                                    <Picker.Item label="Natural" value="Natural" />
+
+
+                                </Picker>
+                            </View>
                             <View style={styles.TextAndInputForm}>
-                                <Text style={{ fontSize: 18 }}>Alto</Text>
-                                <TextInput
-                                    style={styles.input}
+                                <Text style={{ fontSize: 18 }}>Medida de etiqueta a boquete:</Text>
+                                <TextInput style={styles.input}
                                     keyboardType="numeric"
 
-                                    value={producto.AltoBotella}
-                                    onChangeText={(text) => handleChange('AltoBotella', text)}
-
+                                    value={producto.medidaEtiquetaBoquete}
+                                    onChangeText={(text) => handleChange('medidaEtiquetaBoquete', text)}
                                 />
-                                <Text style={{ fontSize: 18 }}>cm.</Text>
+                                <Text>cm.</Text>
                             </View>
+
                             <View style={styles.TextAndInputForm}>
-                                <Text style={{ fontSize: 18 }}>Ancho</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={producto.AnchoBotella}
+                                <Text style={{ fontSize: 18 }}>Medida de etiqueta a base:</Text>
+                                <TextInput style={styles.input}
                                     keyboardType="numeric"
-
-                                    onChangeText={(text) => handleChange('AnchoBotella', text)}
-
+                                    value={producto.medidaEtiquetaBase}
+                                    onChangeText={(text) => handleChange('medidaEtiquetaBase', text)}
                                 />
-                                <Text style={{ fontSize: 18 }}>cm.</Text>
+                                <Text>cm.</Text>
                             </View>
+
+
+
+                            <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Informacion de la botella</Text>
+                            {agregarBotella ? <>
+
+
+
+                                <View style={styles.TextAndInputForm}>
+                                    <Text style={{ fontSize: 18 }}>Nombre de Botella:</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={producto.nombreBotella}
+                                        onChangeText={(text) => handleChange('nombreBotella', text)}
+                                    />
+                                </View>
+
+
+                                <View style={styles.TextAndInputForm}>
+                                    <Text style={{ fontSize: 18 }}>Alto</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        keyboardType="numeric"
+
+                                        value={producto.AltoBotella}
+                                        onChangeText={(text) => handleChange('AltoBotella', text)}
+
+                                    />
+                                    <Text style={{ fontSize: 18 }}>cm.</Text>
+                                </View>
+                                <View style={styles.TextAndInputForm}>
+                                    <Text style={{ fontSize: 18 }}>Ancho</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={producto.AnchoBotella}
+                                        keyboardType="numeric"
+
+                                        onChangeText={(text) => handleChange('AnchoBotella', text)}
+
+                                    />
+                                    <Text style={{ fontSize: 18 }}>cm.</Text>
+                                </View>
+
+                                <TouchableOpacity onPress={() => {
+                                    setAgregarBotella(false)
+                                }}>
+                                    <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>X  No agregar nuevo registro</Text>
+                                </TouchableOpacity>
+
+                            </> :
+                                <>
+
+                                    <View style={styles.TextAndPickerForm}>
+                                        <Text style={{ fontSize: 18 }}>Botella:</Text>
+                                        <Picker
+                                            itemStyle={{ height: 120, fontSize: 14 }}
+                                            style={styles.itemInPicker}
+                                            selectedValue={producto.idBotellaDetalle}
+                                            onValueChange={(itemValue) => handleChange('idBotellaDetalle', itemValue)}
+                                        >
+                                            <Picker.Item label="Selecciona una botella" value={0} />
+                                            {botellas.map((item) => (
+
+                                                <Picker.Item key={item.id} label={item.nombreBotella} value={item.id} />
+
+                                            ))}
+
+
+                                        </Picker>
+                                    </View>
+
+
+                                    <TouchableOpacity onPress={() => {
+                                        setAgregarBotella(true)
+                                    }}>
+                                        <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>
+                                            + Agregar botella nueva
+                                        </Text>
+                                    </TouchableOpacity>
+                                </>
+
+                            }
+
+
+
+
+
+
+
+
+
+
+
 
                             <TouchableOpacity onPress={() => {
-                                setAgregarBotella(false)
+                                setAgregarDetalles(false)
                             }}>
-                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>X  No agregar nuevo registro</Text>
+                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>x No agregar informcion en detalles.</Text>
                             </TouchableOpacity>
 
-                        </> :
+                        </> : <>
+
+                            <TouchableOpacity onPress={() => {
+                                setAgregarDetalles(true)
+                            }}>
+                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar detalles</Text>
+                            </TouchableOpacity>
+
+                        </>}
+
+
+
+
+
+
+                        <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Informacion Quimica de producto</Text>
+
+                        {/* Información Química */}
+                        {nuevaInfoQuimica ? (
                             <>
+                                <View style={styles.TextAndPickerForm}>
+                                    <Text style={{ fontSize: 18 }}>Cepa:</Text>
+                                    <TextInput style={styles.input}
+                                        value={producto.cepa}
+                                        onChangeText={(text) => handleChange('cepa', text)}
+                                    />
+
+                                </View>
+                                <View style={styles.TextAndPickerForm}>
+                                    <Text style={{ fontSize: 18 }}>Azucar:</Text>
+                                    <View style={styles.InfoQuimicaRangosBox}>
+                                        <Text>Min.</Text>
+                                        <TextInput style={styles.input}
+                                            value={producto.azucarMin}
+                                            onChangeText={(text) => handleChange('azucarMin', text)}
+                                            keyboardType="numeric"
+
+                                        />
+                                        <Text>Max.</Text>
+                                        <TextInput style={styles.input}
+                                            value={producto.azucarMax}
+                                            onChangeText={(text) => handleChange('azucarMax', text)}
+                                            keyboardType="numeric"
+
+                                        />
+                                    </View>
+                                </View>
 
                                 <View style={styles.TextAndPickerForm}>
-                                    <Text style={{ fontSize: 18 }}>Botella:</Text>
-                                    <Picker
-                                        itemStyle={{ height: 120, fontSize: 14 }}
-                                        style={styles.itemInPicker}
-                                        selectedValue={producto.idBotellaDetalle}
-                                        onValueChange={(itemValue) => handleChange('idBotellaDetalle', itemValue)}
-                                    >
-                                        <Picker.Item label="Selecciona una botella" value={0} />
-                                        {botellas.map((item) => (
+                                    <Text style={{ fontSize: 18 }}>Sulfuroso:</Text>
+                                    <View style={styles.InfoQuimicaRangosBox}>
+                                        <Text>Min.</Text>
+                                        <TextInput style={styles.input}
+                                            value={producto.sulfurosMin}
+                                            onChangeText={(text) => handleChange('sulfurosMin', text)}
+                                            keyboardType="numeric"
 
-                                            <Picker.Item key={item.id} label={item.nombreBotella} value={item.id} />
+                                        />
+                                        <Text>Max.</Text>
+                                        <TextInput style={styles.input}
+                                            value={producto.sulfurosMax}
+                                            onChangeText={(text) => handleChange('sulfurosMax', text)}
+                                            keyboardType="numeric"
 
-                                        ))}
+                                        />
+                                    </View>
+                                </View>
+
+                                <View style={styles.TextAndPickerForm}>
+                                    <Text style={{ fontSize: 18 }}>Densidad:</Text>
+                                    <View style={styles.InfoQuimicaRangosBox}>
+                                        <Text>Min.</Text>
+                                        <TextInput style={styles.input}
+                                            value={producto.densidadMin}
+                                            onChangeText={(text) => handleChange('densidadMin', text)}
+                                            keyboardType="numeric"
+
+                                        />
+                                        <Text>Max.</Text>
+                                        <TextInput style={styles.input}
+                                            value={producto.densidadMax}
+                                            onChangeText={(text) => handleChange('densidadMax', text)}
+                                            keyboardType="numeric"
+
+                                        />
+                                    </View>
+                                </View>
+
+                                <View style={styles.TextAndPickerForm}>
+                                    <Text style={{ fontSize: 18 }}>Grados de Alcohol:</Text>
+                                    <View style={styles.InfoQuimicaRangosBox}>
+                                        <Text>Min.</Text>
+                                        <TextInput style={styles.input}
+                                            value={producto.gradoAlcoholicoMin}
+                                            onChangeText={(text) => handleChange('gradoAlcoholicoMin', text)}
+                                            keyboardType="numeric"
+                                        />
+                                        <Text>Max.</Text>
+                                        <TextInput style={styles.input}
+                                            value={producto.gradoAlcoholicoMax}
+                                            onChangeText={(text) => handleChange('gradoAlcoholicoMax', text)}
+                                            keyboardType="numeric"
+
+                                        />
+                                    </View>
 
 
-                                    </Picker>
+                                </View>
+
+
+
+                                <TouchableOpacity onPress={() => setNuevaInfoQuimica(false)}>
+                                    <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>X No agregar nuevo registro</Text>
+                                </TouchableOpacity>
+
+
+
+
+                            </>
+
+                        ) : (
+                            <>
+                                <Picker
+                                    itemStyle={{ height: 120, fontSize: 14 }}
+                                    style={styles.itemInPicker}
+                                    selectedValue={producto.idInformacionQuimica}
+                                    onValueChange={(itemValue) => handleChange('idInformacionQuimica', itemValue)}
+
+                                >
+                                    <Picker.Item label="Selecciona cepa" value={0} />
+
+                                    {infoQuimica.map((item) => (
+                                        <Picker.Item key={item.id} label={item.cepa} value={item.id} />
+
+                                    ))}
+                                </Picker>
+                                <TouchableOpacity onPress={() => setNuevaInfoQuimica(true)}>
+                                    <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar Nueva Información Química</Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
+
+
+
+
+
+
+
+
+                        <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Historial del producto</Text>
+
+                        {agregarHistorial ?
+
+                            <>
+                                <View style={styles.TextAndPickerForm}>
+                                    <Text style={{ fontSize: 18 }}>Fecha de Cosecha: {dateCosecha.toLocaleString()} </Text>
+
+                                    {Platform.OS === 'ios' ? (
+                                        <DateTimePicker
+                                            testID="dateTimePicker"
+                                            value={dateCosecha}
+                                            mode="datetime"
+                                            is24Hour={true}
+                                            onChange={onChangeCosecha}
+                                            display="inline"
+                                        />
+                                    ) : Platform.OS === 'android' ? (
+                                        <>
+                                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                                                <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerCosecha}>
+                                                    <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerCosecha}>
+                                                    <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
+                                                </TouchableOpacity>
+                                            </View>
+
+                                            {showCosecha && (
+                                                <DateTimePicker
+                                                    testID="dateTimePicker"
+                                                    value={dateCosecha}
+                                                    mode={mode}
+                                                    is24Hour={true}
+                                                    onChange={onChangeCosecha}
+                                                />
+                                            )}
+
+                                        </>
+                                    ) : (
+                                        <Text>Plataforma desconocida</Text>
+                                    )}
+
+                                </View>
+
+                                <View style={styles.TextAndPickerForm}>
+                                    <Text style={{ fontSize: 18 }}>Fecha de Producción: {dateProduccion.toLocaleString()} </Text>
+
+                                    {Platform.OS === 'ios' ? (
+                                        <DateTimePicker
+                                            testID="dateTimePicker"
+                                            value={dateProduccion}
+                                            mode="datetime"
+                                            is24Hour={true}
+                                            onChange={onChangeDateProduccion}
+                                            display="inline"
+                                        />
+                                    ) : Platform.OS === 'android' ? (
+                                        <>
+                                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                                                <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerProduccion}>
+                                                    <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerProduccion}>
+                                                    <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
+                                                </TouchableOpacity>
+                                            </View>
+
+                                            {showProduccion && (
+                                                <DateTimePicker
+                                                    testID="dateTimePicker"
+                                                    value={dateProduccion}
+                                                    mode={mode}
+                                                    is24Hour={true}
+                                                    onChange={onChangeDateProduccion}
+                                                />
+                                            )}
+                                        </>
+                                    ) : (
+                                        <Text>Plataforma desconocida</Text>
+                                    )}
+                                </View>
+
+                                <View style={styles.TextAndPickerForm}>
+                                    <Text style={{ fontSize: 18 }}>Fecha de Envasado: {dateEnvasado.toLocaleString()} </Text>
+
+                                    {Platform.OS === 'ios' ? (
+                                        <DateTimePicker
+                                            testID="dateTimePicker"
+                                            value={dateEnvasado}
+                                            mode="datetime"
+                                            is24Hour={true}
+                                            onChange={onChangeDateEnvasado}
+                                            display="inline"
+                                        />
+                                    ) : Platform.OS === 'android' ? (
+                                        <>
+                                            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                                                <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerEnvasado}>
+                                                    <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerEnvasado}>
+                                                    <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
+                                                </TouchableOpacity>
+                                            </View>
+
+                                            {showEnvasado && (
+                                                <DateTimePicker
+                                                    testID="dateTimePicker"
+                                                    value={dateEnvasado}
+                                                    mode={mode}
+                                                    is24Hour={true}
+                                                    onChange={onChangeDateEnvasado}
+                                                />
+                                            )}
+                                        </>
+                                    ) : (
+                                        <Text>Plataforma desconocida</Text>
+                                    )}
+                                    <Text style={{ color: 'red', fontSize: 12, marginBottom: 20, marginTop: 20 }}>*Complete todos los campos, fecha y hora.</Text>
+
                                 </View>
 
 
                                 <TouchableOpacity onPress={() => {
-                                    setAgregarBotella(true)
+                                    setAgregarHistorial(false)
                                 }}>
-                                    <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>
-                                        + Agregar botella nueva
-                                    </Text>
+                                    <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>X  No agregar nuevo registro</Text>
                                 </TouchableOpacity>
                             </>
-
+                            :
+                            <TouchableOpacity onPress={() => {
+                                setAgregarHistorial(true)
+                            }}>
+                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar Historial</Text>
+                            </TouchableOpacity>
                         }
 
-
-
-
-
-
-
-
-
-
-
-
-                        <TouchableOpacity onPress={() => {
-                            setAgregarDetalles(false)
-                        }}>
-                            <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>x No agregar informcion en detalles.</Text>
-                        </TouchableOpacity>
-
-                    </> : <>
-
-                        <TouchableOpacity onPress={() => {
-                            setAgregarDetalles(true)
-                        }}>
-                            <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar detalles</Text>
-                        </TouchableOpacity>
-
-                    </>}
-
-
-
-
-
-
-                    <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Informacion Quimica de producto</Text>
-
-                    {/* Información Química */}
-                    {nuevaInfoQuimica ? (
-                        <>
-                            <View style={styles.TextAndPickerForm}>
-                                <Text style={{ fontSize: 18 }}>Cepa:</Text>
-                                <TextInput style={styles.input}
-                                    value={producto.cepa}
-                                    onChangeText={(text) => handleChange('cepa', text)}
-                                />
-
-                            </View>
-                            <View style={styles.TextAndPickerForm}>
-                                <Text style={{ fontSize: 18 }}>Azucar:</Text>
-                                <View style={styles.InfoQuimicaRangosBox}>
-                                    <Text>Min.</Text>
-                                    <TextInput style={styles.input}
-                                        value={producto.azucarMin}
-                                        onChangeText={(text) => handleChange('azucarMin', text)}
-                                    />
-                                    <Text>Max.</Text>
-                                    <TextInput style={styles.input}
-                                        value={producto.azucarMax}
-                                        onChangeText={(text) => handleChange('azucarMax', text)}
-                                    />
-                                </View>
-                            </View>
-
-                            <View style={styles.TextAndPickerForm}>
-                                <Text style={{ fontSize: 18 }}>Sulfuroso:</Text>
-                                <View style={styles.InfoQuimicaRangosBox}>
-                                    <Text>Min.</Text>
-                                    <TextInput style={styles.input}
-                                        value={producto.sulfurosMin}
-                                        onChangeText={(text) => handleChange('sulfurosMin', text)}
-                                    />
-                                    <Text>Max.</Text>
-                                    <TextInput style={styles.input}
-                                        value={producto.sulfurosMax}
-                                        onChangeText={(text) => handleChange('sulfurosMax', text)}
-                                    />
-                                </View>
-                            </View>
-
-                            <View style={styles.TextAndPickerForm}>
-                                <Text style={{ fontSize: 18 }}>Densidad:</Text>
-                                <View style={styles.InfoQuimicaRangosBox}>
-                                    <Text>Min.</Text>
-                                    <TextInput style={styles.input}
-                                        value={producto.densidadMin}
-                                        onChangeText={(text) => handleChange('densidadMin', text)}
-                                    />
-                                    <Text>Max.</Text>
-                                    <TextInput style={styles.input}
-                                        value={producto.densidadMax}
-                                        onChangeText={(text) => handleChange('densidadMax', text)}
-                                    />
-                                </View>
-                            </View>
-
-                            <View style={styles.TextAndPickerForm}>
-                                <Text style={{ fontSize: 18 }}>Grados de Alcohol:</Text>
-                                <View style={styles.InfoQuimicaRangosBox}>
-                                    <Text>Min.</Text>
-                                    <TextInput style={styles.input}
-                                        value={producto.gradoAlcoholicoMin}
-                                        onChangeText={(text) => handleChange('gradoAlcoholicoMin', text)}
-                                    />
-                                    <Text>Max.</Text>
-                                    <TextInput style={styles.input}
-                                        value={producto.gradoAlcoholicoMax}
-                                        onChangeText={(text) => handleChange('gradoAlcoholicoMax', text)}
-                                    />
-                                </View>
-
-
-                            </View>
-
-
-
-                            <TouchableOpacity onPress={() => setNuevaInfoQuimica(false)}>
-                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>X No agregar nuevo registro</Text>
-                            </TouchableOpacity>
-
-
-
-
-                        </>
-
-                    ) : (
-                        <>
-                            <Picker
-                                itemStyle={{ height: 120, fontSize: 14 }}
-                                style={styles.itemInPicker}
-                                selectedValue={producto.idInformacionQuimica}
-                                onValueChange={(itemValue) => handleChange('idInformacionQuimica', itemValue)}
-
-                            >
-                                <Picker.Item label="Selecciona cepa" value={0} />
-
-                                {infoQuimica.map((item) => (
-                                    <Picker.Item key={item.id} label={item.cepa} value={item.id} />
-
-                                ))}
-                            </Picker>
-                            <TouchableOpacity onPress={() => setNuevaInfoQuimica(true)}>
-                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar Nueva Información Química</Text>
-                            </TouchableOpacity>
-                        </>
-                    )}
-
-
-
-
-
-
-
-
-                    <Text style={[styles.botonNuevoRegistro, { color: 'black', fontSize: 22, marginTop: 30 }]}>Historial del producto</Text>
-
-                    {agregarHistorial ?
-
-                        <>
-                            <View style={styles.TextAndPickerForm}>
-                                <Text style={{ fontSize: 18 }}>Fecha de Cosecha: {dateCosecha.toLocaleString()} </Text>
-
-                                {Platform.OS === 'ios' ? (
-                                    <DateTimePicker
-                                        testID="dateTimePicker"
-                                        value={dateCosecha}
-                                        mode="datetime"
-                                        is24Hour={true}
-                                        onChange={onChangeCosecha}
-                                        display="inline"
-                                    />
-                                ) : Platform.OS === 'android' ? (
-                                    <>
-                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                                            <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerCosecha}>
-                                                <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerCosecha}>
-                                                <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
-                                            </TouchableOpacity>
-                                        </View>
-
-                                        {showCosecha && (
-                                            <DateTimePicker
-                                                testID="dateTimePicker"
-                                                value={dateCosecha}
-                                                mode={mode}
-                                                is24Hour={true}
-                                                onChange={onChangeCosecha}
-                                            />
-                                        )}
-
-                                    </>
-                                ) : (
-                                    <Text>Plataforma desconocida</Text>
-                                )}
-
-                            </View>
-
-                            <View style={styles.TextAndPickerForm}>
-                                <Text style={{ fontSize: 18 }}>Fecha de Producción: {dateProduccion.toLocaleString()} </Text>
-
-                                {Platform.OS === 'ios' ? (
-                                    <DateTimePicker
-                                        testID="dateTimePicker"
-                                        value={dateProduccion}
-                                        mode="datetime"
-                                        is24Hour={true}
-                                        onChange={onChangeDateProduccion}
-                                        display="inline"
-                                    />
-                                ) : Platform.OS === 'android' ? (
-                                    <>
-                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                                            <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerProduccion}>
-                                                <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerProduccion}>
-                                                <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
-                                            </TouchableOpacity>
-                                        </View>
-
-                                        {showProduccion && (
-                                            <DateTimePicker
-                                                testID="dateTimePicker"
-                                                value={dateProduccion}
-                                                mode={mode}
-                                                is24Hour={true}
-                                                onChange={onChangeDateProduccion}
-                                            />
-                                        )}
-                                    </>
-                                ) : (
-                                    <Text>Plataforma desconocida</Text>
-                                )}
-                            </View>
-
-                            <View style={styles.TextAndPickerForm}>
-                                <Text style={{ fontSize: 18 }}>Fecha de Envasado: {dateEnvasado.toLocaleString()} </Text>
-
-                                {Platform.OS === 'ios' ? (
-                                    <DateTimePicker
-                                        testID="dateTimePicker"
-                                        value={dateEnvasado}
-                                        mode="datetime"
-                                        is24Hour={true}
-                                        onChange={onChangeDateEnvasado}
-                                        display="inline"
-                                    />
-                                ) : Platform.OS === 'android' ? (
-                                    <>
-                                        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                                            <TouchableOpacity style={styles.botonFechas} onPress={showDatepickerEnvasado}>
-                                                <Text style={{ color: '#4b0404' }}>Escoger Fecha</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={styles.botonFechas} onPress={showTimepickerEnvasado}>
-                                                <Text style={{ color: '#4b0404' }}>Escoger Hora</Text>
-                                            </TouchableOpacity>
-                                        </View>
-
-                                        {showEnvasado && (
-                                            <DateTimePicker
-                                                testID="dateTimePicker"
-                                                value={dateEnvasado}
-                                                mode={mode}
-                                                is24Hour={true}
-                                                onChange={onChangeDateEnvasado}
-                                            />
-                                        )}
-                                    </>
-                                ) : (
-                                    <Text>Plataforma desconocida</Text>
-                                )}
-                                <Text style={{ color: 'red', fontSize: 12, marginBottom: 20, marginTop: 20 }}>*Complete todos los campos, fecha y hora.</Text>
-
-                            </View>
-
-
-                            <TouchableOpacity onPress={() => {
-                                setAgregarHistorial(false)
-                            }}>
-                                <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>X  No agregar nuevo registro</Text>
-                            </TouchableOpacity>
-                        </>
-                        :
-                        <TouchableOpacity onPress={() => {
-                            setAgregarHistorial(true)
-                        }}>
-                            <Text style={[styles.botonNuevoRegistro, { fontSize: 14, paddingLeft: 10 }]}>+ Agregar Historial</Text>
-                        </TouchableOpacity>
-                    }
-
-                </View>
-
+                    </View>
+                </KeyboardAvoidingView>
             </ScrollView >
 
             <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>

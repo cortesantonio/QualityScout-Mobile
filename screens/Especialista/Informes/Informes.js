@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Nav, Footer } from '../../../components/shared';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { URL_API_BACKEND } from '../../../config';
+import { useRoute } from '@react-navigation/native';
 
 // iconos propios 
 
@@ -17,6 +18,9 @@ const iconVarita = require('../../../assets/icons/iconVarita.png')
 const iconReload = require('../../../assets/icons/iconReload.png')
 
 const Informes = ({ navigation }) => {
+
+    const route = useRoute();
+
     const [loading, setLoading] = useState(false)
 
     //datos para generar informe
@@ -67,6 +71,7 @@ const Informes = ({ navigation }) => {
         obtenerInformes();
     }, []);
 
+    
 
     useEffect(() => {
         // Inicializa la lista filtrada con los datos completos al obtenerlos
@@ -326,7 +331,7 @@ const styles = StyleSheet.create({
         height: 25,
         resizeMode: 'contain',
     }, flatList: {
-        height: Dimensions.get('window').height / 2.5,
+        height: Dimensions.get('window').height -400,
         flexGrow: 0,
     },
 

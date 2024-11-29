@@ -1,6 +1,6 @@
 import {
     TouchableOpacity, StyleSheet, View, Text, Image, ScrollView,
-    TextInput, Switch, Platform, Button, Alert
+    TextInput, Switch, Platform, Button, Alert, KeyboardAvoidingView
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useRoute } from '@react-navigation/native';
@@ -13,7 +13,7 @@ import { URL_API_BACKEND } from '../../config';
 
 const CrearControl = ({ navigation }) => {
     const route = useRoute();
-    const { productoRecibido } = route.params;
+    const { productoRecibido, errores } = route.params;
 
     const iconRA = require('../../assets/icons/iconRA.png')
 
@@ -22,6 +22,10 @@ const CrearControl = ({ navigation }) => {
         vinoImagen = require('../../assets/images/VinoEjemplo.jpg')
     } else {
         vinoImagen = { uri: productoRecibido.urlImagen }
+    }
+
+    if(errores){
+        alert(errores)
     }
 
     const [value, setValue] = React.useState('Rechazado'); // Estado inicial predeterminado
@@ -108,96 +112,102 @@ const CrearControl = ({ navigation }) => {
 
 
     return (
-        <View style={styles.container}>
-            <ScrollView style={styles.scroll}>
-                <Image source={vinoImagen} style={styles.image} />
-                <View style={styles.containerInfo}>
-                    <View style={{ marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <View style={{ width: '90%' }}>
-                            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>
-                                {productoRecibido.nombre}
-                            </Text>
-                            <Text style={{ fontSize: 12, fontWeight: 'light' }}>
-                                CODIGO: {productoRecibido.codigoBarra}
-                            </Text>
+
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+            <View style={styles.container}>
+                <ScrollView style={styles.scroll}>
+                    <Image source={vinoImagen} style={styles.image} />
+                    <View style={styles.containerInfo}>
+                        <View style={{ marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <View style={{ width: '90%' }}>
+                                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>
+                                    {productoRecibido.nombre}
+                                </Text>
+                                <Text style={{ fontSize: 12, fontWeight: 'light' }}>
+                                    CODIGO: {productoRecibido.codigoBarra}
+                                </Text>
+                            </View>
+                        </View>
+
+                        {/* Línea Controlada */}
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Linea Controlada</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={control.linea}
+                                onChangeText={(value) => setControl({ ...control, linea: value })}
+                            />
+                        </View>
+
+                        {/* Tipo de Control */}
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Tipo de Control</Text>
+                            <RadioButton.Group
+                                onValueChange={value2 => {
+                                    setValue2(value2);
+                                    setControl(prevControl => ({ ...prevControl, tipodecontrol: value2 }));
+                                }}
+                                value={value2}
+                            >
+                                <RadioButton.Item label="Reproceso" value="Reproceso" />
+                                <RadioButton.Item label="Preventivo" value="Preventivo" />
+                            </RadioButton.Group>
+                        </View>
+
+                        {/* Estado de Control */}
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Estado de Control</Text>
+                            <RadioButton.Group
+                                onValueChange={value => {
+                                    setValue(value);
+                                    setControl(prevControl => ({ ...prevControl, estado: value }));
+                                }}
+                                value={value}
+                            >
+                                <RadioButton.Item label="Rechazado" value="Rechazado" />
+                                <RadioButton.Item label="Reproceso" value="Reproceso" />
+                                <RadioButton.Item label="Aprobado" value="Aprobado" />
+                            </RadioButton.Group>
+                        </View>
+
+                        {/* Comentario sobre control */}
+                        <View style={styles.TextAndPickerForm}>
+                            <Text style={{ fontSize: 18 }}>Comentario sobre control:</Text>
+                            <TextInput
+                                style={styles.inputComentario}
+                                multiline={true}
+                                value={control.comentario}
+                                onChangeText={(value) => setControl({ ...control, comentario: value })}
+                            />
+                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.navigate('Reconocimiento', { producto: productoRecibido }) }} >
+                                <Image source={iconRA} style={styles.iconRA} />
+                                <Text style={{ marginTop: 10 }}>Completar con inteligencia artificial.</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
+                </ScrollView>
 
-                    {/* Línea Controlada */}
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Linea Controlada</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={control.linea}
-                            onChangeText={(value) => setControl({ ...control, linea: value })}
-                        />
+                {/* Botón para retroceder */}
+                <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
+                    <View style={styles.CirculoAtras}>
+                        <View style={{ flexDirection: 'row', marginTop: 25 }}>
+                            <Text style={{ color: 'white', fontSize: 34 }}>Atrás</Text>
+                        </View>
+                        <Text style={{ color: 'white', fontSize: 22 }}>Ver Producto</Text>
                     </View>
-
-                    {/* Tipo de Control */}
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Tipo de Control</Text>
-                        <RadioButton.Group
-                            onValueChange={value2 => {
-                                setValue2(value2);
-                                setControl(prevControl => ({ ...prevControl, tipodecontrol: value2 }));
-                            }}
-                            value={value2}
-                        >
-                            <RadioButton.Item label="Reproceso" value="Reproceso" />
-                            <RadioButton.Item label="Preventivo" value="Preventivo" />
-                        </RadioButton.Group>
-                    </View>
-
-                    {/* Estado de Control */}
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Estado de Control</Text>
-                        <RadioButton.Group
-                            onValueChange={value => {
-                                setValue(value);
-                                setControl(prevControl => ({ ...prevControl, estado: value }));
-                            }}
-                            value={value}
-                        >
-                            <RadioButton.Item label="Rechazado" value="Rechazado" />
-                            <RadioButton.Item label="Reproceso" value="Reproceso" />
-                            <RadioButton.Item label="Aprobado" value="Aprobado" />
-                        </RadioButton.Group>
-                    </View>
-
-                    {/* Comentario sobre control */}
-                    <View style={styles.TextAndPickerForm}>
-                        <Text style={{ fontSize: 18 }}>Comentario sobre control:</Text>
-                        <TextInput
-                            style={styles.inputComentario}
-                            multiline={true}
-                            value={control.comentario}
-                            onChangeText={(value) => setControl({ ...control, comentario: value })}
-                        />
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { navigation.navigate('Reconocimiento' , {producto: productoRecibido} ) }} >
-                            <Image source={iconRA} style={styles.iconRA} />
-                            <Text style={{ marginTop: 10 }}>Completar con inteligencia artificial.</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </ScrollView>
-
-            {/* Botón para retroceder */}
-            <TouchableOpacity style={styles.ButtonCirculoAtras} onPress={() => navigation.goBack()}>
-                <View style={styles.CirculoAtras}>
-                    <View style={{ flexDirection: 'row', marginTop: 25 }}>
-                        <Text style={{ color: 'white', fontSize: 34 }}>Atrás</Text>
-                    </View>
-                    <Text style={{ color: 'white', fontSize: 22 }}>Ver Producto</Text>
-                </View>
-            </TouchableOpacity>
-
-            {/* Botón para agregar control */}
-            <View style={styles.botonRealizarControl}>
-                <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} onPress={enviarControl}>
-                    <Text style={{ color: 'white', fontSize: 18 }}>Agregar control</Text>
                 </TouchableOpacity>
+
+                {/* Botón para agregar control */}
+                <View style={styles.botonRealizarControl}>
+                    <TouchableOpacity style={[styles.BotonesFinales, { backgroundColor: '#260202' }]} onPress={enviarControl}>
+                        <Text style={{ color: 'white', fontSize: 18 }}>Agregar control</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 

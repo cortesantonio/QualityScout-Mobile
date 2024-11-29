@@ -1,6 +1,6 @@
 import {
     TouchableOpacity, StyleSheet, View, Text, Image, ScrollView,
-    TextInput, Switch, Platform, Button, Alert
+    TextInput, Switch, Platform, Button, Alert, KeyboardAvoidingView
 } from 'react-native';
 
 import { useState } from 'react';
@@ -9,7 +9,6 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { URL_API_BACKEND } from '../../../config';
 import { React } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 const iconAdd = require('../../../assets/icons/iconAdd.png')
 
@@ -63,7 +62,7 @@ const CrearUsuario = ({ navigation }) => {
             return;
         }
 
-        if(UserToSend.Password.length <8){
+        if (UserToSend.Password.length < 8) {
             return Alert.alert('Error', 'La contraseña debe tener al menos 8 caracteres.');
         }
 
@@ -133,68 +132,71 @@ const CrearUsuario = ({ navigation }) => {
                     Gestión De Usuario
                 </Text>
 
-                <View style={styles.containerForm}>
 
-                    <Text style={styles.tituloForm}>
-                        Añadir Usuario
-                    </Text>
+                    
+                    <View style={styles.containerForm}>
 
-                    <View style={styles.form}>
-                        <Text style={styles.label}>RUT</Text>
-                        <TextInput style={styles.input}
-                            value={Usuario.Rut}
-                            onChangeText={handleChangeRut} />
+                        <Text style={styles.tituloForm}>
+                            Añadir Usuario
+                        </Text>
 
-
-                        <Text style={styles.label}>Nombre Completo</Text>
-                        <TextInput style={styles.input}
-                            value={Usuario.Nombre}
-                            onChangeText={(value) => handleChange('Nombre', value)}
-                        />
+                        <View style={styles.form}>
+                            <Text style={styles.label}>RUT</Text>
+                            <TextInput style={styles.input}
+                                value={Usuario.Rut}
+                                onChangeText={handleChangeRut}
+                                keyboardType="numeric"
+                            />
 
 
-                        <Text style={styles.label}>Email</Text>
-                        <TextInput style={styles.input}
-                            value={Usuario.Email}
-                            onChangeText={(value) => handleChange('Email', value)}
-                        />
+                            <Text style={styles.label}>Nombre Completo</Text>
+                            <TextInput style={styles.input}
+                                value={Usuario.Nombre}
+                                onChangeText={(value) => handleChange('Nombre', value)}
+                            />
 
 
-                        <Text style={styles.label}>Rol</Text>
-                        <DropDownPicker
-                            open={open}
-                            value={value}
-                            items={items}
-                            setOpen={setOpen}
-                            setValue={setValue}
-                            setItems={setItems}
-                            placeholder={'Selecciona el rol.'}
-                            style={styles.input}
-
-                        />
-
-                        <Text style={styles.label}>Contraseña</Text>
-                        <TextInput style={styles.input} secureTextEntry={true}
-
-                            value={Usuario.Password}
-                            onChangeText={(value) => handleChange('Password', value)}
-                        />
-                        <Text style={{ color: 'gray', fontSize: 10 }}>CONTRASEÑA TEMPORAL*</Text>
+                            <Text style={styles.label}>Email</Text>
+                            <TextInput style={styles.input}
+                                value={Usuario.Email}
+                                onChangeText={(value) => handleChange('Email', value)}
+                            />
 
 
+                            <Text style={styles.label}>Rol</Text>
+                            <DropDownPicker
+                                open={open}
+                                value={value}
+                                items={items}
+                                setOpen={setOpen}
+                                setValue={setValue}
+                                setItems={setItems}
+                                placeholder={'Selecciona el rol.'}
+                                style={styles.input}
+
+                            />
+
+                            <Text style={styles.label}>Contraseña</Text>
+                            <TextInput style={styles.input} secureTextEntry={true}
+
+                                value={Usuario.Password}
+                                onChangeText={(value) => handleChange('Password', value)}
+                            />
+                            <Text style={{ color: 'gray', fontSize: 10 }}>CONTRASEÑA TEMPORAL*</Text>
 
 
-                        <TouchableOpacity style={styles.TouchableBoton} onPress={EnviarUsuario}>
-                            <Image source={iconAdd} style={styles.iconsBotones} />
-                            <Text style={styles.botonText}>Añadir Usuarios</Text>
-                        </TouchableOpacity>
+
+
+                            <TouchableOpacity style={styles.TouchableBoton} onPress={EnviarUsuario}>
+                                <Image source={iconAdd} style={styles.iconsBotones} />
+                                <Text style={styles.botonText}>Añadir Usuarios</Text>
+                            </TouchableOpacity>
+                        </View>
+
+
+
+
                     </View>
-
-
-
-
-                </View>
-
             </View>
 
             <Footer />
@@ -226,6 +228,7 @@ const styles = StyleSheet.create({
         marginBottom: 15
     },
     input: {
+        zIndex: 0,
         height: 30,
         backgroundColor: '#dbd7d7',
         marginLeft: 0,

@@ -77,8 +77,11 @@ export default function Reconocimiento({ navigation }) {
                             const errores = objetosEsperados.filter(
                                 objeto => predicciones.includes(objeto)
                             );
-
-                            setErrores(`Los sellos nacionales entan presentes en este productos: ${errores}`)
+                            if (errores.length > 0) {
+                                setErrores(`Los sellos nacionales entan presentes en este productos: ${errores}`)
+                            } else {
+                                setErrores(`No se encontraron errores`)
+                            }
 
 
                         }
@@ -102,6 +105,8 @@ export default function Reconocimiento({ navigation }) {
         setResponseRoboflow(false);
         setFotoUri(null);
         Clipboard.setStringAsync(errores);
+        //voler atras y mandar errores
+        navigation.goBack();
 
 
     };
